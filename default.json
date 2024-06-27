@@ -1,0 +1,18 @@
+
+{ "ownership":
+{"user": "user1", "pass": "password"}, 
+"events": 
+[
+    { "year": "2019", "events": 
+    [
+        {"month": "january", "event": 
+        [
+            {"data": "21", "activities" : 
+            [
+                {"activity":"coding", "beginTime":"10:00am", "hours":"2"},
+                {"activity":"learn", "beginTime":"1:00pm", "hours":"1"},
+                {"activity":"teach", "beginTime":"2:00pm", "hours":"1"}
+            ]}
+        ]}
+    ]}
+]}
