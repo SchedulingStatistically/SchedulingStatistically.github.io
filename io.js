@@ -1,7 +1,7 @@
 useExternalJSON()
 
 function useExternalJSON(){
-    const JSON_data_struct = Null;
+    let JSON_data_struct;
     document.getElementById('input_JSON_file').addEventListener('change', function(event) {
         const file = event.target.files[0]
         if(file){
@@ -30,11 +30,12 @@ function useExternalJSON(){
 
 // use the default json file for debugging
 function useDefaultJSON(){
-    fetch('default.json').then(response => {
+    fetch('jsonFIles/default.json').then(response => {
         if(!response.ok){
             throw new Error('response ok error' + response.statusText);
         }
         return response.json();
     }).then(data => {console.log(data);})
     .catch(error => {console.error('fetch default JSON failed', error)})
+    return data;
 }
