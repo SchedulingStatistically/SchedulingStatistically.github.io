@@ -30,7 +30,7 @@ function useExternalJSON(){
 
 // use the default json file for debugging
 function useDefaultJSON(){
-    fetch('jsonFIles/default.json').then(response => {
+    fetch('jsonFiles/default.json').then(response => {
         if(!response.ok){
             throw new Error('response ok error' + response.statusText);
         }
