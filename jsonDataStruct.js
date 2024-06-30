@@ -123,6 +123,46 @@ class JsonDataStruct {
         return new JsonDataStruct(json.name, ownership, owner_status, scheduled_events);
     }
 
+    getName(){
+        return this.name;
+    }
+
+    updateName(newName){
+        this.name = newName;
+    }
+
+    getOwnership(){
+        return this.ownership;
+    }
+
+    updateOwnership(newOwnership){
+        this.ownership = new Ownership(newOwnership.name, newOwnership.user_name, newOwnership.password);
+    }
+
+    get getOwner_status(){
+        return this.owner_status;
+    }
+
+    updateOwner_status(newOwner_status){
+        this.owner_status = new OwnerStatus(newOwner_status.max, newOwner_status.min, newOwner_status.median, newOwner_status.mode);
+    }
+
+    getScheduled_events(){
+        return this.scheduled_events;
+    }
+
+    addScheduled_event(event){
+        this.scheduled_events.push(new ScheduledEvents(event.year, event.month, event.day, event.hobby, event.start, event.hours, event.end))
+    }
+
+    removeScheduled_event(){
+        this.scheduled_events.pop()
+    }
+
+    updateScheduled_events(newScheduled_events){
+        this.scheduled_events = newScheduled_events.map(event => new ScheduledEvents(event.year, event.month, event.day, event.hobby, event.start, event.hours,event.end));
+    }
+
 
 }
 

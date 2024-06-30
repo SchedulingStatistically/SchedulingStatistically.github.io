@@ -122,3 +122,59 @@ console.log('load whole json file')
 const whole_data = JsonDataStruct.fromJsonFormat(whole_json);
 console.log(whole_data);
 console.log(whole_data.toJsonFormat());
+
+console.log('test update functions')
+console.log('update name, ownership, status, and scheduled events')
+whole_data.updateName('ben')
+
+whole_data.updateOwnership({name : 'ben', user_name : "row", password : 'ben row'})
+whole_data.updateOwner_status({max : 27, min : 2, median : 27, mode : 14})
+const updated_events = [
+    {
+        year : 2014,
+        month : 12,
+        day : 9,
+        hobby : 'gaming',
+        start : '11:00am',
+        hours : 6,
+        end : '4:00pm'
+    },
+    {
+        year : 2017,
+        month : 1,
+        day : 1,
+        hobby : 'running',
+        start : '4:00pm',
+        hours : 1,
+        end : '6:00pm'
+    }
+]
+
+const add_event_1 = {
+    year : 2018,
+    month : 1,
+    day : 1,
+    hobby : 'studying',
+    start : '8:00am',
+    hours : 4,
+    end : '6:00pm'
+}
+
+whole_data.updateScheduled_events(updated_events);
+whole_data.addScheduled_event(add_event_1);
+console.log(whole_data)
+console.log(whole_data.toJsonFormat())
+
+console.log('test access function then update an object attribute')
+let get_name = whole_data.getName()
+console.log('accessed name of json ' + get_name);
+get_name = 'JSON Den'
+whole_data.updateName(get_name);
+let get_owner = whole_data.getOwnership()
+console.log('accessed owner ' + get_owner);
+get_owner.name = 'get Den';
+let get_status = whole_data.getOwner_status
+console.log('accessed status ' + get_status);
+get_status.max = 49
+console.log(whole_data);
+
