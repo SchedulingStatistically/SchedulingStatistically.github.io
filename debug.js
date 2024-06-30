@@ -35,3 +35,6 @@ let student = {name : "ob", class : "2020", uni : "SFSU"};
 console.log(student.name);
 console.log(student.class);
 console.log(student.uni);
+
+// add a new json object
+// json_object.unshift()
