@@ -32,10 +32,11 @@ console.log(new_owner.toJsonFormat());
 
 // Owner status data
 const status_json = {
-    max : 29,
-    min : 1,
-    mode : 7,
-    median : 13
+    your_global_status : 'global status 2019828',
+    current_status_scope : "yearly: 2017 to 2020",
+    your_hobby_status : [
+        {hobby : 'coding', max : 70, min : 15, median : 35, mode : 40}
+    ]
 }
 console.log('owner status data');
 const status = OwnerStatus.fromJsonFormat(status_json);
@@ -73,10 +74,11 @@ const whole_json = {
         password : 'sam to'
     },
     owner_status : {
-        max : 17,
-        min : 0,
-        mode : 3,
-        median : 13
+        your_global_status : 'global status 2019828',
+        current_status_scope : "yearly: 2017 to 2020",
+        your_hobby_status : [
+            {hobby : 'coding', max : 70, min : 15, median : 35, mode : 40}
+        ]
     },
     scheduled_events : [
         {
@@ -128,7 +130,7 @@ console.log('update name, ownership, status, and scheduled events')
 whole_data.updateName('ben')
 
 whole_data.updateOwnership({name : 'ben', user_name : "row", password : 'ben row'})
-whole_data.updateOwner_status({max : 27, min : 2, median : 27, mode : 14})
+// whole_data.updateOwner_status({max : 27, min : 2, median : 27, mode : 14})
 const updated_events = [
     {
         year : 2014,
@@ -173,8 +175,8 @@ whole_data.updateName(get_name);
 let get_owner = whole_data.getOwnership()
 console.log('accessed owner ' + get_owner);
 get_owner.name = 'get Den';
-let get_status = whole_data.getOwner_status
-console.log('accessed status ' + get_status);
-get_status.max = 49
+// let get_status = whole_data.getOwner_status
+// console.log('accessed status ' + get_status);
+// get_status.max = 49
 console.log(whole_data);
 
