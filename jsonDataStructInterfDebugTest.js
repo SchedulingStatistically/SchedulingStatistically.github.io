@@ -40,3 +40,7 @@ console.log(our_interface)
 // get json object string
 console.log('get json object string')
 console.log(our_interface.getJsonObjectString());
+
+// get json object hobby
+console.log('get json hobby status')
+console.log(our_interface.getHobbyStatus())

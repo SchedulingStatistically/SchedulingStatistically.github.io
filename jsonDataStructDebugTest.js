@@ -118,8 +118,8 @@ const whole_json = {
             end : '5:00pm'
         }
     ]
-
 }
+
 console.log('load whole json file')
 const whole_data = JsonDataStruct.fromJsonFormat(whole_json);
 console.log(whole_data);

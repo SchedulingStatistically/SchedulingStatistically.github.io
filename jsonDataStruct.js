@@ -182,6 +182,10 @@ class JsonDataStruct {
         this.owner_status.removeHobby_status();
     }
 
+    getHobby_status() {
+        return this.owner_status.toJsonFormat()
+    }
+
     updateOwner_status(newOwner_status){
         this.owner_status = OwnerStatus.fromJsonFormat(newOwner_status)
         // this.owner_status = new OwnerStatus(newOwner_status.your_global_status, newOwner_status.current_status_scope, newOwner_status.your_hobby_status);

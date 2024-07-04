@@ -8,6 +8,7 @@
 
 import  {ScheduledEvents, OwnerStatus, Ownership, JsonDataStruct} from './jsonDataStruct.js'
 // loading a whole json to make a data struct
+// loading a whole json to make a data struct
 const whole_json = {
     name : 'whole tree',
     ownership : {
@@ -16,10 +17,11 @@ const whole_json = {
         password : 'sam to'
     },
     owner_status : {
-        max : 17,
-        min : 0,
-        mode : 3,
-        median : 13
+        your_global_status : 'global status 2019828',
+        current_status_scope : "yearly: 2017 to 2020",
+        your_hobby_status : [
+            {hobby : 'coding', max : 70, min : 15, median : 35, mode : 40}
+        ]
     },
     scheduled_events : [
         {
@@ -60,6 +62,7 @@ const whole_json = {
         }
     ]
 }
+
 // pending documentation!
 export default class jsonDataStructInterf {
     constructor(name){
@@ -78,6 +81,11 @@ export default class jsonDataStructInterf {
             password : password
         }
         this.json_object.updateOwnership(owner);
+    }
+
+    getHobbyStatus() {
+        const hobby_status = JSON.stringify(this.json_object.getHobby_status(), null, 2);
+        return hobby_status;
     }
 
     addComplete_events(year, month, day, hobby, start, hours, end){
