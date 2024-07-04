@@ -27,6 +27,62 @@
     "I use vscode with 'Live Server' extension to run the html on my local browser app"
     "DO NOT MERGE or push you testing code in the main branch"
 */
+class DailyEvents {
+    constructor(day, scheduled_events) {
+        this.day = day;
+        this.scheduled_events = scheduled_events;
+    }
+
+    toJsonFormat() {
+        return {
+            day : this.day,
+            scheduled_events : this.scheduled_events.map(the_events => the_events.toJsonFormat())
+        }
+    }
+
+    static fromJsonFormat(json){
+        const scheduled_events = json.scheduled_events.map(the_events => ScheduledEvents.fromJsonFormat(the_events))
+        return new DailyEvents(json.day, scheduled_events)
+    }
+}
+
+class MonthlyEvents {
+    constructor(month, daily_events) {
+        this.month = month;
+        this.daily_events = daily_events;
+    }
+
+    toJsonFormat() {
+        return {
+            month : this.month,
+            daily_events : this.daily_events.map(the_events => the_events.toJsonFormat())
+        }
+    }
+
+    static fromJsonFormat(json){
+        const daily_events = json.daily_events.map(the_events => DailyEvents.fromJsonFormat(the_events))
+        return new MonthlyEvents(json.month, daily_events)
+    }
+}
+
+class YearlyEvents {
+    constructor(year, monthly_events) {
+        this.year = year;
+        this.monthly_events = monthly_events;
+    }
+
+    toJsonFormat() {
+        return {
+            year : this.year,
+            monthly_events : this.monthly_events.map(the_events => the_events.toJsonFormat())
+        }
+    }
+
+    static fromJsonFormat(json){
+        const monthly_events = json.monthly_events.map(the_events => MonthlyEvents.fromJsonFormat(the_events))
+        return new YearlyEvents(json.year, monthly_events)
+    }
+}
 
 class ScheduledEvents {
     constructor(year, month, day, hobby, start, hours, end) {
