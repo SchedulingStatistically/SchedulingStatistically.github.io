@@ -96,8 +96,16 @@ class OwnerStatus {
     }
 
     static fromJsonFormat(json) {
-        const your_hobby_status = json.your_hobby_status.map(hobby_status => HobbyStatus.fromJsonFormat(hobby_status)) 
+        const your_hobby_status = json.your_hobby_status.map(hobby_status => HobbyStatus.fromJsonFormat(hobby_status));
         return new OwnerStatus(json.your_global_status, json.current_status_scope, your_hobby_status);
+    }
+
+    addHobby_status(new_hobby) {
+        this.your_hobby_status.push(new HobbyStatus(new_hobby.hobby, new_hobby.max, new_hobby.min, new_hobby.median, new_hobby.mode));
+    }
+
+    removeHobby_status(new_hobby) {
+        this.your_hobby_status.pop()
     }
 }
 
@@ -159,16 +167,25 @@ class JsonDataStruct {
     }
 
     updateOwnership(newOwnership){
-        this.ownership = new Ownership(newOwnership.name, newOwnership.user_name, newOwnership.password);
+        this.ownership = Ownership.fromJsonFormat(newOwnership);
     }
 
-    // get getOwner_status(){
-    //     return this.owner_status;
-    // }
+    get getOwner_status(){
+        return this.owner_status;
+    }
+    
+    addHobby_ToOwnerStatus(new_hobby) {
+        this.owner_status.addHobby_status(new_hobby);
+    }
 
-    // updateOwner_status(newOwner_status){
-    //     this.owner_status = new OwnerStatus(newOwner_status.max, newOwner_status.min, newOwner_status.median, newOwner_status.mode);
-    // }
+    removeHobby_fromOwnerStatus() {
+        this.owner_status.removeHobby_status();
+    }
+
+    updateOwner_status(newOwner_status){
+        this.owner_status = OwnerStatus.fromJsonFormat(newOwner_status)
+        // this.owner_status = new OwnerStatus(newOwner_status.your_global_status, newOwner_status.current_status_scope, newOwner_status.your_hobby_status);
+    }
 
     getScheduled_events(){
         return this.scheduled_events;

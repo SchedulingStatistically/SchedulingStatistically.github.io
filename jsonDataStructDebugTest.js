@@ -130,7 +130,19 @@ console.log('update name, ownership, status, and scheduled events')
 whole_data.updateName('ben')
 
 whole_data.updateOwnership({name : 'ben', user_name : "row", password : 'ben row'})
-// whole_data.updateOwner_status({max : 27, min : 2, median : 27, mode : 14})
+const status2_json = {
+    your_global_status : 'global status 2021818',
+    current_status_scope : "yearly: 2020 to 2022",
+    your_hobby_status : [
+        {hobby : 'writing', max : 80, min : 25, median : 40, mode : 45},
+        {hobby : 'learning', max : 90, min : 60, median : 75, mode : 70}
+    ]
+}
+whole_data.updateOwner_status(status2_json)
+console.log('add and remove hobbies for owner_status')
+whole_data.addHobby_ToOwnerStatus({hobby : 'soccer', max : 60, min : 25, median : 50, mode : 55})
+whole_data.addHobby_ToOwnerStatus({hobby : 'gaming', max : 180, min : 65, median : 160, mode : 160})
+console.log(whole_data)
 const updated_events = [
     {
         year : 2014,
@@ -165,7 +177,7 @@ const add_event_1 = {
 whole_data.updateScheduled_events(updated_events);
 whole_data.addScheduled_event(add_event_1);
 console.log(whole_data)
-console.log(whole_data.toJsonFormat())
+// console.log(whole_data.toJsonFormat())
 
 console.log('test access function then update an object attribute')
 let get_name = whole_data.getName()
