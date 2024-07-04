@@ -27,10 +27,10 @@ console.log('update ownership on interface')
 our_interface.updateOwnership('jen', 'will', 'jen will')
 console.log(our_interface)
 
-// update owner status on interface
-console.log('update owner status on interface')
-our_interface.updateOwnerStatus(69, 13, 33, 21)
-console.log(our_interface)
+// // update owner status on interface
+// console.log('update owner status on interface')
+// our_interface.updateOwnerStatus(69, 13, 33, 21)
+// console.log(our_interface)
 
 // add a scheduled event
 console.log('add a scheduled event')

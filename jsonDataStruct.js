@@ -56,8 +56,9 @@ class ScheduledEvents {
     }
 }
 
-class OwnerStatus {
-    constructor(max, min, median, mode) {
+class HobbyStatus {
+    constructor(hobby, max, min, median, mode) {
+        this.hobby = hobby;
         this.max = max;
         this.min = min;
         this.median = median;
@@ -66,15 +67,37 @@ class OwnerStatus {
 
     toJsonFormat() {
         return {
+            hobby : this.hobby,
             max : this.max,
             min : this.min,
             median : this.median,
-            mode : this.mode,
+            mode : this.mode
+        }
+    }
+
+    static fromJsonFormat(json) {
+        return new HobbyStatus(json.hobby, json.max, json.min, json.median, json.mode)
+    }
+}
+
+class OwnerStatus {
+    constructor(global_status, current_status_scope, hobby_status) {
+        this.your_global_status = global_status;
+        this.current_status_scope = current_status_scope;
+        this.your_hobby_status = hobby_status;
+    }
+
+    toJsonFormat() {
+        return {
+            your_global_status : this.your_global_status,
+            current_status_scope : this.current_status_scope,
+            your_hobby_status : this.your_hobby_status.map(hobby_status => hobby_status.toJsonFormat()),
         };
     }
 
     static fromJsonFormat(json) {
-        return new OwnerStatus(json.max, json.min, json.median, json.mode);
+        const your_hobby_status = json.your_hobby_status.map(hobby_status => HobbyStatus.fromJsonFormat(hobby_status)) 
+        return new OwnerStatus(json.your_global_status, json.current_status_scope, your_hobby_status);
     }
 }
 
@@ -139,13 +162,13 @@ class JsonDataStruct {
         this.ownership = new Ownership(newOwnership.name, newOwnership.user_name, newOwnership.password);
     }
 
-    get getOwner_status(){
-        return this.owner_status;
-    }
+    // get getOwner_status(){
+    //     return this.owner_status;
+    // }
 
-    updateOwner_status(newOwner_status){
-        this.owner_status = new OwnerStatus(newOwner_status.max, newOwner_status.min, newOwner_status.median, newOwner_status.mode);
-    }
+    // updateOwner_status(newOwner_status){
+    //     this.owner_status = new OwnerStatus(newOwner_status.max, newOwner_status.min, newOwner_status.median, newOwner_status.mode);
+    // }
 
     getScheduled_events(){
         return this.scheduled_events;

@@ -80,15 +80,15 @@ export default class jsonDataStructInterf {
         this.json_object.updateOwnership(owner);
     }
 
-    updateOwnerStatus(max, min, median, mode){
-        let status = {
-            max : max,
-            min : min,
-            median : median,
-            mode : mode
-        }
-        this.json_object.updateOwner_status(status)
-    }
+    // updateOwnerStatus(max, min, median, mode){
+    //     let status = {
+    //         max : max,
+    //         min : min,
+    //         median : median,
+    //         mode : mode
+    //     }
+    //     this.json_object.updateOwner_status(status)
+    // }
 
     addComplete_events(year, month, day, hobby, start, hours, end){
         let a_event = {
