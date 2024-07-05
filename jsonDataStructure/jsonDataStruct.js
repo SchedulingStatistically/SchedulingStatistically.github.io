@@ -29,11 +29,11 @@
 */
 
 class ScheduledEvents {
-    constructor(year, month, day, hobby, start, hours, end) {
+    constructor(year, month, day, an_event, start, hours, end) {
         this.year = year;
         this.month = month;
         this.day = day;
-        this.hobby = hobby;
+        this.an_event = an_event;
         this.start = start;
         this.hours = hours;
         this.end = end;
@@ -44,7 +44,7 @@ class ScheduledEvents {
             year : this.year,
             month : this.month,
             day : this.day,
-            hobby : this.hobby,
+            an_event : this.an_event,
             start : this.start,
             hours : this.hours,
             end : this.end,
@@ -52,13 +52,13 @@ class ScheduledEvents {
     }
 
     static fromJsonFormat(json) {
-        return new ScheduledEvents(json.year, json.month, json.day, json.hobby, json.start, json.hours, json.end);
+        return new ScheduledEvents(json.year, json.month, json.day, json.an_event, json.start, json.hours, json.end);
     }
 }
 
-class HobbyStatus {
-    constructor(hobby, max, min, median, mode) {
-        this.hobby = hobby;
+class EventStatus {
+    constructor(an_event, max, min, median, mode) {
+        this.an_event = an_event;
         this.max = max;
         this.min = min;
         this.median = median;
@@ -67,7 +67,7 @@ class HobbyStatus {
 
     toJsonFormat() {
         return {
-            hobby : this.hobby,
+            an_event : this.an_event,
             max : this.max,
             min : this.min,
             median : this.median,
@@ -76,7 +76,7 @@ class HobbyStatus {
     }
 
     static fromJsonFormat(json) {
-        return new HobbyStatus(json.hobby, json.max, json.min, json.median, json.mode)
+        return new EventStatus(json.an_event, json.max, json.min, json.median, json.mode)
     }
 }
 
@@ -84,28 +84,28 @@ class OwnerStatus {
     constructor(global_status, current_status_scope, hobby_status) {
         this.your_global_status = global_status;
         this.current_status_scope = current_status_scope;
-        this.your_hobby_status = hobby_status;
+        this.all_event_status = hobby_status;
     }
 
     toJsonFormat() {
         return {
             your_global_status : this.your_global_status,
             current_status_scope : this.current_status_scope,
-            your_hobby_status : this.your_hobby_status.map(hobby_status => hobby_status.toJsonFormat()),
+            all_event_status : this.all_event_status.map(hobby_status => hobby_status.toJsonFormat()),
         };
     }
 
     static fromJsonFormat(json) {
-        const your_hobby_status = json.your_hobby_status.map(hobby_status => HobbyStatus.fromJsonFormat(hobby_status));
-        return new OwnerStatus(json.your_global_status, json.current_status_scope, your_hobby_status);
+        const all_event_status = json.all_event_status.map(hobby_status => EventStatus.fromJsonFormat(hobby_status));
+        return new OwnerStatus(json.your_global_status, json.current_status_scope, all_event_status);
     }
 
-    addHobby_status(new_hobby) {
-        this.your_hobby_status.push(new HobbyStatus(new_hobby.hobby, new_hobby.max, new_hobby.min, new_hobby.median, new_hobby.mode));
+    addEvent_status(new_event) {
+        this.all_event_status.push(new EventStatus(new_event.an_event, new_event.max, new_event.min, new_event.median, new_event.mode));
     }
 
-    removeHobby_status(new_hobby) {
-        this.your_hobby_status.pop()
+    removeEvent_status(new_event) {
+        this.all_event_status.pop()
     }
 }
 
@@ -174,21 +174,21 @@ class JsonDataStruct {
         return this.owner_status;
     }
     
-    addHobby_ToOwnerStatus(new_hobby) {
-        this.owner_status.addHobby_status(new_hobby);
+    addEvent_ToOwnerStatus(new_event) {
+        this.owner_status.addEvent_status(new_event);
     }
 
-    removeHobby_fromOwnerStatus() {
-        this.owner_status.removeHobby_status();
+    removeEvent_fromOwnerStatus() {
+        this.owner_status.removeEvent_status();
     }
 
-    getHobby_status() {
+    getEvent_status() {
         return this.owner_status.toJsonFormat()
     }
 
     updateOwner_status(newOwner_status){
         this.owner_status = OwnerStatus.fromJsonFormat(newOwner_status)
-        // this.owner_status = new OwnerStatus(newOwner_status.your_global_status, newOwner_status.current_status_scope, newOwner_status.your_hobby_status);
+        // this.owner_status = new OwnerStatus(newOwner_status.your_global_status, newOwner_status.current_status_scope, newOwner_status.all_event_status);
     }
 
     getScheduled_events(){
@@ -196,7 +196,7 @@ class JsonDataStruct {
     }
 
     addScheduled_event(event){
-        this.scheduled_events.push(new ScheduledEvents(event.year, event.month, event.day, event.hobby, event.start, event.hours, event.end))
+        this.scheduled_events.push(new ScheduledEvents(event.year, event.month, event.day, event.an_event, event.start, event.hours, event.end))
     }
 
     removeScheduled_event(){
@@ -204,8 +204,14 @@ class JsonDataStruct {
     }
 
     updateScheduled_events(newScheduled_events){
-        this.scheduled_events = newScheduled_events.map(event => new ScheduledEvents(event.year, event.month, event.day, event.hobby, event.start, event.hours,event.end));
+        this.scheduled_events = newScheduled_events.map(event => new ScheduledEvents(event.year, event.month, event.day, event.an_event, event.start, event.hours,event.end));
     }
+
+    /*
+        FUNCTION BELLOW ARE FOR FILTERING JSON ARRAYS
+        THE INTENT IT TO MAKE A PIPELINE TO PROCESS DATA WITH ARRAY
+        FOR EXAMPLE LIST.REDUCE(LIST.MAP(NAME) + NAME)
+    */
 
 
 }

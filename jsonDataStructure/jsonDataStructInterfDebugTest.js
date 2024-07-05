@@ -41,6 +41,6 @@ console.log(our_interface)
 console.log('get json object string')
 console.log(our_interface.getJsonObjectString());
 
-// get json object hobby
-console.log('get json hobby status')
-console.log(our_interface.getHobbyStatus())
+// get json object an_event
+console.log('get json an_event status')
+console.log(our_interface.getEventStatus())

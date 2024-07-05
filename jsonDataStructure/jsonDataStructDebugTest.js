@@ -34,8 +34,8 @@ console.log(new_owner.toJsonFormat());
 const status_json = {
     your_global_status : 'global status 2019828',
     current_status_scope : "yearly: 2017 to 2020",
-    your_hobby_status : [
-        {hobby : 'coding', max : 70, min : 15, median : 35, mode : 40}
+    all_event_status : [
+        {an_event : 'coding', max : 70, min : 15, median : 35, mode : 40}
     ]
 }
 console.log('owner status data');
@@ -48,7 +48,7 @@ const event_0_json = {
     year : 1997,
     month : 12,
     day : 11,
-    hobby : 'coding',
+    an_event : 'coding',
     start : '10:00pm',
     hours : 3,
     end : '3:00pm'
@@ -76,8 +76,8 @@ const whole_json = {
     owner_status : {
         your_global_status : 'global status 2019828',
         current_status_scope : "yearly: 2017 to 2020",
-        your_hobby_status : [
-            {hobby : 'coding', max : 70, min : 15, median : 35, mode : 40}
+        all_event_status : [
+            {an_event : 'coding', max : 70, min : 15, median : 35, mode : 40}
         ]
     },
     scheduled_events : [
@@ -85,7 +85,7 @@ const whole_json = {
             year : 2019,
             month : 9,
             day : 9,
-            hobby : 'coding',
+            an_event : 'coding',
             start : '9:00am',
             hours : 4,
             end : '1:00pm'
@@ -94,7 +94,7 @@ const whole_json = {
             year : 2020,
             month : 7,
             day : 1,
-            hobby : 'typing',
+            an_event : 'typing',
             start : '11:00am',
             hours : 1,
             end : '1:00pm'
@@ -103,7 +103,7 @@ const whole_json = {
             year : 2020,
             month : 8,
             day : 2,
-            hobby : 'reading',
+            an_event : 'reading',
             start : '12:00am',
             hours : 1,
             end : '1:00pm'
@@ -112,7 +112,7 @@ const whole_json = {
             year : 2020,
             month : 8,
             day : 2,
-            hobby : 'reading',
+            an_event : 'reading',
             start : '4:00apm',
             hours : 1,
             end : '5:00pm'
@@ -133,22 +133,22 @@ whole_data.updateOwnership({name : 'ben', user_name : "row", password : 'ben row
 const status2_json = {
     your_global_status : 'global status 2021818',
     current_status_scope : "yearly: 2020 to 2022",
-    your_hobby_status : [
-        {hobby : 'writing', max : 80, min : 25, median : 40, mode : 45},
-        {hobby : 'learning', max : 90, min : 60, median : 75, mode : 70}
+    all_event_status : [
+        {an_event : 'writing', max : 80, min : 25, median : 40, mode : 45},
+        {an_event : 'learning', max : 90, min : 60, median : 75, mode : 70}
     ]
 }
 whole_data.updateOwner_status(status2_json)
 console.log('add and remove hobbies for owner_status')
-whole_data.addHobby_ToOwnerStatus({hobby : 'soccer', max : 60, min : 25, median : 50, mode : 55})
-whole_data.addHobby_ToOwnerStatus({hobby : 'gaming', max : 180, min : 65, median : 160, mode : 160})
+whole_data.addEvent_ToOwnerStatus({an_event : 'soccer', max : 60, min : 25, median : 50, mode : 55})
+whole_data.addEvent_ToOwnerStatus({an_event : 'gaming', max : 180, min : 65, median : 160, mode : 160})
 console.log(whole_data)
 const updated_events = [
     {
         year : 2014,
         month : 12,
         day : 9,
-        hobby : 'gaming',
+        an_event : 'gaming',
         start : '11:00am',
         hours : 6,
         end : '4:00pm'
@@ -157,7 +157,7 @@ const updated_events = [
         year : 2017,
         month : 1,
         day : 1,
-        hobby : 'running',
+        an_event : 'running',
         start : '4:00pm',
         hours : 1,
         end : '6:00pm'
@@ -168,7 +168,7 @@ const add_event_1 = {
     year : 2018,
     month : 1,
     day : 1,
-    hobby : 'studying',
+    an_event : 'studying',
     start : '8:00am',
     hours : 4,
     end : '6:00pm'

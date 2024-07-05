@@ -19,8 +19,8 @@ const whole_json = {
     owner_status : {
         your_global_status : 'global status 2019828',
         current_status_scope : "yearly: 2017 to 2020",
-        your_hobby_status : [
-            {hobby : 'coding', max : 70, min : 15, median : 35, mode : 40}
+        all_event_status : [
+            {an_event : 'coding', max : 70, min : 15, median : 35, mode : 40}
         ]
     },
     scheduled_events : [
@@ -28,7 +28,7 @@ const whole_json = {
             year : 2019,
             month : 9,
             day : 9,
-            hobby : 'coding',
+            an_event : 'coding',
             start : '9:00am',
             hours : 4,
             end : '1:00pm'
@@ -37,7 +37,7 @@ const whole_json = {
             year : 2020,
             month : 7,
             day : 1,
-            hobby : 'typing',
+            an_event : 'typing',
             start : '11:00am',
             hours : 1,
             end : '1:00pm'
@@ -46,7 +46,7 @@ const whole_json = {
             year : 2020,
             month : 8,
             day : 2,
-            hobby : 'reading',
+            an_event : 'reading',
             start : '12:00am',
             hours : 1,
             end : '1:00pm'
@@ -55,7 +55,7 @@ const whole_json = {
             year : 2020,
             month : 8,
             day : 2,
-            hobby : 'reading',
+            an_event : 'reading',
             start : '4:00apm',
             hours : 1,
             end : '5:00pm'
@@ -83,17 +83,17 @@ export default class jsonDataStructInterf {
         this.json_object.updateOwnership(owner);
     }
 
-    getHobbyStatus() {
-        const hobby_status = JSON.stringify(this.json_object.getHobby_status(), null, 2);
+    getEventStatus() {
+        const hobby_status = JSON.stringify(this.json_object.getEvent_status(), null, 2);
         return hobby_status;
     }
 
-    addComplete_events(year, month, day, hobby, start, hours, end){
+    addComplete_events(year, month, day, an_event, start, hours, end){
         let a_event = {
             year : year,
             month : month,
             day : day,
-            hobby : hobby,
+            an_event : an_event,
             start : start,
             hours : hours,
             end : end
