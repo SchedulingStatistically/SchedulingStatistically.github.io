@@ -1,12 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Daily Planner</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/react-big-calendar@0.33.2/lib/css/react-big-calendar.css">
+  <style>
+    .task-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .task-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .task-lists {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .task-list-area,
+    .completed-task-list-area,
+    .incompleted-task-list-area {
+      width: 30%;
+    }
+
+    .task-input {
+      margin-bottom: 10px;
+      width: 20%;
+      padding: 8px;
+    }
+  </style>
 </head>
+
 <body>
   <div id="root"></div>
   <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
@@ -22,29 +53,69 @@
     function App() {
       const [tasks, setTasks] = useState([]);
       const [newTask, setNewTask] = useState('');
-      const [editingTask, setEditingTask] = useState(null);
+      const [newTaskTime, setNewTaskTime] = useState('');
+      const [editingTaskId, setEditingTaskId] = useState(null);
+      const [editingTaskText, setEditingTaskText] = useState('');
+      const [editingTaskTime, setEditingTaskTime] = useState('');
+      const [completedTasks, setCompletedTasks] = useState([]);
+      const [incompletedTasks, setIncompletedTasks] = useState([]);
 
       const addTask = (e) => {
         e.preventDefault();
-        if (newTask.trim()) {
-          setTasks([...tasks, { id: Date.now(), text: newTask }]);
+        if (newTask.trim() && newTaskTime.trim()) {
+          const task = { id: Date.now(), text: newTask, time: `${newTaskTime} minutes` };
+          setTasks([...tasks, task]);
           setNewTask('');
+          setNewTaskTime('');
         }
       };
 
       const deleteTask = (id) => {
         setTasks(tasks.filter(task => task.id !== id));
+        setCompletedTasks(completedTasks.filter(task => task.id !== id));
+        setIncompletedTasks(incompletedTasks.filter(task => task.id !== id));
       };
 
-      const editTask = (id, newText) => {
-        setTasks(tasks.map(task => 
-          task.id === id ? { ...task, text: newText } : task
-        ));
-        setEditingTask(null);
+      const editTask = (id, newText, newTime) => {
+        const updatedTasks = tasks.map(task =>
+          task.id === id ? { ...task, text: newText, time: newTime } : task
+        );
+        setTasks(updatedTasks);
+        const updatedCompletedTasks = completedTasks.map(task =>
+          task.id === id ? { ...task, text: newText, time: newTime } : task
+        );
+        setCompletedTasks(updatedCompletedTasks);
+        const updatedIncompletedTasks = incompletedTasks.map(task =>
+          task.id === id ? { ...task, text: newText, time: newTime } : task
+        );
+        setIncompletedTasks(updatedIncompletedTasks);
+        setEditingTaskId(null);
+        setEditingTaskText('');
+        setEditingTaskTime('');
       };
 
       const startEditing = (task) => {
-        setEditingTask(task);
+        setEditingTaskId(task.id);
+        setEditingTaskText(task.text);
+        setEditingTaskTime(task.time);
+      };
+
+      const handleEditKeyPress = (e, id) => {
+        if (e.key === 'Enter') {
+          editTask(id, editingTaskText, editingTaskTime);
+        }
+      };
+
+      const completeTask = (id) => {
+        const task = tasks.find(task => task.id === id);
+        setCompletedTasks([...completedTasks, task]);
+        setTasks(tasks.filter(task => task.id !== id));
+      };
+
+      const incompleteTask = (id) => {
+        const task = tasks.find(task => task.id === id);
+        setIncompletedTasks([...incompletedTasks, task]);
+        setTasks(tasks.filter(task => task.id !== id));
       };
 
       return (
@@ -60,40 +131,91 @@
                   placeholder="Add a new task"
                   className="task-input"
                 />
+                <input
+                  type="text"
+                  value={newTaskTime}
+                  onChange={(e) => {
+                    if (!isNaN(e.target.value)) {
+                      setNewTaskTime(e.target.value);
+                    }
+                  }}
+                  placeholder="Estimated time (minutes)"
+                  className="task-input"
+                />
+
                 <button type="submit">Add Task</button>
               </form>
             </div>
+          </div>
+          <div className="task-lists">
             <div className="task-list-area">
+              <h2>Task List</h2>
               <ul className="task-list">
                 {tasks.map(task => (
                   <li key={task.id} className="task-item">
-                    {editingTask && editingTask.id === task.id ? (
-                      <input
-                        type="text"
-                        value={editingTask.text}
-                        onChange={(e) => setEditingTask({...editingTask, text: e.target.value})}
-                        onBlur={() => editTask(task.id, editingTask.text)}
-                        className="task-input"
-                      />
+                    {editingTaskId === task.id ? (
+                      <div>
+                        <input
+                          type="text"
+                          value={editingTaskText}
+                          onChange={(e) => setEditingTaskText(e.target.value)}
+                          onBlur={() => editTask(task.id, editingTaskText, editingTaskTime)}
+                          onKeyPress={(e) => handleEditKeyPress(e, task.id)}
+                          className="task-input"
+                          autoFocus
+                        />
+                        <input
+                          type="text"
+                          value={editingTaskTime}
+                          onChange={(e) => setEditingTaskTime(e.target.value)}
+                          onBlur={() => editTask(task.id, editingTaskText, editingTaskTime)}
+                          onKeyPress={(e) => handleEditKeyPress(e, task.id)}
+                          className="task-input"
+                        />
+                      </div>
                     ) : (
-                      <span onClick={() => startEditing(task)}>{task.text}</span>
+                      <div>
+                        <span>{task.text}</span>
+                        {task.time && (
+    <span style={{ marginLeft: '10px' }}>{`${task.time}`}</span>
+  )}
+                      </div>
                     )}
-                    <button onClick={() => deleteTask(task.id)}>Delete</button>
+                    <div className="task-buttons">
+                      <button onClick={() => deleteTask(task.id)}>Delete</button>
+                      <button onClick={() => startEditing(task)}>Edit</button>
+                      <button onClick={() => completeTask(task.id)}>Complete</button>
+                      <button onClick={() => incompleteTask(task.id)}>Incomplete</button>
+                    </div>
                   </li>
                 ))}
               </ul>
             </div>
-          </div>
-          <div className="calendar-container">
-            <h2>Calendar</h2>
-            <div className="calendar">
-              <Calendar
-                localizer={localizer}
-                events={[]}
-                startAccessor="start"
-                endAccessor="end"
-                style={{ height: '100%' }}
-              />
+            <div className="completed-task-list-area">
+              <h2>Completed Tasks</h2>
+              <ul className="task-list">
+                {completedTasks.map(task => (
+                  <li key={task.id} className="task-item">
+                    <div>
+                      <span>{task.text}</span>
+                      <span>{task.time}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="incompleted-task-list-area">
+              <h2>Incompleted Tasks</h2>
+              <ul className="task-list">
+                {incompletedTasks.map(task => (
+                  <li key={task.id} className="task-item">
+                    <div>
+                      <span>{task.text}</span>
+                      <span>{task.time}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
@@ -103,4 +225,5 @@
     ReactDOM.render(<App />, document.getElementById('root'));
   </script>
 </body>
+
 </html>
