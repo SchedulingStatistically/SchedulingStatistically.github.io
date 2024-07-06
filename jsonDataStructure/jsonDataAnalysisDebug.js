@@ -62,7 +62,7 @@ const whole_json = {
             day : 2,
             an_event : 'reading',
             start : '4:00apm',
-            hours : 1,
+            hours : 5,
             end : '5:00pm'
         }
     ]
@@ -72,6 +72,14 @@ console.log('load whole json file')
 const whole_data = JsonDataStruct.fromJsonFormat(whole_json);
 console.log(whole_data);
 console.log(whole_data.toJsonFormat());
+whole_data.use_all_events_scheduled()
+// console.log(whole_data.filter_an_event_type("reading"));
 
+console.log('test data analysis methods')
+whole_data.use_all_events_scheduled()
+whole_data.filter_an_event_type('reading')
+whole_data.solve_max_of_all_events()
+console.log(whole_data.solve_min_of_all_events())
+console.log(whole_data.temp_events_status)
 
 

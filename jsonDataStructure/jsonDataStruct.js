@@ -28,6 +28,9 @@
     "DO NOT MERGE or push you testing code in the main branch"
 */
 
+// const stats = require('https://unpkg.com/simple-statistics@7.8.3/dist/simple-statistics.min.js')
+// import * as stats from 'https://unpkg.com/simple-statistics@7.8.3/dist/simple-statistics.min.js'
+
 class ScheduledEvents {
     constructor(year, month, day, an_event, start, hours, end) {
         this.year = year;
@@ -131,6 +134,8 @@ class Ownership {
 
 
 class JsonDataStruct {
+    temp_event_list = [];
+    temp_events_status = {an_event : '', max : 0, min : 0, median : 0, mode : 0}
     constructor(name, ownership, owner_status, scheduled_events){
         this.name = name;
         this.ownership = ownership;
@@ -212,6 +217,41 @@ class JsonDataStruct {
         THE INTENT IT TO MAKE A PIPELINE TO PROCESS DATA WITH ARRAY
         FOR EXAMPLE LIST.REDUCE(LIST.MAP(NAME) + NAME)
     */
+
+    use_all_events_scheduled(){
+        this.temp_event_list = this.scheduled_events;
+    }
+
+    filter_an_event_type(event_type) {
+        let this_of_type_events = this.temp_event_list.filter(function(the_event) {
+            return the_event.an_event === event_type;
+        });
+        this.temp_event_list = this_of_type_events;
+        return this_of_type_events;
+    }
+
+    solve_min_of_all_events() {
+        let list_of_hours = this.temp_event_list.map(function(the_event) {
+            return the_event.hours;
+        });
+        let min_value = stats.min(list_of_hours);
+        this.temp_events_status.min = min_value;
+        return list_of_hours;
+    }
+
+    solve_max_of_all_events() {
+        let max_obj = this.temp_event_list.reduce((accumulator, current) => {
+            return accumulator.hours <= current.hours ? current : accumulator
+        })
+        this.temp_events_status.max = max_obj.hours
+        return max_obj.hours
+    }
+
+    // stats_ll() {
+    //     Math.min()
+    // }
+
+
 
 
 }
