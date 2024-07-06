@@ -78,8 +78,8 @@ whole_data.use_all_events_scheduled()
 console.log('test data analysis methods')
 whole_data.use_all_events_scheduled()
 whole_data.filter_an_event_type('reading')
+whole_data.solve_min_of_all_events()
 whole_data.solve_max_of_all_events()
-console.log(whole_data.solve_min_of_all_events())
 console.log(whole_data.temp_events_status)
 
 

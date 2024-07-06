@@ -28,8 +28,7 @@
     "DO NOT MERGE or push you testing code in the main branch"
 */
 
-// const stats = require('https://unpkg.com/simple-statistics@7.8.3/dist/simple-statistics.min.js')
-// import * as stats from 'https://unpkg.com/simple-statistics@7.8.3/dist/simple-statistics.min.js'
+import * as stats from 'simple-statistics'
 
 class ScheduledEvents {
     constructor(year, month, day, an_event, start, hours, end) {
@@ -236,24 +235,44 @@ class JsonDataStruct {
         });
         let min_value = stats.min(list_of_hours);
         this.temp_events_status.min = min_value;
-        return list_of_hours;
+        return min_value;
     }
 
     solve_max_of_all_events() {
-        let max_obj = this.temp_event_list.reduce((accumulator, current) => {
-            return accumulator.hours <= current.hours ? current : accumulator
-        })
-        this.temp_events_status.max = max_obj.hours
-        return max_obj.hours
+        let list_of_hours = this.temp_event_list.map(function(the_event) {
+            return the_event.hours;
+        });
+        let max_value = stats.max(list_of_hours);
+        this.temp_events_status.max = max_value;
+        return max_value;
     }
 
-    // stats_ll() {
-    //     Math.min()
+    // solve_mean_of_all_events() {
+    //     let list_of_hours = this.temp_event_list.map(function(the_event) {
+    //         return the_event.hours;
+    //     });
+    //     let mean_value = stats.mean(list_of_hours);
+    //     this.temp_events_status.mean = mean_value;
+    //     return mean_value;
     // }
 
+    solve_median_of_all_events() {
+        let list_of_hours = this.temp_event_list.map(function(the_event) {
+            return the_event.hours;
+        });
+        let median_value = stats.median(list_of_hours);
+        this.temp_events_status.median = median_value;
+        return median_value;
+    }
 
-
-
+    solve_mode_of_all_events() {
+        let list_of_hours = this.temp_event_list.map(function(the_event) {
+            return the_event.hours;
+        });
+        let mode_value = stats.mode(list_of_hours);
+        this.temp_events_status.mode = mode_value;
+        return mode_value;
+    }
 }
 
 export {ScheduledEvents, OwnerStatus, Ownership, JsonDataStruct};
