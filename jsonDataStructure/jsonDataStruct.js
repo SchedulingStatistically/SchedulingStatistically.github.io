@@ -102,11 +102,15 @@ class OwnerStatus {
         return new OwnerStatus(json.your_global_status, json.current_status_scope, all_event_status);
     }
 
+    empty_all_event_status() {
+        this.all_event_status = [];
+    }
+
     addEvent_status(new_event) {
         this.all_event_status.push(new EventStatus(new_event.an_event, new_event.max, new_event.min, new_event.median, new_event.mode));
     }
 
-    removeEvent_status(new_event) {
+    removeEvent_status() {
         this.all_event_status.pop()
     }
 }
@@ -177,12 +181,16 @@ class JsonDataStruct {
     get getOwner_status(){
         return this.owner_status;
     }
+
+    emptyOwnerStatus() {
+        this.owner_status.empty_all_event_status();
+    }
     
-    addEvent_ToOwnerStatus(new_event) {
+    add_an_event_status_toOwnerStatus(new_event) {
         this.owner_status.addEvent_status(new_event);
     }
 
-    removeEvent_fromOwnerStatus() {
+    remove_an_event_status_fromOwnerStatus() {
         this.owner_status.removeEvent_status();
     }
 
@@ -217,6 +225,14 @@ class JsonDataStruct {
         FOR EXAMPLE LIST.REDUCE(LIST.MAP(NAME) + NAME)
     */
 
+    empty_temp_event_list(){
+        this.temp_event_list = [];
+    }
+
+    init_temp_event_status(){
+        this.temp_events_status = {an_event : '', max : 0, min : 0, median : 0, mode : 0}
+    }
+
     use_all_events_scheduled(){
         this.temp_event_list = this.scheduled_events;
     }
@@ -226,6 +242,7 @@ class JsonDataStruct {
             return the_event.an_event === event_type;
         });
         this.temp_event_list = this_of_type_events;
+        this.temp_events_status.an_event = event_type
         return this_of_type_events;
     }
 
@@ -272,6 +289,19 @@ class JsonDataStruct {
         let mode_value = stats.mode(list_of_hours);
         this.temp_events_status.mode = mode_value;
         return mode_value;
+    }
+
+    compute_an_event_type_status(event_type) {
+        this.emptyOwnerStatus()
+        this.empty_temp_event_list()
+        this.init_temp_event_status()
+        this.use_all_events_scheduled()
+        this.filter_an_event_type(event_type)
+        this.solve_min_of_all_events()
+        this.solve_max_of_all_events()
+        this.solve_median_of_all_events()
+        this.solve_mode_of_all_events()
+        this.add_an_event_status_toOwnerStatus(this.temp_events_status)
     }
 }
 

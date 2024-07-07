@@ -140,8 +140,8 @@ const status2_json = {
 }
 whole_data.updateOwner_status(status2_json)
 console.log('add and remove hobbies for owner_status')
-whole_data.addEvent_ToOwnerStatus({an_event : 'soccer', max : 60, min : 25, median : 50, mode : 55})
-whole_data.addEvent_ToOwnerStatus({an_event : 'gaming', max : 180, min : 65, median : 160, mode : 160})
+whole_data.add_an_event_status_toOwnerStatus({an_event : 'soccer', max : 60, min : 25, median : 50, mode : 55})
+whole_data.add_an_event_status_toOwnerStatus({an_event : 'gaming', max : 180, min : 65, median : 160, mode : 160})
 console.log(whole_data)
 const updated_events = [
     {
