@@ -84,8 +84,8 @@ export default class jsonDataStructInterf {
     }
 
     getEventStatus() {
-        const hobby_status = JSON.stringify(this.json_object.getEvent_status(), null, 2);
-        return hobby_status;
+        const an_event_status = JSON.stringify(this.json_object.getEvent_status(), null, 2);
+        return an_event_status;
     }
 
     addComplete_events(year, month, day, an_event, start, hours, end){

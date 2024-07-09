@@ -83,22 +83,22 @@ class EventStatus {
 }
 
 class OwnerStatus {
-    constructor(global_status, current_status_scope, hobby_status) {
+    constructor(global_status, current_status_scope, an_event_status) {
         this.your_global_status = global_status;
         this.current_status_scope = current_status_scope;
-        this.all_event_status = hobby_status;
+        this.all_event_status = an_event_status;
     }
 
     toJsonFormat() {
         return {
             your_global_status : this.your_global_status,
             current_status_scope : this.current_status_scope,
-            all_event_status : this.all_event_status.map(hobby_status => hobby_status.toJsonFormat()),
+            all_event_status : this.all_event_status.map(an_event_status => an_event_status.toJsonFormat()),
         };
     }
 
     static fromJsonFormat(json) {
-        const all_event_status = json.all_event_status.map(hobby_status => EventStatus.fromJsonFormat(hobby_status));
+        const all_event_status = json.all_event_status.map(an_event_status => EventStatus.fromJsonFormat(an_event_status));
         return new OwnerStatus(json.your_global_status, json.current_status_scope, all_event_status);
     }
 
@@ -292,7 +292,6 @@ class JsonDataStruct {
     }
 
     compute_an_event_type_status(event_type) {
-        this.emptyOwnerStatus()
         this.empty_temp_event_list()
         this.init_temp_event_status()
         this.use_all_events_scheduled()
