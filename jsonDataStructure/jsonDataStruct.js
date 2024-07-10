@@ -84,12 +84,14 @@ class YearlyEvents {
     }
 }
 
+import * as stats from 'simple-statistics'
+
 class ScheduledEvents {
-    constructor(year, month, day, hobby, start, hours, end) {
+    constructor(year, month, day, an_event, start, hours, end) {
         this.year = year;
         this.month = month;
         this.day = day;
-        this.hobby = hobby;
+        this.an_event = an_event;
         this.start = start;
         this.hours = hours;
         this.end = end;
@@ -100,7 +102,7 @@ class ScheduledEvents {
             year : this.year,
             month : this.month,
             day : this.day,
-            hobby : this.hobby,
+            an_event : this.an_event,
             start : this.start,
             hours : this.hours,
             end : this.end,
@@ -108,60 +110,72 @@ class ScheduledEvents {
     }
 
     static fromJsonFormat(json) {
-        return new ScheduledEvents(json.year, json.month, json.day, json.hobby, json.start, json.hours, json.end);
+        return new ScheduledEvents(json.year, json.month, json.day, json.an_event, json.start, json.hours, json.end);
     }
 }
 
-class HobbyStatus {
-    constructor(hobby, max, min, median, mode) {
-        this.hobby = hobby;
+class EventStatus {
+    constructor(an_event, max, min, median, mode, mean, ratio, total, percent) {
+        this.an_event = an_event;
         this.max = max;
         this.min = min;
         this.median = median;
         this.mode = mode;
+        this.mean = mean
+        this.ratio = ratio
+        this.total = total
+        this.percent = percent
     }
 
     toJsonFormat() {
         return {
-            hobby : this.hobby,
+            an_event : this.an_event,
             max : this.max,
             min : this.min,
             median : this.median,
-            mode : this.mode
+            mode : this.mode,
+            mean : this.mean,
+            ratio : this.ratio,
+            total : this.total,
+            percent : this.percent
         }
     }
 
     static fromJsonFormat(json) {
-        return new HobbyStatus(json.hobby, json.max, json.min, json.median, json.mode)
+        return new EventStatus(json.an_event, json.max, json.min, json.median, json.mode, json.mean, json.ratio, json.total, json.percent)
     }
 }
 
 class OwnerStatus {
-    constructor(global_status, current_status_scope, hobby_status) {
+    constructor(global_status, current_status_scope, an_event_status) {
         this.your_global_status = global_status;
         this.current_status_scope = current_status_scope;
-        this.your_hobby_status = hobby_status;
+        this.all_event_status = an_event_status;
     }
 
     toJsonFormat() {
         return {
             your_global_status : this.your_global_status,
             current_status_scope : this.current_status_scope,
-            your_hobby_status : this.your_hobby_status.map(hobby_status => hobby_status.toJsonFormat()),
+            all_event_status : this.all_event_status.map(an_event_status => an_event_status.toJsonFormat()),
         };
     }
 
     static fromJsonFormat(json) {
-        const your_hobby_status = json.your_hobby_status.map(hobby_status => HobbyStatus.fromJsonFormat(hobby_status));
-        return new OwnerStatus(json.your_global_status, json.current_status_scope, your_hobby_status);
+        const all_event_status = json.all_event_status.map(an_event_status => EventStatus.fromJsonFormat(an_event_status));
+        return new OwnerStatus(json.your_global_status, json.current_status_scope, all_event_status);
     }
 
-    addHobby_status(new_hobby) {
-        this.your_hobby_status.push(new HobbyStatus(new_hobby.hobby, new_hobby.max, new_hobby.min, new_hobby.median, new_hobby.mode));
+    empty_all_event_status() {
+        this.all_event_status = [];
     }
 
-    removeHobby_status(new_hobby) {
-        this.your_hobby_status.pop()
+    addEvent_status(new_event) {
+        this.all_event_status.push(new EventStatus(new_event.an_event, new_event.max, new_event.min, new_event.median, new_event.mode, new_event.mean, new_event.ratio, new_event.total, new_event.percent));
+    }
+
+    removeEvent_status() {
+        this.all_event_status.pop()
     }
 }
 
@@ -187,6 +201,8 @@ class Ownership {
 
 
 class JsonDataStruct {
+    temp_event_list = [];
+    temp_events_status = {an_event : '', max : 0, min : 0, median : 0, mode : 0}
     constructor(name, ownership, owner_status, scheduled_events){
         this.name = name;
         this.ownership = ownership;
@@ -229,22 +245,26 @@ class JsonDataStruct {
     get getOwner_status(){
         return this.owner_status;
     }
+
+    emptyOwnerStatus() {
+        this.owner_status.empty_all_event_status();
+    }
     
-    addHobby_ToOwnerStatus(new_hobby) {
-        this.owner_status.addHobby_status(new_hobby);
+    add_an_event_status_toOwnerStatus(new_event) {
+        this.owner_status.addEvent_status(new_event);
     }
 
-    removeHobby_fromOwnerStatus() {
-        this.owner_status.removeHobby_status();
+    remove_an_event_status_fromOwnerStatus() {
+        this.owner_status.removeEvent_status();
     }
 
-    getHobby_status() {
+    getEvent_status() {
         return this.owner_status.toJsonFormat()
     }
 
     updateOwner_status(newOwner_status){
         this.owner_status = OwnerStatus.fromJsonFormat(newOwner_status)
-        // this.owner_status = new OwnerStatus(newOwner_status.your_global_status, newOwner_status.current_status_scope, newOwner_status.your_hobby_status);
+        // this.owner_status = new OwnerStatus(newOwner_status.your_global_status, newOwner_status.current_status_scope, newOwner_status.all_event_status);
     }
 
     getScheduled_events(){
@@ -252,7 +272,7 @@ class JsonDataStruct {
     }
 
     addScheduled_event(event){
-        this.scheduled_events.push(new ScheduledEvents(event.year, event.month, event.day, event.hobby, event.start, event.hours, event.end))
+        this.scheduled_events.push(new ScheduledEvents(event.year, event.month, event.day, event.an_event, event.start, event.hours, event.end))
     }
 
     removeScheduled_event(){
@@ -260,10 +280,105 @@ class JsonDataStruct {
     }
 
     updateScheduled_events(newScheduled_events){
-        this.scheduled_events = newScheduled_events.map(event => new ScheduledEvents(event.year, event.month, event.day, event.hobby, event.start, event.hours,event.end));
+        this.scheduled_events = newScheduled_events.map(event => new ScheduledEvents(event.year, event.month, event.day, event.an_event, event.start, event.hours,event.end));
+    }
+
+    /*
+        FUNCTION BELLOW ARE FOR FILTERING JSON ARRAYS
+        THE INTENT IT TO MAKE A PIPELINE TO PROCESS DATA WITH ARRAY
+        FOR EXAMPLE LIST.REDUCE(LIST.MAP(NAME) + NAME)
+    */
+
+    empty_temp_event_list(){
+        this.temp_event_list = [];
+    }
+
+    init_temp_event_status(){
+        this.temp_events_status = {an_event : '', max : 0, min : 0, median : 0, mode : 0, mean : 0, ratio : 0, total : 0, percent : 0 }
+    }
+
+    use_all_events_scheduled(){
+        this.temp_event_list = this.scheduled_events;
+    }
+
+    filter_an_event_type(event_type) {
+        let this_of_type_events = this.temp_event_list.filter(function(the_event) {
+            return the_event.an_event === event_type;
+        });
+        this.temp_event_list = this_of_type_events;
+        this.temp_events_status.an_event = event_type
+        return this_of_type_events;
+    }
+
+    solve_total_of_all_event() {
+        let total = 0;
+        this.temp_event_list.forEach(function(the_event, index) {
+            total = total + 1;
+            // return the_event.hours;
+        });
+        this.temp_events_status.total = total;
+        return total;
+    }
+
+    solve_min_of_all_events() {
+        let list_of_hours = this.temp_event_list.map(function(the_event) {
+            return the_event.hours;
+        });
+        let min_value = stats.min(list_of_hours);
+        this.temp_events_status.min = min_value;
+        return min_value;
+    }
+
+    solve_max_of_all_events() {
+        let list_of_hours = this.temp_event_list.map(function(the_event) {
+            return the_event.hours;
+        });
+        let max_value = stats.max(list_of_hours);
+        this.temp_events_status.max = max_value;
+        return max_value;
+    }
+
+    solve_median_of_all_events() {
+        let list_of_hours = this.temp_event_list.map(function(the_event) {
+            return the_event.hours;
+        });
+        let median_value = stats.median(list_of_hours);
+        this.temp_events_status.median = median_value;
+        return median_value;
+    }
+
+    solve_mode_of_all_events() {
+        let list_of_hours = this.temp_event_list.map(function(the_event) {
+            return the_event.hours;
+        });
+        let mode_value = stats.mode(list_of_hours);
+        this.temp_events_status.mode = mode_value;
+        return mode_value;
+    }
+
+    solve_mean_of_all_events() {
+        let list_of_hours = this.temp_event_list.map(function(the_event) {
+            return the_event.hours;
+        });
+        let mean_value = stats.mean(list_of_hours);
+        this.temp_events_status.mean = mean_value;
+        return mean_value;
     }
 
 
+    compute_an_event_type_status(event_type) {
+        this.empty_temp_event_list()
+        this.init_temp_event_status()
+        this.use_all_events_scheduled()
+        this.filter_an_event_type(event_type)
+        this.solve_min_of_all_events()
+        this.solve_max_of_all_events()
+        this.solve_median_of_all_events()
+        this.solve_mode_of_all_events()
+        this.solve_mean_of_all_events()
+        this.solve_total_of_all_event()
+        this.add_an_event_status_toOwnerStatus(this.temp_events_status)
+    }
 }
 
 export {ScheduledEvents, OwnerStatus, Ownership, JsonDataStruct};
