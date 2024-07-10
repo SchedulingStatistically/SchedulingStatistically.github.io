@@ -110,5 +110,13 @@ export default class jsonDataStructInterf {
         return json_string;
     }
 
+    reset_event_status() {
+        this.json_object.emptyOwnerStatus()
+    }
+
+    compute_an_event_status(event_type) {
+        this.json_object.compute_an_event_type_status(event_type)
+    }
+
 
 }
