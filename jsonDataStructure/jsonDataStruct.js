@@ -59,12 +59,16 @@ class ScheduledEvents {
 }
 
 class EventStatus {
-    constructor(an_event, max, min, median, mode) {
+    constructor(an_event, max, min, median, mode, mean, ratio, total, percent) {
         this.an_event = an_event;
         this.max = max;
         this.min = min;
         this.median = median;
         this.mode = mode;
+        this.mean = mean
+        this.ratio = ratio
+        this.total = total
+        this.percent = percent
     }
 
     toJsonFormat() {
@@ -73,12 +77,16 @@ class EventStatus {
             max : this.max,
             min : this.min,
             median : this.median,
-            mode : this.mode
+            mode : this.mode,
+            mean : this.mean,
+            ratio : this.ratio,
+            total : this.total,
+            percent : this.percent
         }
     }
 
     static fromJsonFormat(json) {
-        return new EventStatus(json.an_event, json.max, json.min, json.median, json.mode)
+        return new EventStatus(json.an_event, json.max, json.min, json.median, json.mode, json.mean, json.ratio, json.total, json.percent)
     }
 }
 
@@ -107,7 +115,7 @@ class OwnerStatus {
     }
 
     addEvent_status(new_event) {
-        this.all_event_status.push(new EventStatus(new_event.an_event, new_event.max, new_event.min, new_event.median, new_event.mode));
+        this.all_event_status.push(new EventStatus(new_event.an_event, new_event.max, new_event.min, new_event.median, new_event.mode, new_event.mean, new_event.ratio, new_event.total, new_event.percent));
     }
 
     removeEvent_status() {
@@ -230,7 +238,7 @@ class JsonDataStruct {
     }
 
     init_temp_event_status(){
-        this.temp_events_status = {an_event : '', max : 0, min : 0, median : 0, mode : 0}
+        this.temp_events_status = {an_event : '', max : 0, min : 0, median : 0, mode : 0, mean : 0, ratio : 0, total : 0, percent : 0 }
     }
 
     use_all_events_scheduled(){
@@ -244,6 +252,16 @@ class JsonDataStruct {
         this.temp_event_list = this_of_type_events;
         this.temp_events_status.an_event = event_type
         return this_of_type_events;
+    }
+
+    solve_total_of_all_event() {
+        let total = 0;
+        this.temp_event_list.forEach(function(the_event, index) {
+            total = total + 1;
+            // return the_event.hours;
+        });
+        this.temp_events_status.total = total;
+        return total;
     }
 
     solve_min_of_all_events() {
@@ -264,15 +282,6 @@ class JsonDataStruct {
         return max_value;
     }
 
-    // solve_mean_of_all_events() {
-    //     let list_of_hours = this.temp_event_list.map(function(the_event) {
-    //         return the_event.hours;
-    //     });
-    //     let mean_value = stats.mean(list_of_hours);
-    //     this.temp_events_status.mean = mean_value;
-    //     return mean_value;
-    // }
-
     solve_median_of_all_events() {
         let list_of_hours = this.temp_event_list.map(function(the_event) {
             return the_event.hours;
@@ -291,6 +300,16 @@ class JsonDataStruct {
         return mode_value;
     }
 
+    solve_mean_of_all_events() {
+        let list_of_hours = this.temp_event_list.map(function(the_event) {
+            return the_event.hours;
+        });
+        let mean_value = stats.mean(list_of_hours);
+        this.temp_events_status.mean = mean_value;
+        return mean_value;
+    }
+
+
     compute_an_event_type_status(event_type) {
         this.empty_temp_event_list()
         this.init_temp_event_status()
@@ -300,6 +319,8 @@ class JsonDataStruct {
         this.solve_max_of_all_events()
         this.solve_median_of_all_events()
         this.solve_mode_of_all_events()
+        this.solve_mean_of_all_events()
+        this.solve_total_of_all_event()
         this.add_an_event_status_toOwnerStatus(this.temp_events_status)
     }
 }
