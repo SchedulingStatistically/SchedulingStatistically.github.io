@@ -11,7 +11,7 @@
 
 */
 
-import  {ScheduledEvents, OwnerStatus, Ownership, JsonDataStruct} from './jsonDataStruct.js'
+import  {ScheduledEvent, OwnerStatus, Ownership, JsonDataStruct} from './jsonDataStruct.js'
 
 // Ownership data
 
@@ -31,17 +31,17 @@ import  {ScheduledEvents, OwnerStatus, Ownership, JsonDataStruct} from './jsonDa
 // console.log(new_owner.toJsonFormat());
 
 // Owner status data
-const status_json = {
-    your_global_status : 'global status 2019828',
-    current_status_scope : "yearly: 2017 to 2020",
-    all_event_status : [
-        {an_event : 'coding', max : 70, min : 15, median : 35, mode : 40, mean : 30, ratio : .25, total : 12, percent : 30}
-    ]
-}
-console.log('owner status data');
-const status = OwnerStatus.fromJsonFormat(status_json);
-console.log(status);
-console.log(status.toJsonFormat());
+// const status_json = {
+//     your_global_status : 'global status 2019828',
+//     current_status_scope : "yearly: 2017 to 2020",
+//     all_event_status : [
+//         {an_event : 'coding', max : 70, min : 15, median : 35, mode : 40, mean : 30, ratio : .25, total : 12, percent : 30}
+//     ]
+// }
+// console.log('owner status data');
+// const status = OwnerStatus.fromJsonFormat(status_json);
+// console.log(status);
+// console.log(status.toJsonFormat());
 
 // Scheduled event data
 // const event_0_json = {
@@ -51,10 +51,28 @@ console.log(status.toJsonFormat());
 //     an_event : 'coding',
 //     start : '10:00pm',
 //     hours : 3,
-//     end : '3:00pm'
+//     end : '3:00pm',
+//     yearly_events : [
+//         {year : 2019, monthly_events : [
+//             {month : 1, daily_events :[
+//                 {day : 13, events : [
+//                     {
+//                         year : 1997,
+//                         month : 12,
+//                         day : 11,
+//                         an_event : 'coding',
+//                         start : '10:00pm',
+//                         hours : 3,
+//                         end : '3:00pm',
+
+//                     }
+//                 ]}
+//             ]}
+//         ]}
+//     ]
 // }
 // console.log('Scheduled event data, event_0');
-// const event_0 = ScheduledEvents.fromJsonFormat(event_0_json);
+// const event_0 = ScheduledEvent.fromJsonFormat(event_0_json);
 // console.log(event_0);
 // console.log(event_0.toJsonFormat())
 
@@ -66,68 +84,68 @@ console.log(status.toJsonFormat());
 
 
 // loading a whole json to make a data struct
-const whole_json = {
-    name : 'whole tree',
-    ownership : {
-        name : 'sam',
-        user_name : 'to',
-        password : 'sam to'
-    },
-    owner_status : {
-        your_global_status : 'global status 2019828',
-        current_status_scope : "yearly: 2017 to 2020",
-        all_event_status : [
-            {an_event : 'coding', max : 70, min : 15, median : 35, mode : 40}
-        ]
-    },
-    scheduled_events : [
-        {
-            year : 2019,
-            month : 9,
-            day : 9,
-            an_event : 'coding',
-            start : '9:00am',
-            hours : 4,
-            end : '1:00pm'
-        },
-        {
-            year : 2020,
-            month : 7,
-            day : 1,
-            an_event : 'typing',
-            start : '11:00am',
-            hours : 1,
-            end : '1:00pm'
-        },
-        {
-            year : 2020,
-            month : 8,
-            day : 2,
-            an_event : 'reading',
-            start : '12:00am',
-            hours : 1,
-            end : '1:00pm'
-        },
-        {
-            year : 2020,
-            month : 8,
-            day : 2,
-            an_event : 'reading',
-            start : '4:00apm',
-            hours : 1,
-            end : '5:00pm'
-        }
-    ]
-}
+// const whole_json = {
+//     name : 'whole tree',
+//     ownership : {
+//         name : 'sam',
+//         user_name : 'to',
+//         password : 'sam to'
+//     },
+//     owner_status : {
+//         your_global_status : 'global status 2019828',
+//         current_status_scope : "yearly: 2017 to 2020",
+//         all_event_status : [
+//             {an_event : 'coding', max : 70, min : 15, median : 35, mode : 40}
+//         ]
+//     },
+//     scheduled_events : [
+//         {
+//             year : 2019,
+//             month : 9,
+//             day : 9,
+//             an_event : 'coding',
+//             start : '9:00am',
+//             hours : 4,
+//             end : '1:00pm'
+//         },
+//         {
+//             year : 2020,
+//             month : 7,
+//             day : 1,
+//             an_event : 'typing',
+//             start : '11:00am',
+//             hours : 1,
+//             end : '1:00pm'
+//         },
+//         {
+//             year : 2020,
+//             month : 8,
+//             day : 2,
+//             an_event : 'reading',
+//             start : '12:00am',
+//             hours : 1,
+//             end : '1:00pm'
+//         },
+//         {
+//             year : 2020,
+//             month : 8,
+//             day : 2,
+//             an_event : 'reading',
+//             start : '4:00apm',
+//             hours : 1,
+//             end : '5:00pm'
+//         }
+//     ]
+// }
 
-console.log('load whole json file')
-const whole_data = JsonDataStruct.fromJsonFormat(whole_json);
-console.log(whole_data);
-console.log(whole_data.toJsonFormat());
+// console.log('load whole json file')
+// const whole_data = JsonDataStruct.fromJsonFormat(whole_json);
+// console.log(whole_data);
+// console.log(whole_data.toJsonFormat());
 
 
-console.log('test get functions')
-console.log(whole_data.getEvent_status())
+// console.log('test get functions')
+// console.log(whole_data.getEvent_status())
 
 // console.log('test update functions')
 // console.log('update name, ownership, status, and scheduled events')
@@ -196,3 +214,320 @@ console.log(whole_data.getEvent_status())
 // // get_status.max = 49
 // console.log(whole_data);
 
+// whole_data.add_an_event_status_toOwnerStatus({an_event : 'gaming', max : 180, min : 45, median : 120, mode : 100})
+// whole_data.add_an_event_status_toOwnerStatus({an_event : 'writing', max : 40, min : 10, median : 30, mode : 20})
+// console.log(whole_data.toJsonFormat())
+
+
+
+
+// loading a whole json to make a data struct
+const whole_json = {
+    name : 'whole tree',
+    ownership : {
+        name : 'sam',
+        user_name : 'to',
+        password : 'sam to'
+    },
+    owner_status : {
+        your_global_status : 'global status 2019828',
+        current_status_scope : "yearly: 2017 to 2020",
+        all_event_status : [
+            {an_event : 'coding', max : 70, min : 15, median : 35, mode : 40}
+        ]
+    },
+    scheduled_events : [
+        {
+            year : 2019,
+            month : 9,
+            day : 9,
+            an_event : 'coding',
+            start : '9:00am',
+            hours : 4,
+            end : '1:00pm',
+            category : 'default', 
+            yearly_events : [
+                {year : 2018, monthly_events : [
+                    {month : 12, daily_events : [
+                        {day : 12, events :[
+                            {
+                                year : 2018,
+                                month : 12,
+                                day : 11,
+                                an_event : 'coding',
+                                start : '10:00pm',
+                                hours : 3,
+                                end : '3:00pm',
+            
+                            }
+                        ]
+                            
+                        }
+                    ]
+                    }
+                ]
+                }
+            ]
+            }
+        ]
+        }
+
+console.log('load whole json file')
+const whole_data = JsonDataStruct.fromJsonFormat(whole_json);
+console.log(whole_data);
+console.log(whole_data.toJsonFormat());
+
+console.log('test added events')
+const event0 = 
+{category : 'default', yearly_event : 
+    {year : 2018, monthly_event :
+        {month : 11, daily_event :
+            {day : 12, event :
+                {
+                    year : 2018,
+                    month : 12,
+                    day : 11,
+                    an_event : 'coding',
+                    start : '10:00pm',
+                    hours : 3,
+                    end : '3:00pm',
+
+                }
+                
+            }
+        }
+    }
+};
+const event1 = 
+{category : 'default', yearly_event : 
+    {year : 2018, monthly_event :
+        {month : 11, daily_event :
+            {day : 12, event :
+                {
+                    year : 2018,
+                    month : 12,
+                    day : 11,
+                    an_event : 'gaming',
+                    start : '10:00pm',
+                    hours : 3,
+                    end : '3:00pm',
+
+                }
+                
+            }
+        }
+    }
+};
+const event2 = 
+{category : 'default', yearly_event : 
+    {year : 2018, monthly_event :
+        {month : 11, daily_event :
+            {day : 12, event :
+                {
+                    year : 2018,
+                    month : 12,
+                    day : 11,
+                    an_event : 'running',
+                    start : '10:00pm',
+                    hours : 3,
+                    end : '3:00pm',
+
+                }
+                
+            }
+        }
+    }
+};
+const event3 = 
+{category : 'default', yearly_event : 
+    {year : 2018, monthly_event :
+        {month : 11, daily_event :
+            {day : 14, event :
+                {
+                    year : 2018,
+                    month : 12,
+                    day : 11,
+                    an_event : 'running',
+                    start : '10:00pm',
+                    hours : 3,
+                    end : '3:00pm',
+
+                }
+                
+            }
+        }
+    }
+};
+const event4 = 
+{category : 'default', yearly_event : 
+    {year : 2018, monthly_event :
+        {month : 11, daily_event :
+            {day : 14, event :
+                {
+                    year : 2018,
+                    month : 12,
+                    day : 11,
+                    an_event : 'gaming',
+                    start : '10:00pm',
+                    hours : 3,
+                    end : '3:00pm',
+
+                }
+                
+            }
+        }
+    }
+};
+const event5 = 
+{category : 'default', yearly_event : 
+    {year : 2018, monthly_event :
+        {month : 11, daily_event :
+            {day : 14, event :
+                {
+                    year : 2018,
+                    month : 12,
+                    day : 11,
+                    an_event : 'writing',
+                    start : '10:00pm',
+                    hours : 3,
+                    end : '3:00pm',
+
+                }
+                
+            }
+        }
+    }
+};
+const event6 = 
+{category : 'default', yearly_event : 
+    {year : 2018, monthly_event :
+        {month : 12, daily_event :
+            {day : 14, event :
+                {
+                    year : 2018,
+                    month : 12,
+                    day : 11,
+                    an_event : 'running',
+                    start : '10:00pm',
+                    hours : 3,
+                    end : '3:00pm',
+
+                }
+                
+            }
+        }
+    }
+};
+const event7 = 
+{category : 'default', yearly_event : 
+    {year : 2018, monthly_event :
+        {month : 12, daily_event :
+            {day : 14, event :
+                {
+                    year : 2018,
+                    month : 12,
+                    day : 11,
+                    an_event : 'gaming',
+                    start : '10:00pm',
+                    hours : 3,
+                    end : '3:00pm',
+
+                }
+                
+            }
+        }
+    }
+};
+const event8 = 
+{category : 'default', yearly_event : 
+    {year : 2018, monthly_event :
+        {month : 12, daily_event :
+            {day : 14, event :
+                {
+                    year : 2018,
+                    month : 12,
+                    day : 11,
+                    an_event : 'writing',
+                    start : '10:00pm',
+                    hours : 3,
+                    end : '3:00pm',
+
+                }
+                
+            }
+        }
+    }
+};
+const event9 = 
+{category : 'default', yearly_event : 
+    {year : 2019, monthly_event :
+        {month : 12, daily_event :
+            {day : 14, event :
+                {
+                    year : 2019,
+                    month : 12,
+                    day : 11,
+                    an_event : 'running',
+                    start : '10:00pm',
+                    hours : 3,
+                    end : '3:00pm',
+
+                }
+                
+            }
+        }
+    }
+};
+const event10 = 
+{category : 'default', yearly_event : 
+    {year : 2019, monthly_event :
+        {month : 12, daily_event :
+            {day : 14, event :
+                {
+                    year : 2019,
+                    month : 12,
+                    day : 11,
+                    an_event : 'gaming',
+                    start : '10:00pm',
+                    hours : 3,
+                    end : '3:00pm',
+
+                }
+                
+            }
+        }
+    }
+};
+const event11 = 
+{category : 'default', yearly_event : 
+    {year : 2019, monthly_event :
+        {month : 12, daily_event :
+            {day : 14, event :
+                {
+                    year : 2019,
+                    month : 12,
+                    day : 11,
+                    an_event : 'writing',
+                    start : '10:00pm',
+                    hours : 3,
+                    end : '3:00pm',
+
+                }
+                
+            }
+        }
+    }
+};
+whole_data.schedule_an_event(event0)
+whole_data.schedule_an_event(event1)
+whole_data.schedule_an_event(event2)
+whole_data.schedule_an_event(event3)
+whole_data.schedule_an_event(event4)
+whole_data.schedule_an_event(event5)
+whole_data.schedule_an_event(event6)
+whole_data.schedule_an_event(event7)
+whole_data.schedule_an_event(event8)
+whole_data.schedule_an_event(event9)
+whole_data.schedule_an_event(event10)
+whole_data.schedule_an_event(event11)
+console.log(whole_data.toJsonFormat())
