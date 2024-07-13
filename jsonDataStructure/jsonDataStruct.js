@@ -274,6 +274,10 @@ class Ownership {
 
 class JsonDataStruct {
     temp_event_list = [];
+    temp_event_category_partition = [];
+    temp_yearly_event_partition = [];
+    temp_monthly_event_partition = [];
+    temp_daily_event_partition = [];
     temp_events_status = {an_event : '', max : 0, min : 0, median : 0, mode : 0}
     constructor(name, ownership, owner_status, scheduled_events){
         this.name = name;
@@ -364,6 +368,46 @@ class JsonDataStruct {
 
     updateScheduled_events(newScheduled_events){
         this.scheduled_events = newScheduled_events.map(event => new ScheduledEvent(event.year, event.month, event.day, event.an_event, event.start, event.hours,event.end));
+    }
+
+    /*
+        Time partition functions
+    */
+
+    yearly_event_partition(category, start_year, end_year) {
+        const selected_category = this.scheduled_events.find(the_event => the_event.category === category)
+        if(selected_category) {
+            this.temp_yearly_event_partition = selected_category.yearly_events.filter(
+                function(the_event) {
+                    return (the_event.year <= end_year && start_year <=the_event.year);
+                })
+        } 
+    }
+
+    monthly_event_partition(year, start_month, end_month) {
+        const selected_year = this.temp_yearly_event_partition.find(the_event => the_event.year === year)
+        if(selected_year) {
+            this.temp_monthly_event_partition = selected_year.monthly_events.filter(
+                    function(the_event) {
+                        return (the_event.month <= end_month && start_month <=the_event.month);
+                    }) 
+        }
+    }
+
+    daily_event_partition(month, start_day, end_day) {
+        const selected_month = this.temp_monthly_event_partition.find(the_event => the_event.month === month)
+        if(selected_month) {
+            this.temp_daily_event_partition = selected_month.daily_events.filter(
+                function(the_event) {
+                    return (the_event.day <= end_day && start_day <=the_event.day);
+                }) 
+            }
+    }
+
+    append_selected_daily_event_partition() {
+        this.temp_daily_event_partition.forEach(event_array => {
+            this.temp_event_list = this.temp_event_list.concat(event_array.events)
+        })
     }
 
     /*
