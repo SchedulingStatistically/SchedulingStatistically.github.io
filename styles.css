@@ -1,0 +1,131 @@
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* Planner header styles */
+  .planner {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+
+  /* Input area styles */
+  .task-input-area {
+    margin-bottom: 20px;
+  }
+
+  .task-input {
+    width: calc(50% - 10px);
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+
+  /* Button styles */
+  button {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+  }
+
+  button:hover {
+    background-color: #2980b9;
+  }
+
+  /* Task list layout */
+  .task-lists {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .task-list-area {
+    width: 60%;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-right: 20px;
+  }
+
+  .completed-incompleted-area {
+    width: 40%;
+  }
+
+  .completed-task-list-area,
+  .incompleted-task-list-area {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  /* Task list styles */
+  .task-list {
+    list-style-type: none;
+    padding: 0;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+
+  .task-item span {
+    word-break: break-word;
+  }
+
+  .task-buttons {
+    display: flex;
+    gap: 5px;
+  }
+
+  .task-buttons button {
+    padding: 5px 10px;
+    font-size: 14px;
+  }
+
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .task-lists {
+      flex-direction: column;
+    }
+
+    .task-list-area,
+    .completed-incompleted-area {
+      width: 100%;
+      margin-right: 0;
+    }
+  }
