@@ -23,6 +23,21 @@
     const { Calendar, momentLocalizer } = ReactBigCalendar;
     const localizer = momentLocalizer(moment);
 
+    function DropdownMenu({ task, position, incompleteReasons, handleIncompleteTask }) {
+  return ReactDOM.createPortal(
+    <ul
+      className="dropdown-menu"
+      style={{ top: position.top, left: position.left, position: 'absolute' }}
+    >
+      {incompleteReasons.map((reason, index) => (
+        <li key={index} onClick={() => handleIncompleteTask(task.id, reason)}>{reason}</li>
+      ))}
+    </ul>,
+    document.body
+  );
+}
+
+
     function App() {
       // State variables
       const [tasks, setTasks] = useState([]);
@@ -33,8 +48,9 @@
       const [editingTaskTime, setEditingTaskTime] = useState('');
       const [completedTasks, setCompletedTasks] = useState([]);
       const [incompletedTasks, setIncompletedTasks] = useState([]);
-      const [showIncompleteReasons, setShowIncompleteReasons] = useState({});
       const [activeDropdownId, setActiveDropdownId] = useState(null);
+      const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+
 
       const incompleteReasons = [
         "Lack of Time",
@@ -110,15 +126,17 @@
         setActiveDropdownId(null);
       };
 
-      // Dropdown Menu
-      const toggleIncompleteReasons = (e, id) => {
-        e.stopPropagation();
-        setShowIncompleteReasons(prev => ({ ...prev, [id]: !prev[id] }));
-      };
-
-      const toggleDropdown = (id) => {
+      // Toggle dropdown menu
+      const toggleDropdown = (id, event) => {
+        const rect = event.target.getBoundingClientRect();
+        const position = {
+          top: rect.top + window.scrollY,
+          left: rect.left + window.scrollX
+        };
+        setDropdownPosition(position);
         setActiveDropdownId(activeDropdownId === id ? null : id);
       };
+
 
       return (
         <div className="container">
@@ -190,13 +208,14 @@
                         <button onClick={() => startEditing(task)}>Edit</button>
                         <button onClick={() => completeTask(task.id)}>Complete</button>
                         <div className="dropdown">
-                          <button onClick={() => toggleDropdown(task.id)}>Incomplete</button>
+                          <button onClick={(e) => toggleDropdown(task.id, e)}>Incomplete</button>
                           {activeDropdownId === task.id && (
-                            <ul className="dropdown-menu">
-                              {incompleteReasons.map((reason, index) => (
-                                <li key={index} onClick={() => incompleteTask(task.id, reason)}>{reason}</li>
-                              ))}
-                            </ul>
+                            <DropdownMenu
+                              task={task}
+                              position={dropdownPosition}
+                              incompleteReasons={incompleteReasons}
+                              handleIncompleteTask={incompleteTask}
+                            />
                           )}
                         </div>
                       </div>
@@ -213,7 +232,7 @@
                     <li key={task.id} className="task-item">
                       <div>
                         <span>{task.text}</span>
-                        <span>{task.time}</span>
+                        <span style={{ marginLeft: '10px' }}>{` ${task.time}`}</span>
                       </div>
                     </li>
                   ))}
@@ -226,7 +245,7 @@
                     <li key={task.id} className="task-item">
                       <div>
                         <span>{task.text}</span>
-                        <span>{task.time}</span>
+                        <span style={{ marginLeft: '10px' }}>{` ${task.time}`}</span>
                         {task.reason && <span className="incomplete-reason">Reason: {task.reason}</span>}
                       </div>
                     </li>
