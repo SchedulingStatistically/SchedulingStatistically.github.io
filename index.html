@@ -33,6 +33,16 @@
       const [editingTaskTime, setEditingTaskTime] = useState('');
       const [completedTasks, setCompletedTasks] = useState([]);
       const [incompletedTasks, setIncompletedTasks] = useState([]);
+      const [showIncompleteReasons, setShowIncompleteReasons] = useState({});
+      const [activeDropdownId, setActiveDropdownId] = useState(null);
+
+      const incompleteReasons = [
+        "Lack of Time",
+        "Procrastination",
+        "Insufficient Resources",
+        "Unexpected Obstacles",
+        "Lack of Motivation or Interest"
+      ];
 
       // Function to add a new task
       const addTask = (e) => {
@@ -55,15 +65,15 @@
       // Function to edit a task
       const editTask = (id, newText, newTime) => {
         const updatedTasks = tasks.map(task =>
-          task.id === id ? { ...task, text: newText, time: newTime } : task
+          task.id === id ? { ...task, text: newText, time: `${newTime} minutes` } : task
         );
         setTasks(updatedTasks);
         const updatedCompletedTasks = completedTasks.map(task =>
-          task.id === id ? { ...task, text: newText, time: newTime } : task
+          task.id === id ? { ...task, text: newText, time: `${newTime} minutes` } : task
         );
         setCompletedTasks(updatedCompletedTasks);
         const updatedIncompletedTasks = incompletedTasks.map(task =>
-          task.id === id ? { ...task, text: newText, time: newTime } : task
+          task.id === id ? { ...task, text: newText, time: `${newTime} minutes` } : task
         );
         setIncompletedTasks(updatedIncompletedTasks);
         setEditingTaskId(null);
@@ -75,7 +85,7 @@
       const startEditing = (task) => {
         setEditingTaskId(task.id);
         setEditingTaskText(task.text);
-        setEditingTaskTime(task.time);
+        setEditingTaskTime(task.time.replace(' minutes', ''));
       };
 
       // Function to handle key press while editing
@@ -93,10 +103,21 @@
       };
 
       // Function to mark a task as incomplete
-      const incompleteTask = (id) => {
+      const incompleteTask = (id, reason) => {
         const task = tasks.find(task => task.id === id);
-        setIncompletedTasks([...incompletedTasks, task]);
+        setIncompletedTasks([...incompletedTasks, { ...task, reason }]);
         setTasks(tasks.filter(task => task.id !== id));
+        setActiveDropdownId(null);
+      };
+
+      // Dropdown Menu
+      const toggleIncompleteReasons = (e, id) => {
+        e.stopPropagation();
+        setShowIncompleteReasons(prev => ({ ...prev, [id]: !prev[id] }));
+      };
+
+      const toggleDropdown = (id) => {
+        setActiveDropdownId(activeDropdownId === id ? null : id);
       };
 
       return (
@@ -130,46 +151,59 @@
           <div className="task-lists">
             <div className="task-list-area">
               <h2>Task List</h2>
-              <ul className="task-list">
-                {tasks.map(task => (
-                  <li key={task.id} className="task-item">
-                    {editingTaskId === task.id ? (
-                      <div>
-                        <input
-                          type="text"
-                          value={editingTaskText}
-                          onChange={(e) => setEditingTaskText(e.target.value)}
-                          onBlur={() => editTask(task.id, editingTaskText, editingTaskTime)}
-                          onKeyPress={(e) => handleEditKeyPress(e, task.id)}
-                          className="task-input"
-                          autoFocus
-                        />
-                        <input
-                          type="text"
-                          value={editingTaskTime}
-                          onChange={(e) => setEditingTaskTime(e.target.value)}
-                          onBlur={() => editTask(task.id, editingTaskText, editingTaskTime)}
-                          onKeyPress={(e) => handleEditKeyPress(e, task.id)}
-                          className="task-input"
-                        />
+              <div className="task-list-scrollable">
+                <ul className="task-list">
+                  {tasks.map(task => (
+                    <li key={task.id} className={`task-item ${editingTaskId === task.id ? 'editing' : ''}`}>
+                      {editingTaskId === task.id ? (
+                        <div>
+                          <input
+                            type="text"
+                            value={editingTaskText}
+                            onChange={(e) => setEditingTaskText(e.target.value)}
+                            className="task-input"
+                            autoFocus
+                          />
+                          <input
+                            type="text"
+                            value={editingTaskTime}
+                            onChange={(e) => {
+                              if (!isNaN(e.target.value)) {
+                                setEditingTaskTime(e.target.value);
+                              }
+                            }}
+                            className="task-input"
+                          />
+                          <button onClick={() => editTask(task.id, editingTaskText, editingTaskTime)}>Save</button>
+                          <button onClick={() => setEditingTaskId(null)}>Cancel</button>
+                        </div>
+                      ) : (
+                        <div>
+                          <span>{task.text}</span>
+                          {task.time && (
+                            <span style={{ marginLeft: '10px' }}>{`${task.time}`}</span>
+                          )}
+                        </div>
+                      )}
+                      <div className="task-buttons">
+                        <button onClick={() => deleteTask(task.id)}>Delete</button>
+                        <button onClick={() => startEditing(task)}>Edit</button>
+                        <button onClick={() => completeTask(task.id)}>Complete</button>
+                        <div className="dropdown">
+                          <button onClick={() => toggleDropdown(task.id)}>Incomplete</button>
+                          {activeDropdownId === task.id && (
+                            <ul className="dropdown-menu">
+                              {incompleteReasons.map((reason, index) => (
+                                <li key={index} onClick={() => incompleteTask(task.id, reason)}>{reason}</li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
                       </div>
-                    ) : (
-                      <div>
-                        <span>{task.text}</span>
-                        {task.time && (
-                          <span style={{ marginLeft: '10px' }}>{`${task.time}`}</span>
-                        )}
-                      </div>
-                    )}
-                    <div className="task-buttons">
-                      <button onClick={() => deleteTask(task.id)}>Delete</button>
-                      <button onClick={() => startEditing(task)}>Edit</button>
-                      <button onClick={() => completeTask(task.id)}>Complete</button>
-                      <button onClick={() => incompleteTask(task.id)}>Incomplete</button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
             <div className="completed-incompleted-area">
               <div className="completed-task-list-area">
@@ -193,6 +227,7 @@
                       <div>
                         <span>{task.text}</span>
                         <span>{task.time}</span>
+                        {task.reason && <span className="incomplete-reason">Reason: {task.reason}</span>}
                       </div>
                     </li>
                   ))}
