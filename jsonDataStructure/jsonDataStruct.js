@@ -27,72 +27,8 @@
     "I use vscode with 'Live Server' extension to run the html on my local browser app"
     "DO NOT MERGE or push you testing code in the main branch"
 */
-class DatabaseObj {
-    //TODO: create separate pages for each item
-    //TODO: update from db on each property
-    constructor() {
-        this.base_id = 'appujfaklryoZZPxX';
-        this.table_id = 'tbldyaC9etrTA5Zpd/viwVlkMTPXKsRYYKv';
-        this.auth_token = 'pateZMV3GBMLUVnWA.53e93b721f80534560c6592cfa282c13e9c8079387c3b79d033cd39956ee7d71';
-        this.user_id = null
-        this.fields
-    }
 
-    // typecheck that fields is a key value pair object
-    // error check for same id in database
-    create_db_entry(data) {
-        fetch(`https://api.airtable.com/v0/${this.base_id}/
-            ${this.table_id}/${this.user_id}`, {
-            method: 'post',
-            headers: {
-                'authorization': this.auth_token,
-                'content-type': 'application/json'
-            },
-            body: json.stringify(data)
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
-        this.user_id = reponse.records.id
-    }
-
-    // DATABSE FUNCTIONS
-    send_to_db() {
-        //TODO: add typechecking and error handling
-        fetch(`https://api.airtable.com/v0/${this.base_id}/
-            ${this.table_id}/${this.user_id}`, {
-            method: 'patch',
-            headers: {
-                'authorization': this.auth_token,
-                'content-type': 'application/json'
-            },
-            body: json.stringify(this.fields)
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
-        // .catch((error) => {
-        //     console.error('error:', error);
-        // });
-    }
-
-    update_from_db() {
-        fetch(`https://api.airtable.com/v0/${this.base_id}/
-            ${this.table_id}/${this.user_id}`, {
-            method: 'get',
-            headers: {
-                'authorization': auth_token,
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                this.name = data.fields["name"]
-                this.ownership = data.fields["ownership"]
-                this.owner_status = data.fields["owner_status"]
-                this.scheduled_events = data.fields["scheduled_events"]
-            })
-    }
-}
-class ScheduledEvents extends DatabaseObj {
+class ScheduledEvents {
     constructor(year, month, day, an_event, start, hours, end) {
         this.year = year;
         this.month = month;
@@ -101,17 +37,6 @@ class ScheduledEvents extends DatabaseObj {
         this.start = start;
         this.hours = hours;
         this.end = end;
-        this.create_db_entry({
-            "fields": {
-                "Year": year,
-                "Month": month,
-                "Day": day,
-                "An_Event": an_event,
-                "Start": start,
-                "Hours": hours,
-                "End": end
-            }
-        })
     }
 
     toJsonFormat() {
@@ -129,73 +54,15 @@ class ScheduledEvents extends DatabaseObj {
     static fromJsonFormat(json) {
         return new ScheduledEvents(json.year, json.month, json.day, json.an_event, json.start, json.hours, json.end);
     }
-
-    // DATABSE FUNCTIONS
-    send_to_db() {
-        //TODO: add typechecking and error handling
-        fetch(`https://api.airtable.com/v0/${this.base_id}/
-            ${this.table_id}/${this.user_id}`, {
-            method: 'patch',
-            headers: {
-                'authorization': this.auth_token,
-                'content-type': 'application/json'
-            },
-            body: json.stringify({
-                "fields": {
-                    "Year": this.year,
-                    "Month": this.month,
-                    "Day": this.day,
-                    "An_Event": this.an_event,
-                    "Start": this.start,
-                    "Hours": this.hours,
-                    "End": this.end
-                }
-            })
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
-        // .catch((error) => {
-        //     console.error('error:', error);
-        // });
-    }
-
-    update_from_db() {
-        fetch(`https://api.airtable.com/v0/${this.base_id}/
-            ${this.table_id}/${this.user_id}`, {
-            method: 'get',
-            headers: {
-                'authorization': auth_token,
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                this.year = data.records.fields["Year"]
-                this.month = data.records.fields["Month"]
-                this.day = data.records.fields("Day")
-                this.an_event = data.records.fields("An_Event")
-                this.start = data.records.fields("Start")
-                this.hours = data.records.fields("Hours")
-                this.end = data.records.fields("End")
-            })
-    }
 }
 
-class EventStatus extends DatabaseObj {
+class EventStatus {
     constructor(an_event, max, min, median, mode) {
         this.an_event = an_event;
         this.max = max;
         this.min = min;
         this.median = median;
         this.mode = mode;
-        this.create_db_entry({
-            "fields": {
-                "An_Event": an_event,
-                "Max": max,
-                "Min": min,
-                "Median": median,
-                "Mode": mode
-            }
-        })
     }
 
     toJsonFormat() {
@@ -211,66 +78,13 @@ class EventStatus extends DatabaseObj {
     static fromJsonFormat(json) {
         return new EventStatus(json.an_event, json.max, json.min, json.median, json.mode)
     }
-
-    send_to_db() {
-        //TODO: add typechecking and error handling
-        fetch(`https://api.airtable.com/v0/${this.base_id}/
-            ${this.table_id}/${this.user_id}`, {
-            method: 'patch',
-            headers: {
-                'authorization': this.auth_token,
-                'content-type': 'application/json'
-            },
-            body: json.stringify({
-                "fields": {
-                    "Year": this.year,
-                    "Month": this.month,
-                    "Day": this.day,
-                    "An_Event": this.an_event,
-                    "Start": this.start,
-                    "Hours": this.hours,
-                    "End": this.end
-                }
-            })
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
-        // .catch((error) => {
-        //     console.error('error:', error);
-        // });
-    }
-
-    update_from_db() {
-        fetch(`https://api.airtable.com/v0/${this.base_id}/
-            ${this.table_id}/${this.user_id}`, {
-            method: 'get',
-            headers: {
-                'authorization': auth_token,
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                this.name = data.fields["name"]
-                this.ownership = data.fields["ownership"]
-                this.owner_status = data.fields["owner_status"]
-                this.scheduled_events = data.fields["scheduled_events"]
-            })
-    }
 }
 
-class OwnerStatus extends DatabaseObj {
+class OwnerStatus {
     constructor(global_status, current_status_scope, hobby_status) {
         this.your_global_status = global_status;
         this.current_status_scope = current_status_scope;
         this.all_event_status = hobby_status;
-        this.create_db_entry({
-            "fields": {
-                "Global_Status": global_status,
-                "Current_Status_Scope": current_status_scope,
-                "Hobby_Status": hobby_status
-            }
-        })
     }
 
     toJsonFormat() {
@@ -293,66 +107,13 @@ class OwnerStatus extends DatabaseObj {
     removeEvent_status(new_event) {
         this.all_event_status.pop()
     }
-
-    send_to_db() {
-        //TODO: add typechecking and error handling
-        fetch(`https://api.airtable.com/v0/${this.base_id}/
-            ${this.table_id}/${this.user_id}`, {
-            method: 'patch',
-            headers: {
-                'authorization': this.auth_token,
-                'content-type': 'application/json'
-            },
-            body: json.stringify({
-                "fields": {
-                    "Year": this.year,
-                    "Month": this.month,
-                    "Day": this.day,
-                    "An_Event": this.an_event,
-                    "Start": this.start,
-                    "Hours": this.hours,
-                    "End": this.end
-                }
-            })
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
-        // .catch((error) => {
-        //     console.error('error:', error);
-        // });
-    }
-
-    update_from_db() {
-        fetch(`https://api.airtable.com/v0/${this.base_id}/
-            ${this.table_id}/${this.user_id}`, {
-            method: 'get',
-            headers: {
-                'authorization': auth_token,
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                this.name = data.fields["name"]
-                this.ownership = data.fields["ownership"]
-                this.owner_status = data.fields["owner_status"]
-                this.scheduled_events = data.fields["scheduled_events"]
-            })
-    }
 }
 
-class Ownership extends DatabaseObj {
+class Ownership {
     constructor(name, user_name, password) {
         this.name = name;
         this.user_name = user_name;
         this.password = password;
-        this.create_db_entry({
-            "fields": {
-                "Name": name,
-                "Username": user_name,
-                "Password": password
-            }
-        })
     }
 
     toJsonFormat() {
@@ -366,47 +127,6 @@ class Ownership extends DatabaseObj {
     static fromJsonFormat(json) {
         return new Ownership(json.name, json.user_name, json.password);
     }
-
-    send_to_db() {
-        //TODO: add typechecking and error handling
-        fetch(`https://api.airtable.com/v0/${this.base_id}/
-            ${this.table_id}/${this.user_id}`, {
-            method: 'patch',
-            headers: {
-                'authorization': this.auth_token,
-                'content-type': 'application/json'
-            },
-            body: json.stringify({
-                "fields": {
-                    "Name": this.name,
-                    "Username": this.user_name,
-                    "Password": this.password
-                }
-            })
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
-        // .catch((error) => {
-        //     console.error('error:', error);
-        // });
-    }
-
-    update_from_db() {
-        fetch(`https://api.airtable.com/v0/${this.base_id}/
-            ${this.table_id}/${this.user_id}`, {
-            method: 'get',
-            headers: {
-                'authorization': auth_token,
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                this.name = data.fields["Name"]
-                this.name = data.fields["Username"]
-                this.name = data.fields["Password"]
-            })
-    }
 }
 
 
@@ -416,14 +136,6 @@ class JsonDataStruct {
         this.ownership = ownership;
         this.owner_status = owner_status;
         this.scheduled_events = scheduled_events;
-        this.create_db_entry({
-            "fields": {
-                "Name": this.name,
-                "Ownership": this.ownership,
-                "Owner_Status": this.owner_status,
-                "Scheduled_Events": this.scheduled_events
-            }
-        })
     }
 
     toJsonFormat() {
@@ -443,22 +155,18 @@ class JsonDataStruct {
     }
 
     getName() {
-        this.update_from_db()
         return this.name;
     }
 
     updateName(newName) {
         this.name = newName;
-        this.send_to_db("name", newName, this.user_id)
     }
 
     getOwnership() {
-        this.update_from_db()
         return this.ownership;
     }
 
     updateOwnership(newOwnership) {
-        // TODO: maybe make it so that it doesn't have to create a new object
         this.ownership = Ownership.fromJsonFormat(newOwnership);
     }
 
@@ -492,7 +200,6 @@ class JsonDataStruct {
     }
 
     removeScheduled_event() {
-        //  TODO: add ability to delete events instead of being a stack
         this.scheduled_events.pop()
     }
 
@@ -500,54 +207,44 @@ class JsonDataStruct {
         this.scheduled_events = newScheduled_events.map(event => new ScheduledEvents(event.year, event.month, event.day, event.an_event, event.start, event.hours, event.end));
     }
 
-    send_to_db() {
-        //TODO: add typechecking and error handling
-        fetch(`https://api.airtable.com/v0/${this.base_id}/
-            ${this.table_id}/${this.user_id}`, {
-            method: 'patch',
-            headers: {
-                'authorization': this.auth_token,
-                'content-type': 'application/json'
-            },
-            body: json.stringify({
-                "fields": {
-                    "Name": this.name,
-                    "Ownership": this.ownership,
-                    "Owner_Status": this.owner_status,
-                    "Scheduled_Events": this.scheduled_events
-                }
-            })
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
-        // .catch((error) => {
-        //     console.error('error:', error);
-        // });
-    }
-
-    update_from_db() {
-        fetch(`https://api.airtable.com/v0/${this.base_id}/
-            ${this.table_id}/${this.user_id}`, {
-            method: 'get',
-            headers: {
-                'authorization': auth_token,
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                this.name = data.fields["name"]
-                this.ownership = data.fields["ownership"]
-                this.owner_status = data.fields["owner_status"]
-                this.scheduled_events = data.fields["scheduled_events"]
-            })
-    }
-
     /*
         FUNCTION BELLOW ARE FOR FILTERING JSON ARRAYS
         THE INTENT IT TO MAKE A PIPELINE TO PROCESS DATA WITH ARRAY
         FOR EXAMPLE LIST.REDUCE(LIST.MAP(NAME) + NAME)
     */
+
+
+    // DATABSE FUNCTIONS
+    send_to_db() {
+        // send to database
+        // pateZMV3GBMLUVnWA.53e93b721f80534560c6592cfa282c13e9c8079387c3b79d033cd39956ee7d71
+        fetch()
+        const baseid = 'your_base_id';
+        const tableidorname = 'your_table_id_or_name';
+        const recordid = 'your_record_id';
+        const data = { /* your data to update */ };
+
+        fetch(`https://api.airtable.com/v0/${baseid}/${tableidorname}/${recordid}`, {
+            method: 'patch',
+            headers: {
+                'authorization': 'bearer your_api_key',
+                'content-type': 'application/json'
+            },
+            body: json.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch((error) => {
+                console.error('error:', error);
+            });
+
+    }
+
+    update_from_db() {
+        // update from database
+    }
+}
+
 }
 
 export { ScheduledEvents, OwnerStatus, Ownership, JsonDataStruct };
