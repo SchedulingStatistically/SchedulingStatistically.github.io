@@ -28,7 +28,7 @@
     "DO NOT MERGE or push you testing code in the main branch"
 */
 
-import * as stats from 'simple-statistics'
+import * as stats from './node_modules/simple-statistics/dist/simple-statistics.mjs'
 
 class ScheduledEvents {
     constructor(year, month, day, an_event, start, hours, end) {
