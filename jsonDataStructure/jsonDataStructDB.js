@@ -244,21 +244,18 @@ class ScheduledEvent extends DatabaseObj {
     }
 }
 
-class Ownership extends DatabaseObj {
+class User extends DatabaseObj {
     constructor(...args) {
         super();
-        this.obj_type = 'Ownership';
+        this.obj_type = 'User';
+        this._username = null;
+        this._name = null;
+        this._password = null;
         if (args.length == 1) {
             this._user_id = args[0];
-            this._username = null;
-            this._name = null;
-            this._password = null;
             this.pullFromDB();
             return;
         }
-        this._user_name = args[0];
-        this._name = args[1];
-        this._password = args[2];
     }
 
     get user_id() { return this._user_id; }
@@ -329,9 +326,8 @@ class Ownership extends DatabaseObj {
         if (imported_obj.password != null) { this.password = imported_obj.password; }
     }
 
-    async logIn(username) {
-        let exists = ''
-        this.base('Ownership').select({
+    nonExistingUsername(username) {
+        this.base('User').select({
             maxRecords: 1,
             // filterByFormula: "{Username} = " + username,
             filterByFormula: `{Username} = '${username}'`,
@@ -339,18 +335,24 @@ class Ownership extends DatabaseObj {
         }).eachPage(function page(records) {
             records.forEach(function (record) {
                 // console.log(record)
-                exists = record.get('Username')
+                return record.get('Username')
             });
         }, function done(err) {
             if (err) { console.error(err); return; }
         });
+        return True
+    }
+
+    async logIn(username) {
+        let doesntExist = nonExistingUsername(username)
         await new Promise(r => setTimeout(r, 2000));
         // IF USER DOESN'T EXIST
-        if (exists == '') {
+        this._username = username
+        if (doesntExist) {
             let new_user = new Ownership()
             new_user.username = username
             new_user.createDBEntry()
-            return new_user
+            return []
         } else {
             let events = []
             this.base('ScheduledEvent').select({
@@ -372,7 +374,7 @@ class Ownership extends DatabaseObj {
     }
 }
 
-export { ScheduledEvent, Ownership };
+export { ScheduledEvent, User };
 // export default OwnerStatus;
 
 // async function test() {
