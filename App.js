@@ -1,33 +1,41 @@
+// App.js is the main component that renders the entire application. It contains the following features:
+// - A form to add a new task with an estimated time
+// - A list of tasks that can be edited, deleted, marked as complete, or marked as incomplete
+// - A list of completed tasks
+// - A list of incompleted tasks with reasons for not completing the task
+// - A dropdown menu to select a reason for marking a task as incomplete
+
 const { useState } = React;
 const { Calendar, momentLocalizer } = ReactBigCalendar;
 const localizer = momentLocalizer(moment);
 
-function DropdownMenu({ task, position, incompleteReasons, handleIncompleteTask }) {
-  return ReactDOM.createPortal(
-    <ul
-      className="dropdown-menu"
-      style={{ top: position.top, left: position.left, position: 'absolute' }}
+
+function DropdownMenu({ task, position, incompleteReasons, handleIncompleteTask }) {            // DropdownMenu component
+  return ReactDOM.createPortal(                                                                 // Create a portal to render the dropdown menu   
+    <ul                                                                                         // Dropdown menu
+      className="dropdown-menu"                                                                 // Dropdown menu class
+      style={{ top: position.top, left: position.left, position: 'absolute' }}                  // Dropdown menu style
     >
-      {incompleteReasons.map((reason, index) => (
-        <li key={index} onClick={() => handleIncompleteTask(task.id, reason)}>{reason}</li>
+      {incompleteReasons.map((reason, index) => (                                               // Map through incomplete reasons
+        <li key={index} onClick={() => handleIncompleteTask(task.id, reason)}>{reason}</li>     // List item with reason
       ))}
     </ul>,
-    document.body
+    document.body                                                                               // Render dropdown menu in the body
   );
 }
 
 function App() {
   // State variables
-  const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState('');
-  const [newTaskTime, setNewTaskTime] = useState('');
-  const [editingTaskId, setEditingTaskId] = useState(null);
-  const [editingTaskText, setEditingTaskText] = useState('');
-  const [editingTaskTime, setEditingTaskTime] = useState('');
-  const [completedTasks, setCompletedTasks] = useState([]);
-  const [incompletedTasks, setIncompletedTasks] = useState([]);
-  const [activeDropdownId, setActiveDropdownId] = useState(null);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+  const [tasks, setTasks] = useState([]);                                              // Tasks state variable        
+  const [newTask, setNewTask] = useState('');                                          // New task state variable
+  const [newTaskTime, setNewTaskTime] = useState('');                                  // New task time state variable
+  const [editingTaskId, setEditingTaskId] = useState(null);                            // Editing task id state variable
+  const [editingTaskText, setEditingTaskText] = useState('');                          // Editing task text state variable
+  const [editingTaskTime, setEditingTaskTime] = useState('');                          // Editing task time state variable
+  const [completedTasks, setCompletedTasks] = useState([]);                            // Completed tasks state variable 
+  const [incompletedTasks, setIncompletedTasks] = useState([]);                        // Incompleted tasks state variable
+  const [activeDropdownId, setActiveDropdownId] = useState(null);                      // Active dropdown id state variable
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });       // Dropdown position state variable
 
 
   const incompleteReasons = [
@@ -41,89 +49,89 @@ function App() {
   ];
 
   // Function to add a new task
-  const addTask = (e) => {
-    e.preventDefault();
-    if (newTask.trim() && newTaskTime.trim()) {
-      const task = { id: Date.now(), text: newTask, time: `${newTaskTime} minutes` };
-      setTasks([...tasks, task]);
-      setNewTask('');
-      setNewTaskTime('');
+  const addTask = (e) => {                                                             // Add task function
+    e.preventDefault();                                                                // Prevent default form submission
+    if (newTask.trim() && newTaskTime.trim()) {                                        // Check if new task and time are not empty
+      const task = { id: Date.now(), text: newTask, time: `${newTaskTime} minutes` };  // Create
+      setTasks([...tasks, task]);                                                      // Add task to tasks
+      setNewTask('');                                                                  // Reset new task
+      setNewTaskTime('');                                                              // Reset new task time 
     }
   };
 
   // Function to delete a task
-  const deleteTask = (id) => {
-    setTasks(tasks.filter(task => task.id !== id));
-    setCompletedTasks(completedTasks.filter(task => task.id !== id));
-    setIncompletedTasks(incompletedTasks.filter(task => task.id !== id));
+  const deleteTask = (id) => {                                                        // Delete task function
+    setTasks(tasks.filter(task => task.id !== id));                                   // Filter out task with id
+    setCompletedTasks(completedTasks.filter(task => task.id !== id));                 // Filter out task with id from completed tasks
+    setIncompletedTasks(incompletedTasks.filter(task => task.id !== id));             // Filter out task with id from incompleted tasks
   };
 
   // Function to edit a task
-  const editTask = (id, newText, newTime) => {
+  const editTask = (id, newText, newTime) => {                                        // Edit task function
     const updatedTasks = tasks.map(task =>
+      task.id === id ? { ...task, text: newText, time: `${newTime} minutes` } : task  // Map through tasks and update task with id
+    );
+    setTasks(updatedTasks);                                                           // Update tasks
+    const updatedCompletedTasks = completedTasks.map(task =>                          // Map through completed tasks and update task with id
+      task.id === id ? { ...task, text: newText, time: `${newTime} minutes` } : task  
+    );
+    setCompletedTasks(updatedCompletedTasks);                                         // Update completed tasks
+    const updatedIncompletedTasks = incompletedTasks.map(task =>                      // Map through incompleted tasks and update task with id
       task.id === id ? { ...task, text: newText, time: `${newTime} minutes` } : task
     );
-    setTasks(updatedTasks);
-    const updatedCompletedTasks = completedTasks.map(task =>
-      task.id === id ? { ...task, text: newText, time: `${newTime} minutes` } : task
-    );
-    setCompletedTasks(updatedCompletedTasks);
-    const updatedIncompletedTasks = incompletedTasks.map(task =>
-      task.id === id ? { ...task, text: newText, time: `${newTime} minutes` } : task
-    );
-    setIncompletedTasks(updatedIncompletedTasks);
-    setEditingTaskId(null);
-    setEditingTaskText('');
-    setEditingTaskTime('');
+    setIncompletedTasks(updatedIncompletedTasks);                                     // Update incompleted tasks
+    setEditingTaskId(null);                                                           // Reset editing task id
+    setEditingTaskText('');                                                           // Reset editing task text
+    setEditingTaskTime('');                                                           // Reset editing task time
   };
 
   // Function to start editing a task
-  const startEditing = (task) => {
-    setEditingTaskId(task.id);
-    setEditingTaskText(task.text);
-    setEditingTaskTime(task.time.replace(' minutes', ''));
+  const startEditing = (task) => {                                                   // Start editing task function
+    setEditingTaskId(task.id);                                                       // Set editing task id
+    setEditingTaskText(task.text);                                                   // Set editing task text
+    setEditingTaskTime(task.time.replace(' minutes', ''));                           // Set editing task time
   };
 
   // Function to handle key press while editing
-  const handleEditKeyPress = (e, id) => {
-    if (e.key === 'Enter') {
-      editTask(id, editingTaskText, editingTaskTime);
+  const handleEditKeyPress = (e, id) => {                                           // Handle edit key press function
+    if (e.key === 'Enter') {                                                        // Check if key is Enter
+      editTask(id, editingTaskText, editingTaskTime);                               // Edit task
     }
   };
 
   // Function to mark a task as complete
-  const completeTask = (id) => {
-    const task = tasks.find(task => task.id === id);
-    setCompletedTasks([...completedTasks, task]);
-    setTasks(tasks.filter(task => task.id !== id));
+  const completeTask = (id) => {                                                   // Complete task function
+    const task = tasks.find(task => task.id === id);                               // Find task with id
+    setCompletedTasks([...completedTasks, task]);                                  // Add task to completed tasks
+    setTasks(tasks.filter(task => task.id !== id));                                // Filter out task with id
   };
 
   // Function to mark a task as incomplete
   const incompleteTask = (id, reason) => {
-    const task = tasks.find(task => task.id === id);
-    setIncompletedTasks([...incompletedTasks, { ...task, reason }]);
-    setTasks(tasks.filter(task => task.id !== id));
-    setActiveDropdownId(null);
+    const task = tasks.find(task => task.id === id);                             // Find task with id
+    setIncompletedTasks([...incompletedTasks, { ...task, reason }]);             // Add task to incompleted tasks with reason
+    setTasks(tasks.filter(task => task.id !== id));                              // Filter out task with id
+    setActiveDropdownId(null);                                                   // Reset active dropdown id
   };
 
   // Toggle dropdown menu
   const toggleDropdown = (id, event) => {
-    const rect = event.target.getBoundingClientRect();
-    const position = {
-      top: rect.top + window.scrollY,
-      left: rect.left + window.scrollX
+    const rect = event.target.getBoundingClientRect();              // Get bounding client rect of target
+    const position = {                                              // Position of dropdown menu
+      top: rect.top + window.scrollY,                               // Top position of dropdown menu
+      left: rect.left + window.scrollX                              // Left position of dropdown menu
     };
-    setDropdownPosition(position);
-    setActiveDropdownId(activeDropdownId === id ? null : id);
+    setDropdownPosition(position);                                  // Set dropdown position
+    setActiveDropdownId(activeDropdownId === id ? null : id);       // Toggle active dropdown id
   };
 
 
   return (
-    <div className="container">
+    <div className="container">                                    {/* Comment everything below this line */}
       <div className="planner">
         <div className="task-input-area">
           <h2>Daily Planner</h2>
-          <form onSubmit={addTask}>
+          <form onSubmit={addTask}>                                
             <input
               type="text"
               value={newTask}
