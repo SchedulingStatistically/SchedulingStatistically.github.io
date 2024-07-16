@@ -69,6 +69,7 @@ button:hover {
   flex-direction: column;
 }
 
+/* General task list area styles for the boxes */
 .task-list-area,
 .completed-task-list-area,
 .incompleted-task-list-area {
@@ -81,6 +82,7 @@ button:hover {
   overflow-y: auto;
 }
 
+/* Task list area styles */
 .task-list-area {
   width: 45%;
   margin-right: 20px;
@@ -90,11 +92,13 @@ button:hover {
   overflow: visible;
 }
 
+/* How the task list scrolls */
 .task-list-scrollable {
   flex-grow: 1;
   overflow-y: auto;
 }
 
+/* How wide the complete and incomplete area can be */
 .completed-incompleted-area {
   width: 48.5%;
 }
@@ -108,6 +112,7 @@ button:hover {
   overflow: visible;
 }
 
+/* Task item styles */
 .task-item {
   display: flex;
   flex-wrap: wrap;
