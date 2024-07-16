@@ -28,9 +28,9 @@
     "DO NOT MERGE or push you testing code in the main branch"
 */
 
-import * as stats from 'simple-statistics'
+// import * as stats from 'simple-statistics'
 
-class ScheduledEvents {
+class AnEvent {
     constructor(year, month, day, an_event, start, hours, end) {
         this.year = year;
         this.month = month;
@@ -54,8 +54,136 @@ class ScheduledEvents {
     }
 
     static fromJsonFormat(json) {
-        return new ScheduledEvents(json.year, json.month, json.day, json.an_event, json.start, json.hours, json.end);
+        return new AnEvent(json.year, json.month, json.day, json.an_event, json.start, json.hours, json.end);
     }
+}
+class DailyEvents {
+    constructor(day, events) {
+        this.day = day;
+        this.events = events;
+    }
+
+    toJsonFormat() {
+        return {
+            day : this.day,
+            events : this.events.map(an_event => an_event.toJsonFormat())
+        }
+    }
+
+    static fromJsonFormat(json){
+        const events = json.events.map(an_event => AnEvent.fromJsonFormat(an_event))
+        return new DailyEvents(json.day, events)
+    }
+
+    addTo_events(json) {
+        this.events.push(new AnEvent(json.year, json.month, json.day, json.an_event, json.start, json.hours, json.end))
+    }
+}
+
+class MonthlyEvents {
+    constructor(month, daily_events) {
+        this.month = month;
+        this.daily_events = daily_events;
+    }
+
+    toJsonFormat() {
+        return {
+            month : this.month,
+            daily_events : this.daily_events.map(the_events => the_events.toJsonFormat())
+        }
+    }
+
+    static fromJsonFormat(json){
+        const daily_events = json.daily_events.map(the_events => DailyEvents.fromJsonFormat(the_events))
+        return new MonthlyEvents(json.month, daily_events)
+    }
+
+    addTo_dailyEvents(json) {
+        const found_daily_event = this.daily_events.find(the_events => the_events.day === json.day)
+        if(found_daily_event){
+            found_daily_event.addTo_events(json.event)
+        }else{
+            const new_daily_event = new DailyEvents(json.day, [])
+            new_daily_event.addTo_events(json.event)
+            this.daily_events.push(new_daily_event)
+        }
+    }
+}
+
+class YearlyEvents {
+    constructor(year, monthly_events) {
+        this.year = year;
+        this.monthly_events = monthly_events;
+    }
+
+    toJsonFormat() {
+        return {
+            year : this.year,
+            monthly_events : this.monthly_events.map(the_events => the_events.toJsonFormat())
+        }
+    }
+
+    static fromJsonFormat(json){
+        const monthly_events = json.monthly_events.map(the_events => MonthlyEvents.fromJsonFormat(the_events))
+        return new YearlyEvents(json.year, monthly_events)
+    }
+
+    addTo_monthlyEvents(json) {
+        const monthly_event = this.monthly_events.find(the_event => the_event.month === json.month)
+        if(monthly_event) {
+            monthly_event.addTo_dailyEvents(json.daily_event)
+        }else{
+            const new_monthly_event = new MonthlyEvents(json.month, [])
+            new_monthly_event.addTo_dailyEvents(json.daily_event)
+            this.monthly_events.push(new_monthly_event)
+        }
+    }
+}
+
+class ScheduledEvent {
+    constructor(year, month, day, an_event, start, hours, end, category, yearly_events) {
+        // this.year = year;
+        // this.month = month;
+        // this.day = day;
+        // this.an_event = an_event;
+        // this.start = start;
+        // this.hours = hours;
+        // this.end = end;
+        this.category = category;
+        this.yearly_events = yearly_events;
+    }
+
+    toJsonFormat() {
+        return {
+            // year : this.year,
+            // month : this.month,
+            // day : this.day,
+            // an_event : this.an_event,
+            // start : this.start,
+            // hours : this.hours,
+            // end : this.end,
+            category : this.category,
+            yearly_events : this.yearly_events.map(the_events => the_events.toJsonFormat())
+        };
+    }
+
+    static fromJsonFormat(json) {
+        const yearly_events = json.yearly_events.map(the_events => YearlyEvents.fromJsonFormat(the_events))
+        // const yearly_events = 0;
+        return new ScheduledEvent(json.year, json.month, json.day, json.an_event, json.start, json.hours, json.end, json.category, yearly_events);
+    }
+
+    addTo_yearlyEvents(json) {
+        const yearly_event = this.yearly_events.find(the_event => the_event.year === json.year)
+        if(yearly_event) {
+            yearly_event.addTo_monthlyEvents(json.monthly_event)
+        }else{
+            const new_yearly_event = new YearlyEvents(json.year, [])
+            new_yearly_event.addTo_monthlyEvents(json.monthly_event)
+            this.yearly_events.push(new_yearly_event)
+        }
+    }
+    
 }
 
 class EventStatus {
@@ -146,6 +274,10 @@ class Ownership {
 
 class JsonDataStruct {
     temp_event_list = [];
+    temp_event_category_partition = [];
+    temp_yearly_event_partition = [];
+    temp_monthly_event_partition = [];
+    temp_daily_event_partition = [];
     temp_events_status = {an_event : '', max : 0, min : 0, median : 0, mode : 0}
     constructor(name, ownership, owner_status, scheduled_events){
         this.name = name;
@@ -166,7 +298,7 @@ class JsonDataStruct {
     static fromJsonFormat(json){
         const ownership = Ownership.fromJsonFormat(json.ownership);
         const owner_status = OwnerStatus.fromJsonFormat(json.owner_status);
-        const scheduled_events = json.scheduled_events.map(an_event => ScheduledEvents.fromJsonFormat(an_event));
+        const scheduled_events = json.scheduled_events.map(an_event => ScheduledEvent.fromJsonFormat(an_event));
         return new JsonDataStruct(json.name, ownership, owner_status, scheduled_events);
     }
 
@@ -216,7 +348,18 @@ class JsonDataStruct {
     }
 
     addScheduled_event(event){
-        this.scheduled_events.push(new ScheduledEvents(event.year, event.month, event.day, event.an_event, event.start, event.hours, event.end))
+        this.scheduled_events.push(new ScheduledEvent(event.year, event.month, event.day, event.an_event, event.start, event.hours, event.end))
+    }
+
+    schedule_an_event(json) {
+        const scheduled_event_category = this.scheduled_events.find(the_event => the_event.category === json.category)
+        if(scheduled_event_category) {
+            scheduled_event_category.addTo_yearlyEvents(json.yearly_event)
+        }else{
+            const new_scheduled_event_category = new ScheduledEvent(json.category, [])
+            new_scheduled_event_category.addTo_yearlyEvents(json.yearly_event)
+            this.scheduled_events.push(new_scheduled_event_category)
+        }
     }
 
     removeScheduled_event(){
@@ -224,7 +367,47 @@ class JsonDataStruct {
     }
 
     updateScheduled_events(newScheduled_events){
-        this.scheduled_events = newScheduled_events.map(event => new ScheduledEvents(event.year, event.month, event.day, event.an_event, event.start, event.hours,event.end));
+        this.scheduled_events = newScheduled_events.map(event => new ScheduledEvent(event.year, event.month, event.day, event.an_event, event.start, event.hours,event.end));
+    }
+
+    /*
+        Time partition functions
+    */
+
+    yearly_event_partition(category, start_year, end_year) {
+        const selected_category = this.scheduled_events.find(the_event => the_event.category === category)
+        if(selected_category) {
+            this.temp_yearly_event_partition = selected_category.yearly_events.filter(
+                function(the_event) {
+                    return (the_event.year <= end_year && start_year <=the_event.year);
+                })
+        } 
+    }
+
+    monthly_event_partition(year, start_month, end_month) {
+        const selected_year = this.temp_yearly_event_partition.find(the_event => the_event.year === year)
+        if(selected_year) {
+            this.temp_monthly_event_partition = selected_year.monthly_events.filter(
+                    function(the_event) {
+                        return (the_event.month <= end_month && start_month <=the_event.month);
+                    }) 
+        }
+    }
+
+    daily_event_partition(month, start_day, end_day) {
+        const selected_month = this.temp_monthly_event_partition.find(the_event => the_event.month === month)
+        if(selected_month) {
+            this.temp_daily_event_partition = selected_month.daily_events.filter(
+                function(the_event) {
+                    return (the_event.day <= end_day && start_day <=the_event.day);
+                }) 
+            }
+    }
+
+    append_selected_daily_event_partition() {
+        this.temp_daily_event_partition.forEach(event_array => {
+            this.temp_event_list = this.temp_event_list.concat(event_array.events)
+        })
     }
 
     /*
@@ -233,97 +416,97 @@ class JsonDataStruct {
         FOR EXAMPLE LIST.REDUCE(LIST.MAP(NAME) + NAME)
     */
 
-    empty_temp_event_list(){
-        this.temp_event_list = [];
-    }
+    // empty_temp_event_list(){
+    //     this.temp_event_list = [];
+    // }
 
-    init_temp_event_status(){
-        this.temp_events_status = {an_event : '', max : 0, min : 0, median : 0, mode : 0, mean : 0, ratio : 0, total : 0, percent : 0 }
-    }
+    // init_temp_event_status(){
+    //     this.temp_events_status = {an_event : '', max : 0, min : 0, median : 0, mode : 0, mean : 0, ratio : 0, total : 0, percent : 0 }
+    // }
 
-    use_all_events_scheduled(){
-        this.temp_event_list = this.scheduled_events;
-    }
+    // use_all_events_scheduled(){
+    //     this.temp_event_list = this.scheduled_events;
+    // }
 
-    filter_an_event_type(event_type) {
-        let this_of_type_events = this.temp_event_list.filter(function(the_event) {
-            return the_event.an_event === event_type;
-        });
-        this.temp_event_list = this_of_type_events;
-        this.temp_events_status.an_event = event_type
-        return this_of_type_events;
-    }
+    // filter_an_event_type(event_type) {
+    //     let this_of_type_events = this.temp_event_list.filter(function(the_event) {
+    //         return the_event.an_event === event_type;
+    //     });
+    //     this.temp_event_list = this_of_type_events;
+    //     this.temp_events_status.an_event = event_type
+    //     return this_of_type_events;
+    // }
 
-    solve_total_of_all_event() {
-        let total = 0;
-        this.temp_event_list.forEach(function(the_event, index) {
-            total = total + 1;
-            // return the_event.hours;
-        });
-        this.temp_events_status.total = total;
-        return total;
-    }
+    // solve_total_of_all_event() {
+    //     let total = 0;
+    //     this.temp_event_list.forEach(function(the_event, index) {
+    //         total = total + 1;
+    //         // return the_event.hours;
+    //     });
+    //     this.temp_events_status.total = total;
+    //     return total;
+    // }
 
-    solve_min_of_all_events() {
-        let list_of_hours = this.temp_event_list.map(function(the_event) {
-            return the_event.hours;
-        });
-        let min_value = stats.min(list_of_hours);
-        this.temp_events_status.min = min_value;
-        return min_value;
-    }
+    // solve_min_of_all_events() {
+    //     let list_of_hours = this.temp_event_list.map(function(the_event) {
+    //         return the_event.hours;
+    //     });
+    //     let min_value = stats.min(list_of_hours);
+    //     this.temp_events_status.min = min_value;
+    //     return min_value;
+    // }
 
-    solve_max_of_all_events() {
-        let list_of_hours = this.temp_event_list.map(function(the_event) {
-            return the_event.hours;
-        });
-        let max_value = stats.max(list_of_hours);
-        this.temp_events_status.max = max_value;
-        return max_value;
-    }
+    // solve_max_of_all_events() {
+    //     let list_of_hours = this.temp_event_list.map(function(the_event) {
+    //         return the_event.hours;
+    //     });
+    //     let max_value = stats.max(list_of_hours);
+    //     this.temp_events_status.max = max_value;
+    //     return max_value;
+    // }
 
-    solve_median_of_all_events() {
-        let list_of_hours = this.temp_event_list.map(function(the_event) {
-            return the_event.hours;
-        });
-        let median_value = stats.median(list_of_hours);
-        this.temp_events_status.median = median_value;
-        return median_value;
-    }
+    // solve_median_of_all_events() {
+    //     let list_of_hours = this.temp_event_list.map(function(the_event) {
+    //         return the_event.hours;
+    //     });
+    //     let median_value = stats.median(list_of_hours);
+    //     this.temp_events_status.median = median_value;
+    //     return median_value;
+    // }
 
-    solve_mode_of_all_events() {
-        let list_of_hours = this.temp_event_list.map(function(the_event) {
-            return the_event.hours;
-        });
-        let mode_value = stats.mode(list_of_hours);
-        this.temp_events_status.mode = mode_value;
-        return mode_value;
-    }
+    // solve_mode_of_all_events() {
+    //     let list_of_hours = this.temp_event_list.map(function(the_event) {
+    //         return the_event.hours;
+    //     });
+    //     let mode_value = stats.mode(list_of_hours);
+    //     this.temp_events_status.mode = mode_value;
+    //     return mode_value;
+    // }
 
-    solve_mean_of_all_events() {
-        let list_of_hours = this.temp_event_list.map(function(the_event) {
-            return the_event.hours;
-        });
-        let mean_value = stats.mean(list_of_hours);
-        this.temp_events_status.mean = mean_value;
-        return mean_value;
-    }
+    // solve_mean_of_all_events() {
+    //     let list_of_hours = this.temp_event_list.map(function(the_event) {
+    //         return the_event.hours;
+    //     });
+    //     let mean_value = stats.mean(list_of_hours);
+    //     this.temp_events_status.mean = mean_value;
+    //     return mean_value;
+    // }
 
 
-    compute_an_event_type_status(event_type) {
-        this.empty_temp_event_list()
-        this.init_temp_event_status()
-        this.use_all_events_scheduled()
-        this.filter_an_event_type(event_type)
-        this.solve_min_of_all_events()
-        this.solve_max_of_all_events()
-        this.solve_median_of_all_events()
-        this.solve_mode_of_all_events()
-        this.solve_mean_of_all_events()
-        this.solve_total_of_all_event()
-        this.add_an_event_status_toOwnerStatus(this.temp_events_status)
-    }
+    // compute_an_event_type_status(event_type) {
+    //     this.empty_temp_event_list()
+    //     this.init_temp_event_status()
+    //     this.use_all_events_scheduled()
+    //     this.filter_an_event_type(event_type)
+    //     this.solve_min_of_all_events()
+    //     this.solve_max_of_all_events()
+    //     this.solve_median_of_all_events()
+    //     this.solve_mode_of_all_events()
+    //     this.solve_mean_of_all_events()
+    //     this.solve_total_of_all_event()
+    //     this.add_an_event_status_toOwnerStatus(this.temp_events_status)
+    // }
 }
 
-export {ScheduledEvents, OwnerStatus, Ownership, JsonDataStruct};
+export {ScheduledEvent, OwnerStatus, Ownership, JsonDataStruct};
 // export default OwnerStatus;

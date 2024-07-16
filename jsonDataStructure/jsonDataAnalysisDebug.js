@@ -11,7 +11,7 @@
 
 */
 
-import  {ScheduledEvents, OwnerStatus, Ownership, JsonDataStruct} from './jsonDataStruct.js'
+import  {ScheduledEvent, OwnerStatus, Ownership, JsonDataStruct} from './jsonDataStruct.js'
 
 // loading a whole json to make a data struct
 const whole_json = {
