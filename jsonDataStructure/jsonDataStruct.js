@@ -260,6 +260,7 @@ class Ownership {
 
 class JsonDataStruct {
     temp_event_list = [];
+    temp_solved_event_list = [];
     temp_event_category_partition = [];
     temp_yearly_event_partition = [];
     temp_monthly_event_partition = [];
@@ -333,10 +334,6 @@ class JsonDataStruct {
         return this.scheduled_events;
     }
 
-    addScheduled_event(event){
-        this.scheduled_events.push(new ScheduledEvent(event.year, event.month, event.day, event.an_event, event.start, event.hours, event.end))
-    }
-
     schedule_an_event(json) {
         const scheduled_event_category = this.scheduled_events.find(the_event => the_event.category === json.category)
         if(scheduled_event_category) {
@@ -352,14 +349,18 @@ class JsonDataStruct {
         this.scheduled_events.pop()
     }
 
-    updateScheduled_events(newScheduled_events){
-        this.scheduled_events = newScheduled_events.map(event => new ScheduledEvent(event.year, event.month, event.day, event.an_event, event.start, event.hours,event.end));
-    }
+    // updateScheduled_events(newScheduled_events){
+    //     this.scheduled_events = newScheduled_events.map(event => new ScheduledEvent(event.year, event.month, event.day, event.an_event, event.start, event.hours,event.end));
+    // }
 
     /*
         Time partition functions
     */
 
+    empty_temp_event_list(){
+        this.temp_event_list = [];
+    }
+    
     yearly_event_partition(category, start_year, end_year) {
         const selected_category = this.scheduled_events.find(the_event => the_event.category === category)
         if(selected_category) {
@@ -396,102 +397,105 @@ class JsonDataStruct {
         })
     }
 
+    // set_up_temp_event_status_solved_list() {
+    //     this.temp_solved_event_list = Array.from(this.temp_event_list);
+    // }
+
+
+
     /*
         FUNCTION BELLOW ARE FOR FILTERING JSON ARRAYS
         THE INTENT IT TO MAKE A PIPELINE TO PROCESS DATA WITH ARRAY
         FOR EXAMPLE LIST.REDUCE(LIST.MAP(NAME) + NAME)
     */
 
-    // empty_temp_event_list(){
-    //     this.temp_event_list = [];
-    // }
+    init_temp_event_status(){
+        this.temp_events_status = {an_event : '', max : 0, min : 0, median : 0, mode : 0, mean : 0, ratio : 0, total : 0, percent : 0 }
+    }
 
-    // init_temp_event_status(){
-    //     this.temp_events_status = {an_event : '', max : 0, min : 0, median : 0, mode : 0, mean : 0, ratio : 0, total : 0, percent : 0 }
-    // }
+    filter_an_event_type(event_type) {
+        let this_of_type_events = this.temp_event_list.filter(function(the_event) {
+            return the_event.an_event === event_type;
+        });
+        this.temp_solved_event_list = this_of_type_events;
+        this.temp_events_status.an_event = event_type
+        return this_of_type_events;
+    }
 
-    // use_all_events_scheduled(){
-    //     this.temp_event_list = this.scheduled_events;
-    // }
+    solve_total_of_all_event() {
+        let total = 0;
+        this.temp_solved_event_list.forEach(function(the_event, index) {
+            total = total + 1;
+            // return the_event.hours;
+        });
+        this.temp_events_status.total = total;
+        return total;
+    }
 
-    // filter_an_event_type(event_type) {
-    //     let this_of_type_events = this.temp_event_list.filter(function(the_event) {
-    //         return the_event.an_event === event_type;
-    //     });
-    //     this.temp_event_list = this_of_type_events;
-    //     this.temp_events_status.an_event = event_type
-    //     return this_of_type_events;
-    // }
+    solve_min_of_all_events() {
+        let list_of_hours = this.temp_solved_event_list.map(function(the_event) {
+            return the_event.hours;
+        });
+        let min_value = stats.min(list_of_hours);
+        this.temp_events_status.min = min_value;
+        return min_value;
+    }
 
-    // solve_total_of_all_event() {
-    //     let total = 0;
-    //     this.temp_event_list.forEach(function(the_event, index) {
-    //         total = total + 1;
-    //         // return the_event.hours;
-    //     });
-    //     this.temp_events_status.total = total;
-    //     return total;
-    // }
+    solve_max_of_all_events() {
+        let list_of_hours = this.temp_solved_event_list.map(function(the_event) {
+            return the_event.hours;
+        });
+        let max_value = stats.max(list_of_hours);
+        this.temp_events_status.max = max_value;
+        return max_value;
+    }
 
-    // solve_min_of_all_events() {
-    //     let list_of_hours = this.temp_event_list.map(function(the_event) {
-    //         return the_event.hours;
-    //     });
-    //     let min_value = stats.min(list_of_hours);
-    //     this.temp_events_status.min = min_value;
-    //     return min_value;
-    // }
+    solve_median_of_all_events() {
+        let list_of_hours = this.temp_solved_event_list.map(function(the_event) {
+            return the_event.hours;
+        });
+        let median_value = stats.median(list_of_hours);
+        this.temp_events_status.median = median_value;
+        return median_value;
+    }
 
-    // solve_max_of_all_events() {
-    //     let list_of_hours = this.temp_event_list.map(function(the_event) {
-    //         return the_event.hours;
-    //     });
-    //     let max_value = stats.max(list_of_hours);
-    //     this.temp_events_status.max = max_value;
-    //     return max_value;
-    // }
+    solve_mode_of_all_events() {
+        let list_of_hours = this.temp_solved_event_list.map(function(the_event) {
+            return the_event.hours;
+        });
+        let mode_value = stats.mode(list_of_hours);
+        this.temp_events_status.mode = mode_value;
+        return mode_value;
+    }
 
-    // solve_median_of_all_events() {
-    //     let list_of_hours = this.temp_event_list.map(function(the_event) {
-    //         return the_event.hours;
-    //     });
-    //     let median_value = stats.median(list_of_hours);
-    //     this.temp_events_status.median = median_value;
-    //     return median_value;
-    // }
-
-    // solve_mode_of_all_events() {
-    //     let list_of_hours = this.temp_event_list.map(function(the_event) {
-    //         return the_event.hours;
-    //     });
-    //     let mode_value = stats.mode(list_of_hours);
-    //     this.temp_events_status.mode = mode_value;
-    //     return mode_value;
-    // }
-
-    // solve_mean_of_all_events() {
-    //     let list_of_hours = this.temp_event_list.map(function(the_event) {
-    //         return the_event.hours;
-    //     });
-    //     let mean_value = stats.mean(list_of_hours);
-    //     this.temp_events_status.mean = mean_value;
-    //     return mean_value;
-    // }
+    solve_mean_of_all_events() {
+        let list_of_hours = this.temp_event_list.map(function(the_event) {
+            return the_event.hours;
+        });
+        let mean_value = stats.mean(list_of_hours);
+        this.temp_events_status.mean = mean_value;
+        return mean_value;
+    }
 
 
-    // compute_an_event_type_status(event_type) {
-    //     this.empty_temp_event_list()
-    //     this.init_temp_event_status()
-    //     this.use_all_events_scheduled()
-    //     this.filter_an_event_type(event_type)
-    //     this.solve_min_of_all_events()
-    //     this.solve_max_of_all_events()
-    //     this.solve_median_of_all_events()
-    //     this.solve_mode_of_all_events()
-    //     this.solve_mean_of_all_events()
-    //     this.solve_total_of_all_event()
-    //     this.add_an_event_status_toOwnerStatus(this.temp_events_status)
-    // }
+    compute_an_event_status_type(event_status_type) {
+        this.init_temp_event_status()
+        this.filter_an_event_type(event_status_type)
+        this.solve_min_of_all_events()
+        this.solve_max_of_all_events()
+        this.solve_median_of_all_events()
+        this.solve_mode_of_all_events()
+        this.solve_mean_of_all_events()
+        this.solve_total_of_all_event()
+        this.add_an_event_status_toOwnerStatus(this.temp_events_status)
+    }
+
+    compute_a_set_of_event_types_status(event_type_status_list) {
+        for (const event_status_type of event_type_status_list){
+            // console.log(event_status_type)
+            this.compute_an_event_status_type(event_status_type)
+        }
+    }
 }
 
 export {ScheduledEvent, OwnerStatus, Ownership, JsonDataStruct};
