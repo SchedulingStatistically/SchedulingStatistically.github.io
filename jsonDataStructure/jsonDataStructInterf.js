@@ -25,43 +25,32 @@ const whole_json = {
     },
     scheduled_events : [
         {
-            year : 2019,
-            month : 9,
-            day : 9,
-            an_event : 'coding',
-            start : '9:00am',
-            hours : 4,
-            end : '1:00pm'
-        },
-        {
-            year : 2020,
-            month : 7,
-            day : 1,
-            an_event : 'typing',
-            start : '11:00am',
-            hours : 1,
-            end : '1:00pm'
-        },
-        {
-            year : 2020,
-            month : 8,
-            day : 2,
-            an_event : 'reading',
-            start : '12:00am',
-            hours : 1,
-            end : '1:00pm'
-        },
-        {
-            year : 2020,
-            month : 8,
-            day : 2,
-            an_event : 'reading',
-            start : '4:00apm',
-            hours : 1,
-            end : '5:00pm'
+            category : 'default', 
+            yearly_events : [
+                {year : 2018, monthly_events : [
+                    {month : 12, daily_events : [
+                        {day : 12, events :[
+                            {
+                                year : 2018,
+                                month : 12,
+                                day : 11,
+                                an_event : 'coding',
+                                start : '10:00pm',
+                                hours : 3,
+                                end : '3:00pm',
+            
+                            }
+                        ]
+                            
+                        }
+                    ]
+                    }
+                ]
+                }
+            ]
+            }
+        ]
         }
-    ]
-}
 
 // pending documentation!
 export default class jsonDataStructInterf {
@@ -74,6 +63,10 @@ export default class jsonDataStructInterf {
         this.json_object = JsonDataStruct.fromJsonFormat(whole_json);
     }
 
+    accessor_object_json_format() {
+        return this.json_object.toJsonFormat()
+    }
+
     updateOwnership(name, user_name, password){
         let owner = {
             name : name,
@@ -83,26 +76,36 @@ export default class jsonDataStructInterf {
         this.json_object.updateOwnership(owner);
     }
 
-    getEventStatus() {
-        const an_event_status = JSON.stringify(this.json_object.getEvent_status(), null, 2);
-        return an_event_status;
+    addComplete_events(i_category, i_year, i_month, i_day, i_an_event, i_start, i_hours, i_end){
+        const event_To_json = 
+            {category : i_category, yearly_event : 
+                {year : i_year, monthly_event :
+                    {month : i_month, daily_event :
+                        {day : i_day, event :
+                            {
+                                year : i_year,
+                                month : i_month,
+                                day : i_day,
+                                an_event : i_an_event,
+                                start : i_start,
+                                hours : i_hours,
+                                end : i_end,
+
+                            }
+                            
+                        }
+                    }
+                }
+            };
+        this.json_object.schedule_an_event(event_To_json)
     }
 
-    addComplete_events(year, month, day, an_event, start, hours, end){
-        let a_event = {
-            year : year,
-            month : month,
-            day : day,
-            an_event : an_event,
-            start : start,
-            hours : hours,
-            end : end
-        }
-        this.json_object.addScheduled_event(a_event)
+    remove_top_Completed_event(){
+        this.json_object.remove_top_scheduled_event()
     }
 
-    removeCompleted_event(){
-        this.json_object.removeScheduled_event()
+    remove_bottom_Completed_event() {
+        this.json_object.remove_bottom_scheduled_event()
     }
 
     getJsonObjectString(){
@@ -113,6 +116,8 @@ export default class jsonDataStructInterf {
     reset_event_status() {
         this.json_object.emptyOwnerStatus()
     }
+
+    get_events_within_a_time_partition
 
     compute_an_event_status(event_type) {
         this.json_object.compute_an_event_type_status(event_type)

@@ -20,27 +20,34 @@ console.log('debugging jsonDataStructInterf');
 const our_interface = new jsonDataStructInterf('face');
 our_interface.use_default_json_data()
 console.log('print initialize interface object')
-console.log(our_interface)
+console.log(our_interface.accessor_object_json_format())
 
 // update ownership on interface
 console.log('update ownership on interface')
-our_interface.updateOwnership('jen', 'will', 'jen will')
-console.log(our_interface)
+our_interface.updateOwnership('maz', 'will', 'maz will')
+console.log(our_interface.accessor_object_json_format())
 
 // add a scheduled event
 console.log('add a scheduled event')
-our_interface.addComplete_events(2022, 10, 3, 'web development', '1:00pm', 3, '4:00pm')
-console.log(our_interface)
+our_interface.addComplete_events('work', 2022, 10, 3, 'web development', '1:00pm', 3, '4:00pm')
+console.log(our_interface.accessor_object_json_format())
+
+// remove a schedule event in filo queue
+console.log('remove a schedule event in filo queue')
+our_interface.remove_top_Completed_event()
+console.log(our_interface.accessor_object_json_format())
 
 // remove a schedule event in lilo queue
-console.log('remove a schedule event in lilo queue')
-our_interface.removeCompleted_event()
-console.log(our_interface)
+// console.log('remove a schedule event in lilo queue')
+// our_interface.remove_bottom_Completed_event()
+// console.log(our_interface.accessor_object_json_format())
 
-// get json object string
-console.log('get json object string')
-console.log(our_interface.getJsonObjectString());
+console.log('partition a set of event')
 
-// get json object an_event
-console.log('get json an_event status')
-console.log(our_interface.getEventStatus())
+// // get json object string
+// console.log('get json object string')
+// console.log(our_interface.getJsonObjectString());
+
+// // get json object an_event
+// console.log('get json an_event status')
+// console.log(our_interface.getEventStatus())

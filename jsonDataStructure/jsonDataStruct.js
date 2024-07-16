@@ -345,7 +345,11 @@ class JsonDataStruct {
         }
     }
 
-    removeScheduled_event(){
+    remove_top_scheduled_event(){
+        this.scheduled_events.shift()
+    }
+
+    remove_bottom_scheduled_event() {
         this.scheduled_events.pop()
     }
 
@@ -391,10 +395,26 @@ class JsonDataStruct {
             }
     }
 
-    append_selected_daily_event_partition() {
+
+    filter_events_from_daily_event_partition() {
         this.temp_daily_event_partition.forEach(event_array => {
             this.temp_event_list = this.temp_event_list.concat(event_array.events)
         })
+    }
+
+
+    filter_events_from_monthly_event_partition() {
+        for(const a_monthly_event of this.temp_monthly_event_partition) {
+            this.daily_event_partition(a_monthly_event.month, 1, 31)
+            this.filter_events_from_daily_event_partition()
+        }
+    }
+
+    filter_events_from_yearly_event_partition() {
+        for(const a_yearly_event of this.temp_yearly_event_partition) {
+            this.monthly_event_partition(a_yearly_event.year, 1, 12)
+            this.filter_events_from_monthly_event_partition()
+        }
     }
 
     // set_up_temp_event_status_solved_list() {
