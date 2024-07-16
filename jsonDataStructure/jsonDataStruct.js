@@ -141,27 +141,13 @@ class YearlyEvents {
 }
 
 class ScheduledEvent {
-    constructor(year, month, day, an_event, start, hours, end, category, yearly_events) {
-        // this.year = year;
-        // this.month = month;
-        // this.day = day;
-        // this.an_event = an_event;
-        // this.start = start;
-        // this.hours = hours;
-        // this.end = end;
+    constructor(category, yearly_events) {
         this.category = category;
         this.yearly_events = yearly_events;
     }
 
     toJsonFormat() {
         return {
-            // year : this.year,
-            // month : this.month,
-            // day : this.day,
-            // an_event : this.an_event,
-            // start : this.start,
-            // hours : this.hours,
-            // end : this.end,
             category : this.category,
             yearly_events : this.yearly_events.map(the_events => the_events.toJsonFormat())
         };
@@ -170,7 +156,7 @@ class ScheduledEvent {
     static fromJsonFormat(json) {
         const yearly_events = json.yearly_events.map(the_events => YearlyEvents.fromJsonFormat(the_events))
         // const yearly_events = 0;
-        return new ScheduledEvent(json.year, json.month, json.day, json.an_event, json.start, json.hours, json.end, json.category, yearly_events);
+        return new ScheduledEvent(json.category, yearly_events);
     }
 
     addTo_yearlyEvents(json) {
