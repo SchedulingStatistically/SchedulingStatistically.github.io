@@ -84,36 +84,28 @@ class ScheduledEvent extends DatabaseObj {
     constructor(...args) {
         super();
         this.obj_type = 'ScheduledEvent';
+        this._owner = null;
+        this._name = null;
+        this._year = null;
+        this._month = null;
+        this._day = null;
+        this._start = null;
+        this._hours = null;
+        this._end = null;
+        this._max = null;
+        this._min = null;
+        this._median = null;
+        this._mode = null;
         if (args.length == 1) {
             this._user_id = args[0];
-            this._name = null;
-            this._year = null;
-            this._month = null;
-            this._day = null;
-            this._start = null;
-            this._hours = null;
-            this._end = null;
-            this._max = null;
-            this._min = null;
-            this._median = null;
-            this._mode = null;
             this.pullFromDB();
             return;
         }
-        this._name = args[0];
-        this._year = args[1];
-        this._month = args[2];
-        this._day = args[3];
-        this._start = args[4];
-        this._hours = args[5];
-        this._end = args[6];
-        this._max = args[7];
-        this._min = args[8];
-        this._median = args[9];
-        this._mode = args[10]
     }
 
     get user_id() { return this._user_id; }
+
+    get owner() { return this._owner; }
 
     get name() { return this._name; }
 
@@ -138,6 +130,8 @@ class ScheduledEvent extends DatabaseObj {
     get mode() { return this._mode; }
 
     set name(inputName) { this._name = inputName; }
+
+    set owner(inputOwner) { this._owner = inputOwner; }
 
     set year(inputYear) { this._year = inputYear; }
 
@@ -174,6 +168,7 @@ class ScheduledEvent extends DatabaseObj {
         try {
             let imported_obj = await this.update(this._user_id);
             this.name = imported_obj.fields.Name;
+            this.owner = imported_obj.fields.Owner;
             this.year = imported_obj.fields.Year;
             this.month = imported_obj.fields.Month;
             this.day = imported_obj.fields.Day;
@@ -192,6 +187,7 @@ class ScheduledEvent extends DatabaseObj {
     exportToJson() {
         return {
             Name: this.name,
+            Owner: this.owner,
             Year: this.year,
             Month: this.month,
             Day: this.day,
@@ -210,6 +206,7 @@ class ScheduledEvent extends DatabaseObj {
         json = JSON.stringify(json);
         json = JSON.parse(json);
         if (json.name != null) { this._name = json.name; }
+        if (json.owner != null) { this._owner = json.owner; }
         if (json.year != null) { this._year = json.year; }
         if (json.month != null) { this._month = json.month; }
         if (json.day != null) { this._day = json.day; }
@@ -233,6 +230,7 @@ class ScheduledEvent extends DatabaseObj {
     updateFromDB() {
         imported_obj = this.update(this._user_id)
         if (imported_obj.name != null) { this.name = imported_obj.name; }
+        if (imported_obj.owner != null) { this.owner = imported_obj }
         if (imported_obj.year != null) { this.year = imported_obj.year; }
         if (imported_obj.month != null) { this.month = imported_obj.month; }
         if (imported_obj.day != null) { this.day = imported_obj.day; }
@@ -252,14 +250,14 @@ class Ownership extends DatabaseObj {
         this.obj_type = 'Ownership';
         if (args.length == 1) {
             this._user_id = args[0];
-            this._name = null;
             this._username = null;
+            this._name = null;
             this._password = null;
             this.pullFromDB();
             return;
         }
-        this._name = args[0];
-        this._user_name = args[1];
+        this._user_name = args[0];
+        this._name = args[1];
         this._password = args[2];
     }
 
@@ -271,9 +269,9 @@ class Ownership extends DatabaseObj {
 
     get password() { return this._password; }
 
-    set name(inputName) { this._name = inputName; }
-
     set user_name(inputUserName) { this._username = inputUserName; }
+
+    set name(inputName) { this._name = inputName; }
 
     set password(inputPassword) { this._password = inputPassword; }
 
@@ -331,103 +329,75 @@ class Ownership extends DatabaseObj {
         if (imported_obj.password != null) { this.password = imported_obj.password; }
     }
 
-}
-
-
-class JsonDataStruct {
-    constructor(name, ownership, scheduled_events) {
-        super();
-        this.obj_type = 'DataStruct';
-        if (args.length == 1) {
-            this._user_id = args[0];
-            this._name = null;
-            this._ownership = null;
-            this._scheduled_events = null;
-            this.pullFromDB();
-            return;
-        }
-        this._name = name;
-        this._ownership = ownership;
-        this._scheduled_events = scheduled_events;
-    }
-
-    get user_id() { return this._user_id; }
-
-    get name() { return this._name; }
-
-    get ownership() { return this._ownership; }
-
-    get scheduled_events() { return this._scheduled_events; }
-
-    set name(inputName) { this._name = inputName; }
-
-    set ownership(inputOwnership) { this._ownership = inputOwnership; }
-
-    set scheduled_events(inputScheduledEvents) { this._scheduled_events = inputScheduledEvents; }
-
-    async createDBEntry() {
-        try {
-            this._user_id = await this.create(
-                { ...this.exportToJson() }
-            );
-            console.log(this._user_id)
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    async pullFromDB() {
-        try {
-            let imported_obj = await this.update(this._user_id);
-            this.name = imported_obj.fields.Name;
-            this.ownership = imported_obj.fields.Ownership;
-            this.scheduled_events = imported_obj.fields.ScheduledEvents;
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    exportToJson() {
-        return {
-            Name: this.name,
-            Ownership: this.ownership,
-            ScheduledEvents: this.scheduled_events
-        };
-    }
-
-    updateFromJson(json) {
-        // json = JSON.parse(json);
-        json = JSON.stringify(json);
-        json = JSON.parse(json);
-        if (json.name != null) { this.name = json.name; }
-        if (json.ownership != null) { this.ownership = json.ownership; }
-        if (json.scheduled_events != null) { this.scheduled_events = json.scheduled_events; }
-    }
-
-    exportToDB() {
-        if (this._user_id != null) {
-            this.export(this.exportToJson());
+    async logIn(username) {
+        let exists = ''
+        this.base('Ownership').select({
+            maxRecords: 1,
+            // filterByFormula: "{Username} = " + username,
+            filterByFormula: `{Username} = '${username}'`,
+            view: "Grid view"
+        }).eachPage(function page(records) {
+            records.forEach(function (record) {
+                // console.log(record)
+                exists = record.get('Username')
+            });
+        }, function done(err) {
+            if (err) { console.error(err); return; }
+        });
+        await new Promise(r => setTimeout(r, 2000));
+        // IF USER DOESN'T EXIST
+        if (exists == '') {
+            let new_user = new Ownership()
+            new_user.username = username
+            new_user.createDBEntry()
+            return new_user
         } else {
-            this._user_id = this.createDBEntry();
+            let events = []
+            this.base('ScheduledEvent').select({
+                // filterByFormula: "{Owner} = " + username,
+                filterByFormula: `{Owner} = '${username}'`,
+                view: "Grid view"
+            }).eachPage(function page(records, fetchNextPage) {
+                records.forEach(function (record) {
+                    // console.log(record)
+                    events.push(record.fields)
+                });
+                fetchNextPage();
+
+            }, function done(err) {
+                if (err) { console.error(err); return; }
+            });
+            return events
         }
     }
 }
 
-export { ScheduledEvents, Ownership, JsonDataStruct };
+export { ScheduledEvent, Ownership };
 // export default OwnerStatus;
 
 // async function test() {
-//     test_event = new ScheduledEvent("test", '2021', '12', '12', '12', '12', '12', '12', '12', '12', '12')
-//     test_event.createDBEntry()
-//     await new Promise(r => setTimeout(r, 2000));
-//     // console.log(test_event.user_id)
-//     console.log(test_event)
-//     test_event.updateFromJson({
-//         year: "912837",
-//         month: "11"
-//     })
-//     test_event.exportToDB()
-//     new_event = new ScheduledEvent(test_event.user_id)
-//     // console.log(new_event)
-// }
+// NOTE: DEMONSTRATING LOG IN FUNCTION
+// test_user = new Ownership
+// events = await test_user.logIn('Angel')
+// await new Promise(r => setTimeout(r, 2000));
+// console.log(events)
+// test_user2 = new Ownership
+// let test_user2_name = test_user2.logIn('Paolo')
+// await new Promise(r => setTimeout(r, 2000));
+// console.log(test_user2_name)
 
+// NOTE: CREATING SCHEDULED EVENT EXAMPLE
+// test_event = new ScheduledEvent("test", '2021', '12', '12', '12', '12', '12', '12', '12', '12', '12')
+// test_event.createDBEntry()
+// await new Promise(r => setTimeout(r, 2000));
+// // console.log(test_event.user_id)
+// console.log(test_event)
+// test_event.updateFromJson({
+//     year: "912837",
+//     month: "11"
+// })
+// console.log(test_event)
+// test_event.exportToDB()
+// new_event = new ScheduledEvent(test_event.user_id)
+// console.log(new_event)
+// }
