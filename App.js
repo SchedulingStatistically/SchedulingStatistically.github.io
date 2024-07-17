@@ -401,7 +401,7 @@ function App() {
             </ul>
           </div>
           <div className="incompleted-task-list-area">
-            <h2>Incompleted Tasks</h2>
+            <h2>Incomplete Tasks</h2>
             <ul className="task-list">
               {incompletedTasks.map(task => (
                 <li key={task.id} className="task-item">
