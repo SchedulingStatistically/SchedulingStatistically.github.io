@@ -416,9 +416,7 @@ function App() {
           </div>
         </div>
       </div>
-      <div style={{ width: '80%', margin: 'auto' }}>
-        <canvas id="productivityChart" />
-      </div>
+      <canvas id="productivityChart" />
     </div>
   );
 }
