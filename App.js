@@ -210,7 +210,52 @@ function App() {
     setUser(null);
   };
 
+  const [productivityChart, setChart] = useState(null);
   useEffect(() => {
+    // Configuration options
+    const config = {
+      type: 'line',
+      // data: data,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'Productivity Tracker: Completed vs Incomplete Tasks'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Number of Tasks'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Time (Days)'
+            }
+          }
+        }
+      },
+    };
+
+    // Create and render the chart
+    setChart(new Chart(
+      document.getElementById('productivityChart'),
+      config
+    ));
+
+  }, []);
+
+  useEffect(() => {
+    console.log('preupdate');
+    if (!productivityChart) return;
     // Generate fake data for the last 30 days
     const generateData = (completed) => {
       return Array.from({ length: 30 }, () =>
@@ -245,45 +290,12 @@ function App() {
       ]
     };
 
-    // Configuration options
-    const config = {
-      type: 'line',
-      data: data,
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: 'top',
-          },
-          title: {
-            display: true,
-            text: 'Productivity Tracker: Completed vs Incomplete Tasks'
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Number of Tasks'
-            }
-          },
-          x: {
-            title: {
-              display: true,
-              text: 'Time (Days)'
-            }
-          }
-        }
-      },
-    };
+    console.log('update');
 
-    // Create and render the chart
-    const productivityChart = new Chart(
-      document.getElementById('productivityChart'),
-      config
-    );
-  }, [tasks, completedTasks, incompletedTasks])
+    productivityChart.data = data;
+    productivityChart.update();
+  });
+
 
   return (
     <div className="container">                                    {/* Comment everything below this line */}
