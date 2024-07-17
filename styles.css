@@ -17,11 +17,13 @@ body {
 /* Top bar styles */
 .planner {
   width: 45%;
+  height: 45%;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
   margin-bottom: 20px;
+  margin-right: 40px;
 }
 
 /* Header Text */
@@ -67,6 +69,7 @@ button:hover {
 .task-lists {
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
 /* General task list area styles for the boxes */
@@ -215,4 +218,47 @@ button:hover {
     width: 100%;
     margin-right: 0;
   }
+}
+
+.app-header {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+}
+
+
+.auth-section {
+  width: 300px;
+}
+
+.auth-box {
+  background-color: #FFF;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+}
+
+.auth-box h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.auth-box form {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-box input {
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+.auth-box button {
+  padding: 5px;
+}
+
+.user-info {
+  background-color: #f0f0f0;
+  padding: 15px;
+  border-radius: 5px;
 }

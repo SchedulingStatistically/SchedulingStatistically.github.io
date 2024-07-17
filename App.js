@@ -5,7 +5,7 @@
 // - A list of incompleted tasks with reasons for not completing the task
 // - A dropdown menu to select a reason for marking a task as incomplete
 
-const { useState } = React;
+const { useState, Fragment } = React;
 const { Calendar, momentLocalizer } = ReactBigCalendar;
 const localizer = momentLocalizer(moment);
 
@@ -24,6 +24,78 @@ function DropdownMenu({ task, position, incompleteReasons, handleIncompleteTask 
   );
 }
 
+// Login component
+function Login({ onLogin }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Here you would typically send a request to your backend to authenticate
+    console.log('Login attempt:', username, password);
+    onLogin(username);
+  };
+
+  return (
+    <div className="auth-box">
+      <h2>Login</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
+          required
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          required
+        />
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  );
+}
+
+// Register component
+function Register({ onRegister }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Here you would typically send a request to your backend to register
+    console.log('Registration attempt:', username, password);
+    onRegister(username);
+  };
+
+  return (
+    <div className="auth-box">
+      <h2>Register</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
+          required
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          required
+        />
+        <button type="submit">Register</button>
+      </form>
+    </div>
+  );
+}
+
 function App() {
   // State variables
   const [tasks, setTasks] = useState([]);                                              // Tasks state variable        
@@ -36,6 +108,7 @@ function App() {
   const [incompletedTasks, setIncompletedTasks] = useState([]);                        // Incompleted tasks state variable
   const [activeDropdownId, setActiveDropdownId] = useState(null);                      // Active dropdown id state variable
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });       // Dropdown position state variable
+  const [user, setUser] = useState(null);
 
 
   const incompleteReasons = [
@@ -125,9 +198,23 @@ function App() {
     setActiveDropdownId(activeDropdownId === id ? null : id);       // Toggle active dropdown id
   };
 
+    // Functions for handling login and registration
+    const handleLogin = (username) => {
+      setUser(username);
+    };
+  
+    const handleRegister = (username) => {
+      setUser(username);
+    };
+  
+    const handleLogout = () => {
+      setUser(null);
+    };
+
 
   return (
     <div className="container">                                    {/* Comment everything below this line */}
+    <div className="app-header">
       <div className="planner">
         <div className="task-input-area">
           <h2>Daily Planner</h2>
@@ -154,6 +241,20 @@ function App() {
           </form>
         </div>
       </div>
+      <div className="auth-section">
+        {user ? (
+          <div className="user-info">
+            <p>Welcome, {user}!</p>
+            <button onClick={handleLogout}>Logout</button>
+          </div>
+        ) : (
+          <React.Fragment>
+            <Login onLogin={handleLogin} />
+            <Register onRegister={handleRegister} />
+          </React.Fragment>
+        )}
+      </div>
+    </div>
       <div className="task-lists">
         <div className="task-list-area">
           <h2>Task List</h2>
@@ -243,6 +344,7 @@ function App() {
         </div>
       </div>
     </div>
+
   );
 }
 
