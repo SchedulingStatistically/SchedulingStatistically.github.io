@@ -5,10 +5,9 @@
 // - A list of incompleted tasks with reasons for not completing the task
 // - A dropdown menu to select a reason for marking a task as incomplete
 
-const { useState, Fragment } = React;
+const { useEffect, useState, Fragment } = React;
 const { Calendar, momentLocalizer } = ReactBigCalendar;
 const localizer = momentLocalizer(moment);
-
 
 function DropdownMenu({ task, position, incompleteReasons, handleIncompleteTask }) {            // DropdownMenu component
   return ReactDOM.createPortal(                                                                 // Create a portal to render the dropdown menu   
@@ -146,7 +145,7 @@ function App() {
     );
     setTasks(updatedTasks);                                                           // Update tasks
     const updatedCompletedTasks = completedTasks.map(task =>                          // Map through completed tasks and update task with id
-      task.id === id ? { ...task, text: newText, time: `${newTime} minutes` } : task  
+      task.id === id ? { ...task, text: newText, time: `${newTime} minutes` } : task
     );
     setCompletedTasks(updatedCompletedTasks);                                         // Update completed tasks
     const updatedIncompletedTasks = incompletedTasks.map(task =>                      // Map through incompleted tasks and update task with id
@@ -198,63 +197,137 @@ function App() {
     setActiveDropdownId(activeDropdownId === id ? null : id);       // Toggle active dropdown id
   };
 
-    // Functions for handling login and registration
-    const handleLogin = (username) => {
-      setUser(username);
-    };
-  
-    const handleRegister = (username) => {
-      setUser(username);
-    };
-  
-    const handleLogout = () => {
-      setUser(null);
+  // Functions for handling login and registration
+  const handleLogin = (username) => {
+    setUser(username);
+  };
+
+  const handleRegister = (username) => {
+    setUser(username);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+  };
+
+  useEffect(() => {
+    // Generate fake data for the last 30 days
+    const generateData = (completed) => {
+      return Array.from({ length: 30 }, () =>
+        completed ? Math.floor(Math.random() * 10) + 1 : Math.floor(Math.random() * 5)
+      );
     };
 
+    const labels = Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`);
+    const completedTaskData = generateData(true);
+    const incompleteTaskData = generateData(false);
+
+    // Data for the chart
+    const data = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Completed Tasks',
+          data: completedTaskData,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          tension: 0.1,
+          fill: true
+        },
+        {
+          label: 'Incomplete Tasks',
+          data: incompleteTaskData,
+          borderColor: 'rgba(255, 99, 132, 1)',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          tension: 0.1,
+          fill: true
+        }
+      ]
+    };
+
+    // Configuration options
+    const config = {
+      type: 'line',
+      data: data,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'Productivity Tracker: Completed vs Incomplete Tasks'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Number of Tasks'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Time (Days)'
+            }
+          }
+        }
+      },
+    };
+
+    // Create and render the chart
+    const productivityChart = new Chart(
+      document.getElementById('productivityChart'),
+      config
+    );
+  }, [tasks, completedTasks, incompletedTasks])
 
   return (
     <div className="container">                                    {/* Comment everything below this line */}
-    <div className="app-header">
-      <div className="planner">
-        <div className="task-input-area">
-          <h2>Daily Planner</h2>
-          <form onSubmit={addTask}>                                
-            <input
-              type="text"
-              value={newTask}
-              onChange={(e) => setNewTask(e.target.value)}
-              placeholder="Add a new task"
-              className="task-input"
-            />
-            <input
-              type="text"
-              value={newTaskTime}
-              onChange={(e) => {
-                if (!isNaN(e.target.value)) {
-                  setNewTaskTime(e.target.value);
-                }
-              }}
-              placeholder="Estimated time (minutes)"
-              className="task-input"
-            />
-            <button type="submit">Add Task</button>
-          </form>
+      <div className="app-header">
+        <div className="planner">
+          <div className="task-input-area">
+            <h2>Daily Planner</h2>
+            <form onSubmit={addTask}>
+              <input
+                type="text"
+                value={newTask}
+                onChange={(e) => setNewTask(e.target.value)}
+                placeholder="Add a new task"
+                className="task-input"
+              />
+              <input
+                type="text"
+                value={newTaskTime}
+                onChange={(e) => {
+                  if (!isNaN(e.target.value)) {
+                    setNewTaskTime(e.target.value);
+                  }
+                }}
+                placeholder="Estimated time (minutes)"
+                className="task-input"
+              />
+              <button type="submit">Add Task</button>
+            </form>
+          </div>
+        </div>
+        <div className="auth-section">
+          {user ? (
+            <div className="user-info">
+              <p>Welcome, {user}!</p>
+              <button onClick={handleLogout}>Logout</button>
+            </div>
+          ) : (
+            <React.Fragment>
+              <Login onLogin={handleLogin} />
+              <Register onRegister={handleRegister} />
+            </React.Fragment>
+          )}
         </div>
       </div>
-      <div className="auth-section">
-        {user ? (
-          <div className="user-info">
-            <p>Welcome, {user}!</p>
-            <button onClick={handleLogout}>Logout</button>
-          </div>
-        ) : (
-          <React.Fragment>
-            <Login onLogin={handleLogin} />
-            <Register onRegister={handleRegister} />
-          </React.Fragment>
-        )}
-      </div>
-    </div>
       <div className="task-lists">
         <div className="task-list-area">
           <h2>Task List</h2>
@@ -343,8 +416,10 @@ function App() {
           </div>
         </div>
       </div>
+      <div style={{ width: '80%', margin: 'auto' }}>
+        <canvas id="productivityChart" />
+      </div>
     </div>
-
   );
 }
 
