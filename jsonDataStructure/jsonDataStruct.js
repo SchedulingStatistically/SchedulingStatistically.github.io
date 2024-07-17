@@ -31,7 +31,7 @@
 import * as stats from './node_modules/simple-statistics/dist/simple-statistics.mjs'
 
 class AnEvent {
-    constructor(year, month, day, an_event, start, hours, end) {
+    constructor(year, month, day, an_event, start, hours, end, complete, id) {
         this.year = year;
         this.month = month;
         this.day = day;
@@ -39,6 +39,8 @@ class AnEvent {
         this.start = start;
         this.hours = hours;
         this.end = end;
+        this.complete = complete
+        this.id = id
     }
 
     toJsonFormat() {
@@ -50,22 +52,26 @@ class AnEvent {
             start : this.start,
             hours : this.hours,
             end : this.end,
+            complete: this.complete,
+            id : this.id
         };
     }
 
     static fromJsonFormat(json) {
-        return new AnEvent(json.year, json.month, json.day, json.an_event, json.start, json.hours, json.end);
+        return new AnEvent(json.year, json.month, json.day, json.an_event, json.start, json.hours, json.end, json.complete, json.id);
     }
 }
 class DailyEvents {
     constructor(day, events) {
         this.day = day;
+        this.current_id = -1;
         this.events = events;
     }
 
     toJsonFormat() {
         return {
             day : this.day,
+            current_id : this.current_id,
             events : this.events.map(an_event => an_event.toJsonFormat())
         }
     }
@@ -76,7 +82,29 @@ class DailyEvents {
     }
 
     addTo_events(json) {
-        this.events.push(new AnEvent(json.year, json.month, json.day, json.an_event, json.start, json.hours, json.end))
+        this.current_id++
+        const generated_id = json.year + json.month * 10000 + json.day * 1000000 + this.current_id * 100000000
+        this.events.push(new AnEvent(json.year, json.month, json.day, json.an_event, json.start, json.hours, json.end, false, generated_id))
+    }
+
+    updateTo_events(json) {
+        const selected_event_index = this.events.findIndex(the_event => the_event.id === json.id)
+        if (selected_event_index !== -1) {
+            delete this.events[selected_event_index]
+            this.events[selected_event_index] = new AnEvent(json.year, json.month, json.day, json.an_event, json.start, json.hours, json.end, json.complete, json.id)
+        }else{
+            console.error('id is valid')
+        }
+    }
+
+    deleteFrom_events(json) {
+        const selected_event_index = this.events.findIndex(the_event => the_event.id === json.id)
+        if (selected_event_index !== -1) {
+            delete this.events[selected_event_index]
+            this.events.splice(selected_event_index, 1)
+        }else{
+            console.error('id is valid')
+        }
     }
 }
 
@@ -106,6 +134,24 @@ class MonthlyEvents {
             const new_daily_event = new DailyEvents(json.day, [])
             new_daily_event.addTo_events(json.event)
             this.daily_events.push(new_daily_event)
+        }
+    }
+
+    updateTo_dailyEvents(json) {
+        const found_daily_event = this.daily_events.find(the_events => the_events.day === json.day)
+        if(found_daily_event){
+            found_daily_event.updateTo_events(json.event)
+        }else{
+            console.error('date of day is not valid')
+        }
+    }
+
+    deleteFrom_dailyEvents(json) {
+        const found_daily_event = this.daily_events.find(the_events => the_events.day === json.day)
+        if(found_daily_event){
+            found_daily_event.deleteFrom_events(json.event)
+        }else{
+            console.error('date of day is not valid')
         }
     }
 }
@@ -138,6 +184,24 @@ class YearlyEvents {
             this.monthly_events.push(new_monthly_event)
         }
     }
+
+    updateTo_monthlyEvents(json) {
+        const monthly_event = this.monthly_events.find(the_event => the_event.month === json.month)
+        if(monthly_event) {
+            monthly_event.updateTo_dailyEvents(json.daily_event)
+        }else{
+            console.error('date of month is not valid')
+        }
+    }
+
+    deleteFrom_monthlyEvents(json) {
+        const monthly_event = this.monthly_events.find(the_event => the_event.month === json.month)
+        if(monthly_event) {
+            monthly_event.deleteFrom_dailyEvents(json.daily_event)
+        }else{
+            console.error('date of month is not valid')
+        }
+    }
 }
 
 class ScheduledEvent {
@@ -167,6 +231,24 @@ class ScheduledEvent {
             const new_yearly_event = new YearlyEvents(json.year, [])
             new_yearly_event.addTo_monthlyEvents(json.monthly_event)
             this.yearly_events.push(new_yearly_event)
+        }
+    }
+
+    updateTo_yearlyEvents(json) {
+        const yearly_event = this.yearly_events.find(the_event => the_event.year === json.year)
+        if(yearly_event) {
+            yearly_event.updateTo_monthlyEvents(json.monthly_event)
+        }else{
+            console.error('date of year is not valid')
+        }
+    }
+
+    deleteFrom_yearlyEvents(json) {
+        const yearly_event = this.yearly_events.find(the_event => the_event.year === json.year)
+        if(yearly_event) {
+            yearly_event.deleteFrom_monthlyEvents(json.monthly_event)
+        }else{
+            console.error('date of year is not valid')
         }
     }
     
@@ -327,7 +409,6 @@ class JsonDataStruct {
 
     updateOwner_status(newOwner_status){
         this.owner_status = OwnerStatus.fromJsonFormat(newOwner_status)
-        // this.owner_status = new OwnerStatus(newOwner_status.your_global_status, newOwner_status.current_status_scope, newOwner_status.all_event_status);
     }
 
     getScheduled_events(){
@@ -344,6 +425,25 @@ class JsonDataStruct {
             this.scheduled_events.push(new_scheduled_event_category)
         }
     }
+
+    update_a_scheduled_event(json) {
+        const scheduled_event_category = this.scheduled_events.find(the_event => the_event.category === json.category)
+        if(scheduled_event_category) {
+            scheduled_event_category.updateTo_yearlyEvents(json.yearly_event)
+        }else{
+            console.error('category is not valid')
+        }
+    }
+
+    delete_a_scheduled_event(json) {
+        const scheduled_event_category = this.scheduled_events.find(the_event => the_event.category === json.category)
+        if(scheduled_event_category) {
+            scheduled_event_category.deleteFrom_yearlyEvents(json.yearly_event)
+        }else{
+            console.error('category is not valid')
+        }
+    }
+
 
     remove_top_scheduled_event(){
         this.scheduled_events.shift()

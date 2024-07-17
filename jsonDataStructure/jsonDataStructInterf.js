@@ -37,6 +37,8 @@ const whole_json = {
                                 start : '10:00pm',
                                 hours : 3,
                                 end : '3:00pm',
+                                complete : false,
+                                id : -1
             
                             }
                         ]
@@ -76,7 +78,7 @@ export default class jsonDataStructInterf {
         this.json_object.updateOwnership(owner);
     }
 
-    addComplete_events(i_category, i_year, i_month, i_day, i_an_event, i_start, i_hours, i_end){
+    addComplete_event(i_category, i_year, i_month, i_day, i_an_event, i_start, i_hours, i_end){
         const event_To_json = 
             {category : i_category, yearly_event : 
                 {year : i_year, monthly_event :
@@ -98,6 +100,56 @@ export default class jsonDataStructInterf {
                 }
             };
         this.json_object.schedule_an_event(event_To_json)
+    }
+
+    update_the_complete_event(i_category, i_year, i_month, i_day, i_an_event, i_start, i_hours, i_end, complete, id){
+        const event_To_json = 
+            {category : i_category, yearly_event : 
+                {year : i_year, monthly_event :
+                    {month : i_month, daily_event :
+                        {day : i_day, event :
+                            {
+                                year : i_year,
+                                month : i_month,
+                                day : i_day,
+                                an_event : i_an_event,
+                                start : i_start,
+                                hours : i_hours,
+                                end : i_end,
+                                complete : complete,
+                                id : id
+                            }
+                            
+                        }
+                    }
+                }
+            };
+        this.json_object.update_a_scheduled_event(event_To_json)
+    }
+
+    delete_the_complete_event(i_category, i_year, i_month, i_day, i_an_event, i_start, i_hours, i_end, complete, id){
+        const event_To_json = 
+            {category : i_category, yearly_event : 
+                {year : i_year, monthly_event :
+                    {month : i_month, daily_event :
+                        {day : i_day, event :
+                            {
+                                year : i_year,
+                                month : i_month,
+                                day : i_day,
+                                an_event : i_an_event,
+                                start : i_start,
+                                hours : i_hours,
+                                end : i_end,
+                                complete : complete,
+                                id : id
+                            }
+                            
+                        }
+                    }
+                }
+            };
+        this.json_object.delete_a_scheduled_event(event_To_json)
     }
 
     remove_top_Completed_event(){
