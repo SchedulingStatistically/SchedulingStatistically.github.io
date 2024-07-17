@@ -17,13 +17,13 @@ body {
 /* Top bar styles */
 .planner {
   width: 45%;
-  height: 45%;
+  height: 35%;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
   margin-bottom: 20px;
-  margin-right: 40px;
+  margin-right: 20px
 }
 
 /* Header Text */
@@ -69,7 +69,6 @@ button:hover {
 .task-lists {
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 
 /* General task list area styles for the boxes */

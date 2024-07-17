@@ -31,7 +31,7 @@ function Login({ onLogin }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Here you would typically send a request to your backend to authenticate
+    // Backend request here
     console.log('Login attempt:', username, password);
     onLogin(username);
   };
@@ -67,7 +67,7 @@ function Register({ onRegister }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Here you would typically send a request to your backend to register
+    // Backend request here
     console.log('Registration attempt:', username, password);
     onRegister(username);
   };
