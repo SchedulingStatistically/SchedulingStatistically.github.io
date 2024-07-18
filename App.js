@@ -95,20 +95,38 @@ function Register({ onRegister }) {
   );
 }
 
+function loadTasks(key) {
+  const tasks = window.localStorage.getItem(key);
+  return tasks ? JSON.parse(tasks) : [];
+}
+
 function App() {
   // State variables
-  const [tasks, setTasks] = useState([]);                                              // Tasks state variable        
+  const [tasks, setTasksVar] = useState(loadTasks('tasks'));                                              // Tasks state variable        
   const [newTask, setNewTask] = useState('');                                          // New task state variable
   const [newTaskTime, setNewTaskTime] = useState('');                                  // New task time state variable
   const [editingTaskId, setEditingTaskId] = useState(null);                            // Editing task id state variable
   const [editingTaskText, setEditingTaskText] = useState('');                          // Editing task text state variable
   const [editingTaskTime, setEditingTaskTime] = useState('');                          // Editing task time state variable
-  const [completedTasks, setCompletedTasks] = useState([]);                            // Completed tasks state variable 
-  const [incompletedTasks, setIncompletedTasks] = useState([]);                        // Incompleted tasks state variable
+  const [completedTasks, setCompletedTasksVar] = useState(loadTasks('completedTasks'));                            // Completed tasks state variable 
+  const [incompletedTasks, setIncompletedTasksVar] = useState(loadTasks('incompletedTasks'));                        // Incompleted tasks state variable
   const [activeDropdownId, setActiveDropdownId] = useState(null);                      // Active dropdown id state variable
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });       // Dropdown position state variable
   const [user, setUser] = useState(null);
 
+  const setTasks = (args) => {
+    setTasksVar(args);
+    window.localStorage.setItem('tasks', JSON.stringify(args));
+  };
+
+  const setCompletedTasks = (args) => {
+    setCompletedTasksVar(args);
+    window.localStorage.setItem('completedTasks', JSON.stringify(args));
+  };
+  const setIncompletedTasks = (args) => {
+    setIncompletedTasksVar(args);
+    window.localStorage.setItem('incompletedTasks', JSON.stringify(args));
+  };
 
   const incompleteReasons = [
     "Procrastination",
