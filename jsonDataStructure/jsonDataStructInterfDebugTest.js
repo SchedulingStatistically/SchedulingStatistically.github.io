@@ -43,17 +43,17 @@ console.log(our_interface.accessor_object_json_format())
 // console.log(our_interface.accessor_object_json_format())
 
 // console.log('schedule a set of events')
-// our_interface.addComplete_event('work', 2019, 11, 21, 'history', '8:00am', 2, '11:30am')
-// our_interface.addComplete_event('work', 2019, 11, 22, 'history', '8:00am', 1, '11:30am')
-// our_interface.addComplete_event('work', 2019, 11, 23, 'history', '8:00am', 3, '11:30am')
-// our_interface.addComplete_event('work', 2019, 11, 24, 'history', '8:00am', 4, '11:30am')
-// our_interface.addComplete_event('work', 2019, 11, 25, 'history', '8:00am', 4, '11:30am')
+our_interface.addComplete_event('work', 2019, 11, 21, 'history', '8:00am', 2, '11:30am')
+our_interface.addComplete_event('work', 2019, 11, 22, 'history', '8:00am', 1, '11:30am')
+our_interface.addComplete_event('work', 2019, 11, 23, 'history', '8:00am', 3, '11:30am')
+our_interface.addComplete_event('work', 2019, 11, 24, 'history', '8:00am', 4, '11:30am')
+our_interface.addComplete_event('work', 2019, 11, 25, 'history', '8:00am', 4, '11:30am')
 
-// our_interface.addComplete_event('work', 2020, 1, 21, 'comps', '8:00am', 10, '1:30am')
-// our_interface.addComplete_event('work', 2020, 1, 22, 'comps', '8:00am', 2, '11:30am')
-// our_interface.addComplete_event('work', 2020, 1, 23, 'comps', '8:00am', 10, '11:30am')
-// our_interface.addComplete_event('work', 2020, 1, 24, 'comps', '8:00am', 9, '11:30am')
-// our_interface.addComplete_event('work', 2020, 1, 25, 'comps', '8:00am', 12, '11:30am')
+our_interface.addComplete_event('work', 2020, 1, 21, 'comps', '8:00am', 10, '1:30am')
+our_interface.addComplete_event('work', 2020, 1, 22, 'comps', '8:00am', 2, '11:30am')
+our_interface.addComplete_event('work', 2020, 1, 23, 'comps', '8:00am', 10, '11:30am')
+our_interface.addComplete_event('work', 2020, 1, 24, 'comps', '8:00am', 9, '11:30am')
+our_interface.addComplete_event('work', 2020, 1, 25, 'comps', '8:00am', 12, '11:30am')
 
 our_interface.addComplete_event('work', 2020, 11, 21, 'calc', '8:00am', 5, '11:30am')
 our_interface.addComplete_event('work', 2020, 11, 22, 'calc', '8:00am', 2, '11:30am')
@@ -87,16 +87,17 @@ our_interface.get_events_within_a_daily_time_partition('work', 2020, 11, 22, 25)
 console.log(our_interface.accessor_object_filter_events())
 
 
-console.log('test json data struct event update')
+// console.log('test json data struct event update')
 our_interface.update_the_complete_event('work', 2020, 11, 22, 'update', '1:00pm', 4, '3:00pm', true, 22112020)
 our_interface.update_the_complete_event('work', 2020, 11, 22, 'updat1', '1:00pm', 4, '3:00pm', true, 122112020)
 our_interface.update_the_complete_event('work', 2020, 11, 22, 'updat2', '1:00pm', 4, '3:00pm', true, 222112020)
 our_interface.delete_the_complete_event('work', 2020, 11, 25, 'delete', '10:00pm', 1, '5:00am', false, 225112020)
-console.log(our_interface.accessor_object_json_format())
+// console.log(our_interface.accessor_object_json_format())
 
-console.log('daily time partition')
-our_interface.get_events_within_a_daily_time_partition('work', 2020, 11, 22, 25)
-console.log(our_interface.accessor_object_filter_events())
+
+// console.log('daily time partition')
+// our_interface.get_events_within_a_daily_time_partition('work', 2020, 11, 22, 25)
+// console.log(our_interface.accessor_object_filter_events())
 
 
 
@@ -106,16 +107,16 @@ console.log(our_interface.accessor_object_filter_events())
 // console.log(our_interface.accessor_object_event_status())
 
 // console.log('compute a list of filter evens')
-// our_interface.add_an_event_type('calc')
-// our_interface.add_an_event_type('hims')
-// our_interface.compute_all_event_status_type()
-// console.log(our_interface.accessor_object_event_status())
+our_interface.add_an_event_type('calc')
+our_interface.add_an_event_type('hims')
+our_interface.compute_all_event_status_type()
+console.log(our_interface.accessor_object_event_status())
 
-// console.log('test task adding')
-// our_interface.addComplete_event('task', 2022, 11, 21, 'baseball', '8:00am', 2, '11:30am')
-// our_interface.addComplete_event('task', 2022, 11, 21, 'baseball', '8:00am', 2, '11:30am')
-// our_interface.get_events_within_a_yearly_time_partition('task', 2022, 2022)
-// console.log(our_interface.accessor_object_filter_events())
+console.log('compute a list of filter events in period of day')
+our_interface.compute_event_in_by_period_of_days('work', 2017, 2020, 8)
+console.log(our_interface.accessor_object_period_status())
+console.log(our_interface.accessor_object_event_status())
+
 
 // // get json object string
 // console.log('get json object string')

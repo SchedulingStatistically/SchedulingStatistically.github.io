@@ -286,11 +286,38 @@ class EventStatus {
     }
 }
 
+class PeriodStatus {
+    constructor(an_event, year, month, day, total, complete) {
+        this.an_event = an_event;
+        this.year = year
+        this.month = month
+        this.day = day
+        this.total = total
+        this.complete = complete
+    }
+
+    toJsonFormat() {
+        return {
+            an_event : this.an_event,
+            year : this.year,
+            month : this.month,
+            day : this.day,
+            total : this.total,
+            complete : this.complete
+        }
+    }
+
+    static fromJsonFormat(json) {
+        return new PeriodStatus(json.an_event, json.year, json.month, json.day, json.total, json.complete)
+    }
+}
+
 class OwnerStatus {
-    constructor(global_status, current_status_scope, an_event_status) {
+    constructor(global_status, current_status_scope, all_event_status, all_period_status) {
         this.your_global_status = global_status;
         this.current_status_scope = current_status_scope;
-        this.all_event_status = an_event_status;
+        this.all_event_status = all_event_status;
+        this.all_period_status = all_period_status;
     }
 
     toJsonFormat() {
@@ -298,24 +325,38 @@ class OwnerStatus {
             your_global_status : this.your_global_status,
             current_status_scope : this.current_status_scope,
             all_event_status : this.all_event_status.map(an_event_status => an_event_status.toJsonFormat()),
+            all_period_status : this.all_period_status.map(a_period_status => a_period_status.toJsonFormat())
         };
     }
 
     static fromJsonFormat(json) {
         const all_event_status = json.all_event_status.map(an_event_status => EventStatus.fromJsonFormat(an_event_status));
-        return new OwnerStatus(json.your_global_status, json.current_status_scope, all_event_status);
+        const all_period_status = json.all_period_status.map(a_period_status => PeriodStatus.fromJsonFormat(a_period_status))
+        return new OwnerStatus(json.your_global_status, json.current_status_scope, all_event_status, all_period_status);
     }
 
     empty_all_event_status() {
         this.all_event_status = [];
     }
 
-    addEvent_status(new_event) {
-        this.all_event_status.push(new EventStatus(new_event.an_event, new_event.max, new_event.min, new_event.median, new_event.mode, new_event.mean, new_event.ratio, new_event.total, new_event.percent));
+    empty_all_period_status() {
+        this.all_period_status = [];
+    }
+
+    addEvent_status(new_status) {
+        this.all_event_status.push(new EventStatus(new_status.an_event, new_status.max, new_status.min, new_status.median, new_status.mode, new_status.mean, new_status.ratio, new_status.total, new_status.percent));
+    }
+
+    addPeriod_status(new_status) {
+        this.all_period_status.push(new PeriodStatus(new_status.an_event, new_status.year, new_status.month, new_status.day, new_status.total, new_status.complete))
     }
 
     removeEvent_status() {
         this.all_event_status.pop()
+    }
+
+    removePeriod_status() {
+        this.all_period_status.pop()
     }
 }
 
@@ -343,11 +384,13 @@ class Ownership {
 class JsonDataStruct {
     temp_event_list = [];
     temp_solved_event_list = [];
+    temp_period_event_status = [];
     temp_event_category_partition = [];
     temp_yearly_event_partition = [];
     temp_monthly_event_partition = [];
     temp_daily_event_partition = [];
     temp_events_status = {an_event : '', max : 0, min : 0, median : 0, mode : 0}
+    temp_period_status = {year : 0, month : 0, day : 0, total : 0, complete : 0}
     constructor(name, ownership, owner_status, scheduled_events){
         this.name = name;
         this.ownership = ownership;
@@ -391,16 +434,28 @@ class JsonDataStruct {
         return this.owner_status;
     }
 
-    emptyOwnerStatus() {
+    emptyOwnerEventStatus() {
         this.owner_status.empty_all_event_status();
     }
+
+    emptyOwnerPeriodStatus() {
+        this.owner_status.empty_all_period_status()
+    }
     
-    add_an_event_status_toOwnerStatus(new_event) {
-        this.owner_status.addEvent_status(new_event);
+    add_an_event_status_toOwnerStatus(new_status) {
+        this.owner_status.addEvent_status(new_status);
+    }
+
+    add_a_period_status_toOwnerStatus(new_status) {
+        this.owner_status.addPeriod_status(new_status)
     }
 
     remove_an_event_status_fromOwnerStatus() {
         this.owner_status.removeEvent_status();
+    }
+
+    remove_a_period_status_fromOwnerStatus() {
+        this.owner_status.removePeriod_status()
     }
 
     getEvent_status() {
@@ -597,6 +652,15 @@ class JsonDataStruct {
         return mean_value;
     }
 
+    solve_complete_of_all_events_in_a_period() {
+        let completion_count = 0
+        this.temp_solved_event_list.forEach(function(the_event) {
+            if( the_event.complete === true) {completion_count++}
+        })
+        this.temp_period_status.complete = completion_count;
+        return completion_count;
+    }
+
 
     compute_an_event_status_type(event_status_type) {
         this.init_temp_event_status()
@@ -614,6 +678,49 @@ class JsonDataStruct {
         for (const event_status_type of event_type_status_list){
             // console.log(event_status_type)
             this.compute_an_event_status_type(event_status_type)
+        }
+    }
+
+    /*
+    add function that compute daily status
+    */
+
+    empty_temp_period_list(){
+        this.temp_period_event_status = [];
+    }
+
+    init_temp_period_status() {
+        this.temp_period_status = {year : 0, month : 0, day : 0, total : 0, complete : 0}
+    }
+
+    compute_events_in_periods_of_days_in_a_month(year, month, days_period) {
+        for(let day = 0; day < 31; day = day + days_period) {
+            this.empty_temp_event_list()
+            this.init_temp_period_status()
+            this.temp_period_status.year = year
+            this.temp_period_status.month = month
+            this.temp_period_status.day = day
+            this.daily_event_partition(month, day, day + days_period)
+            this.filter_events_from_daily_event_partition()
+            this.temp_solved_event_list = this.temp_event_list
+            this.solve_complete_of_all_events_in_a_period()
+            this.add_a_period_status_toOwnerStatus(this.temp_period_status)
+            this.temp_period_event_status.push(this.temp_period_status)
+        }
+    }
+
+    compute_events_in_a_monthly_period(year, days_period) {
+        for(const a_monthly_event of this.temp_monthly_event_partition) {
+            this.monthly_event_partition(year, a_monthly_event.month, a_monthly_event.month)
+            this.compute_events_in_periods_of_days_in_a_month(year, a_monthly_event.month, days_period)
+        }
+    }
+
+    compute_events_in_a_yearly_span_and_days_period(category, start_year, end_year, days_period) {
+        this.yearly_event_partition(category, start_year, end_year)
+        for(const a_yearly_event of this.temp_yearly_event_partition) {
+            this.monthly_event_partition(a_yearly_event.year, 1, 12)
+            this.compute_events_in_a_monthly_period(a_yearly_event.year, days_period)
         }
     }
 }

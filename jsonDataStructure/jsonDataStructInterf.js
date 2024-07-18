@@ -20,6 +20,9 @@ const whole_json = {
         current_status_scope : "yearly: 2017 to 2020",
         all_event_status : [
             {an_event : 'default', max : 0, min : 0, median : 0, mode : 0, mean : 0, ratio : 0, total : 0, percent : 0}
+        ],
+        all_period_status : [
+            {year : 0, month : 0, day : 0, total : 0, complete : 0}
         ]
     },
     scheduled_events : [
@@ -161,7 +164,11 @@ export default class jsonDataStructInterf {
     }
 
     reset_event_status() {
-        this.json_object.emptyOwnerStatus()
+        this.json_object.emptyOwnerEventStatus()
+    }
+
+    reset_period_status() {
+        this.json_object.emptyOwnerPeriodStatus()
     }
 
     accessor_object_filter_events() {
@@ -190,7 +197,7 @@ export default class jsonDataStructInterf {
     }
 
     compute_an_event_status(event_type) {
-        this.json_object.emptyOwnerStatus()
+        this.json_object.emptyOwnerEventStatus()
         this.json_object.compute_an_event_status_type(event_type)
     }
 
@@ -203,8 +210,16 @@ export default class jsonDataStructInterf {
     }
 
     compute_all_event_status_type(){
-        this.json_object.emptyOwnerStatus()
+        this.json_object.emptyOwnerEventStatus()
         this.json_object.compute_a_set_of_event_types_status(this.event_types_to_be_computed)
+    }
+
+    compute_event_in_by_period_of_days(category, start_year, end_year, days_period) {
+        this.json_object.compute_events_in_a_yearly_span_and_days_period(category, start_year, end_year, days_period)
+    }
+
+    accessor_object_period_status(){
+        return this.json_object.temp_period_event_status
     }
 
     accessor_object_event_status() {
