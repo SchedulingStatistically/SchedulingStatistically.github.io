@@ -340,6 +340,20 @@ function App() {
     productivityChart.update();
   }, [productivityChart, completedTasks, incompletedTasks]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (activeDropdownId && !event.target.closest('.dropdown')) {
+        setActiveDropdownId(null);
+      }
+    };
+  
+    document.addEventListener('mousedown', handleClickOutside);
+  
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [activeDropdownId]);
+
 
   return (
     <div className="container">                                    {/* Comment everything below this line */}
@@ -425,22 +439,23 @@ function App() {
                       )}
                     </div>
                   )}
-                  <div className="task-buttons">
-                    <button onClick={() => completeTask(task.id)}>Complete</button>
-                    <div className="dropdown">
-                      <button onClick={(e) => toggleDropdown(task.id, e)}>Incomplete</button>
-                      {activeDropdownId === task.id && (
-                        <DropdownMenu
-                          task={task}
-                          position={dropdownPosition}
-                          incompleteReasons={incompleteReasons}
-                          handleIncompleteTask={incompleteTask}
-                        />
-                      )}
-                    </div>
-                    <button onClick={() => startEditing(task)}>Edit</button>
-                    <button onClick={() => deleteTask(task.id)}>Delete</button>
-                  </div>
+<div className="task-buttons">
+  <button className="complete-button" onClick={() => completeTask(task.id)}>Complete</button>
+  <div className="dropdown">
+    <button className="incomplete-button" onClick={(e) => toggleDropdown(task.id, e)}>Incomplete</button>
+    {activeDropdownId === task.id && (
+      <DropdownMenu
+        task={task}
+        position={dropdownPosition}
+        incompleteReasons={incompleteReasons}
+        handleIncompleteTask={incompleteTask}
+      />
+    )}
+  </div>
+  <button className="edit-button" onClick={() => startEditing(task)}>Edit</button>
+  <button className="delete-button" onClick={() => deleteTask(task.id)}>Delete</button>
+</div>
+
                 </li>
               ))}
             </ul>

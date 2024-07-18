@@ -189,33 +189,38 @@ button:active {
 }
 
 /* Task buttons */
-.task-buttons button:nth-child(1) { /* Delete */
-  background-color: #F56565;
-}
-.task-buttons button:nth-child(1):hover {
-  background-color: #E53E3E;
-}
-
-.task-buttons button:nth-child(2) { /* Edit */
-  background-color: #ECC94B;
-}
-.task-buttons button:nth-child(2):hover {
-  background-color: #D69E2E;
-}
-
-.task-buttons button:nth-child(3) { /* Complete */
+.task-buttons button.complete-button {
   background-color: #38B2AC;
 }
-.task-buttons button:nth-child(3):hover {
+
+.task-buttons button.complete-button:hover {
   background-color: #319795;
 }
 
-.task-buttons button:nth-child(4) { /* Incomplete */
+.task-buttons button.incomplete-button {
   background-color: #ED8936;
 }
-.task-buttons button:nth-child(4):hover {
+
+.task-buttons button.incomplete-button:hover {
   background-color: #DD6B20;
 }
+
+.task-buttons button.edit-button {
+  background-color: #ECC94B;
+}
+
+.task-buttons button.edit-button:hover {
+  background-color: #D69E2E;
+}
+
+.task-buttons button.delete-button {
+  background-color: #F56565;
+}
+
+.task-buttons button.delete-button:hover {
+  background-color: #E53E3E;
+}
+
 
 /* Dropdown menu */
 .dropdown {
