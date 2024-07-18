@@ -164,7 +164,7 @@ class ScheduledEvent extends DatabaseObj {
         }
     }
 
-    async pullFromDB() {
+    async updateFromDB() {
         try {
             let imported_obj = await this.update(this._obj_id);
             this.name = imported_obj.fields.Name;
@@ -226,22 +226,6 @@ class ScheduledEvent extends DatabaseObj {
             this._obj_id = this.createDBEntry();
         }
     }
-
-    updateFromDB() {
-        imported_obj = this.update(this._obj_id)
-        if (imported_obj.name != null) { this.name = imported_obj.name; }
-        if (imported_obj.owner != null) { this.owner = imported_obj }
-        if (imported_obj.year != null) { this.year = imported_obj.year; }
-        if (imported_obj.month != null) { this.month = imported_obj.month; }
-        if (imported_obj.day != null) { this.day = imported_obj.day; }
-        if (imported_obj.start != null) { this.start = imported_obj.start; }
-        if (imported_obj.hours != null) { this.hours = imported_obj.hours; }
-        if (imported_obj.end != null) { this.end = imported_obj.end; }
-        if (imported_obj.max != null) { this.max = imported_obj.max; }
-        if (imported_obj.min != null) { this.min = imported_obj.min; }
-        if (imported_obj.median != null) { imported_obj.median = imported_obj.median; }
-        if (imported_obj.mode != null) { imported_obj.mode = imported_obj.mode; }
-    }
 }
 
 class User extends DatabaseObj {
@@ -283,7 +267,7 @@ class User extends DatabaseObj {
         }
     }
 
-    async pullFromDB() {
+    async updateFromDB() {
         try {
             let imported_obj = await this.update(this._obj_id);
             this.name = imported_obj.fields.Name;
@@ -317,13 +301,6 @@ class User extends DatabaseObj {
         } else {
             this._obj_id = this.createDBEntry();
         }
-    }
-
-    updateFromDB() {
-        imported_obj = this.update(this._obj_id)
-        if (imported_obj.name != null) { this.name = imported_obj.name; }
-        if (imported_obj.username != null) { this.user_name = imported_obj.username; }
-        if (imported_obj.password != null) { this.password = imported_obj.password; }
     }
 
     nonExistingUsername(username) {
