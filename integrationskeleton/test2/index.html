@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Form with Login</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: space-between;
+        }
+        .left-side, .right-side {
+            width: 45%;
+        }
+    </style>
+</head>
+<body>
+    <div class="left-side">
+        <h2>Text Submission</h2>
+        <form id="text-form">
+            <input type="text" id="text-input" placeholder="Enter your text" disabled>
+            <button type="submit" id="submit-btn" disabled>Submit</button>
+        </form>
+        <ul id="input-list"></ul>
+    </div>
+    
+    <div class="right-side">
+        <h2>User Authentication</h2>
+        <div id="login-form">
+            <h3>Login</h3>
+            <input type="text" id="login-username" placeholder="Username">
+            <input type="password" id="login-password" placeholder="Password">
+            <button id="login-btn">Login</button>
+        </div>
+        <div id="register-form">
+            <h3>Register</h3>
+            <input type="text" id="register-username" placeholder="Username">
+            <input type="password" id="register-password" placeholder="Password">
+            <button id="register-btn">Register</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
