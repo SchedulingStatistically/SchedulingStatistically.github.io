@@ -213,36 +213,6 @@ class JsonDataStruct {
         FOR EXAMPLE LIST.REDUCE(LIST.MAP(NAME) + NAME)
     */
 
-
-    // DATABSE FUNCTIONS
-    send_to_db() {
-        // send to database
-        // pateZMV3GBMLUVnWA.53e93b721f80534560c6592cfa282c13e9c8079387c3b79d033cd39956ee7d71
-        fetch()
-        const baseid = 'your_base_id';
-        const tableidorname = 'your_table_id_or_name';
-        const recordid = 'your_record_id';
-        const data = { /* your data to update */ };
-
-        fetch(`https://api.airtable.com/v0/${baseid}/${tableidorname}/${recordid}`, {
-            method: 'patch',
-            headers: {
-                'authorization': 'bearer your_api_key',
-                'content-type': 'application/json'
-            },
-            body: json.stringify(data)
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch((error) => {
-                console.error('error:', error);
-            });
-
-    }
-
-    update_from_db() {
-        // update from database
-    }
 }
 
 }
