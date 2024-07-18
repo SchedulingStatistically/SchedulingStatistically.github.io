@@ -18,7 +18,7 @@ For our database, we used Airtable, a relatively low barrier to entry database, 
 
 <h4><ins>DatabaseObj</ins></h4>
 
-<p>The database object served as a parent class for the following objects providing abstractions for interacting with the database</p>
+<p>The database object serves as a parent class for the following objects providing abstractions for interacting with the database</p>
 
 <h5>Properties</h5>
 
@@ -38,11 +38,11 @@ For our database, we used Airtable, a relatively low barrier to entry database, 
   <li>export: combines create an update, creating an entry if it exists in the database and updating if it doesn't</li>
 </ul>
 
-<h4>ScheduledEvent</h4>
+<h4><ins>ScheduledEvent</ins></h4>
 
-<p>This is a representation of any event/task that a user creates with date and statistics. This object has getters and setters used as if you were modifying the property. Creating a ScheduledEvent with one argument of the obj_id will pull all properties of that user_id from the database.</p>
+<p>This is a representation of any event/task that a user creates with date and statistics. This object has getters and setters, used as if you were modifying the property. Creating a ScheduledEvent with one argument of the obj_id will pull all properties of that user_id from the database.</p>
 
-<h5><in>Properties</in></h5>
+<h5>Properties</h5>
 
 <ul>
   <li>owner: the user that "owns" the events</li>
@@ -59,12 +59,37 @@ For our database, we used Airtable, a relatively low barrier to entry database, 
   <li>mode: the mode amount of time the user has spent on this event in the past</li>
 </ul>
 
-<h5><in>Functions</in></h5>
+<h5>Functions</h5>
 
 <ul>
   <li>createDBEntry: uses inherited functions to create an entry in the database, waiting for a response before continuing</li>
   <li>updateFromDB: updates all properties of current object </li>
+  <li>exportToJson: exports a Json object</li>
+  <li>updateFromJson: updates the properties of current object with a given Json string</li>
+  <li>exportToDB: uses inherited export function to create/update database entry and assigns user_id to created DB entry if not already created</li>
 </ul>
 
   
-<h4>User</h4>
+<h4><ins>User</ins></h4>
+
+<p>The User object represents a User in the system. Unfortunately, authentication was not able to be implemented in the time period we were allotted so it has no functionality.</p>
+
+<h5><ins>Properties</ins></h5>
+
+<ul>
+  <li>username: used to associate a User with ScheduledEvents</li>
+  <li>name: the real name of the user</li>
+  <li>password: the password of the user (currently no functionality)</li>
+</ul>
+
+<h5><ins>Functions</ins></h5>
+
+<ul>
+  <li>createDBEntry: uses inherited functions to create an entry in the database, waiting for a response before continuing</li>
+  <li>updateFromDB: updates the properties of current object with a given Json string</li>
+  <li>exportToJson: exports a Json object</li>
+  <li>updateFromJson: updates the properties of current object with a given Json string</li>
+  <li>uses inherited export function to create/update database entry and assigns user_id to created DB entry if not already created</li>
+  <li>nonExistingUsername: takes in a username, checking the database if the username  doesn't exist and returning True if it doesn't</li>
+  <li>logIn: takes in a username. creates an entry in the database if it doesn't exist and returning an empty list. if the entry exists, it returns a list of ScheduledEvents associated with that user</li>
+</ul>
