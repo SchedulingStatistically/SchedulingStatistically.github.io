@@ -33,7 +33,7 @@ class DatabaseObj {
         this.base_id = 'appujfaklryoZZPxX';
         this.auth_token = 'Bearer pateZMV3GBMLUVnWA.53e93b721f80534560c6592cfa282c13e9c8079387c3b79d033cd39956ee7d71';
         this.obj_type = '';
-        this._user_id = null
+        this._obj_id = null
         var Airtable = require('airtable');
         Airtable.configure({
             endpointUrl: 'https://api.airtable.com',
@@ -55,7 +55,7 @@ class DatabaseObj {
 
     async update() {
         return new Promise((resolve, reject) => {
-            this.base(this.obj_type).find(this._user_id, function (err, record) {
+            this.base(this.obj_type).find(this._obj_id, function (err, record) {
                 if (err) { reject(err); }
                 else { resolve(record); }
             });
@@ -65,7 +65,7 @@ class DatabaseObj {
     export(data) {
         this.base(this.obj_type).update([
             {
-                "id": this._user_id,
+                "id": this._obj_id,
                 "fields": data
             }
         ], function (err, records) {
@@ -97,13 +97,13 @@ class ScheduledEvent extends DatabaseObj {
         this._median = null;
         this._mode = null;
         if (args.length == 1) {
-            this._user_id = args[0];
+            this._obj_id = args[0];
             this.pullFromDB();
             return;
         }
     }
 
-    get user_id() { return this._user_id; }
+    get obj_id() { return this._obj_id; }
 
     get owner() { return this._owner; }
 
@@ -155,10 +155,10 @@ class ScheduledEvent extends DatabaseObj {
 
     async createDBEntry() {
         try {
-            this._user_id = await this.create(
+            this._obj_id = await this.create(
                 { ...this.exportToJson() }
             );
-            console.log(this._user_id)
+            console.log(this._obj_id)
         } catch (error) {
             console.error(error);
         }
@@ -166,7 +166,7 @@ class ScheduledEvent extends DatabaseObj {
 
     async pullFromDB() {
         try {
-            let imported_obj = await this.update(this._user_id);
+            let imported_obj = await this.update(this._obj_id);
             this.name = imported_obj.fields.Name;
             this.owner = imported_obj.fields.Owner;
             this.year = imported_obj.fields.Year;
@@ -220,15 +220,15 @@ class ScheduledEvent extends DatabaseObj {
     }
 
     exportToDB() {
-        if (this._user_id != null) {
+        if (this._obj_id != null) {
             this.export(this.exportToJson());
         } else {
-            this._user_id = this.createDBEntry();
+            this._obj_id = this.createDBEntry();
         }
     }
 
     updateFromDB() {
-        imported_obj = this.update(this._user_id)
+        imported_obj = this.update(this._obj_id)
         if (imported_obj.name != null) { this.name = imported_obj.name; }
         if (imported_obj.owner != null) { this.owner = imported_obj }
         if (imported_obj.year != null) { this.year = imported_obj.year; }
@@ -252,13 +252,13 @@ class User extends DatabaseObj {
         this._name = null;
         this._password = null;
         if (args.length == 1) {
-            this._user_id = args[0];
+            this._obj_id = args[0];
             this.pullFromDB();
             return;
         }
     }
 
-    get user_id() { return this._user_id; }
+    get obj_id() { return this._obj_id; }
 
     get name() { return this._name; }
 
@@ -274,10 +274,10 @@ class User extends DatabaseObj {
 
     async createDBEntry() {
         try {
-            this._user_id = await this.create(
+            this._obj_id = await this.create(
                 { ...this.exportToJson() }
             );
-            console.log(this._user_id)
+            console.log(this._obj_id)
         } catch (error) {
             console.error(error);
         }
@@ -285,7 +285,7 @@ class User extends DatabaseObj {
 
     async pullFromDB() {
         try {
-            let imported_obj = await this.update(this._user_id);
+            let imported_obj = await this.update(this._obj_id);
             this.name = imported_obj.fields.Name;
             this.user_name = imported_obj.fields.Username;
             this.password = imported_obj.fields.Password;
@@ -312,15 +312,15 @@ class User extends DatabaseObj {
     }
 
     exportToDB() {
-        if (this._user_id != null) {
+        if (this._obj_id != null) {
             this.export(this.exportToJson());
         } else {
-            this._user_id = this.createDBEntry();
+            this._obj_id = this.createDBEntry();
         }
     }
 
     updateFromDB() {
-        imported_obj = this.update(this._user_id)
+        imported_obj = this.update(this._obj_id)
         if (imported_obj.name != null) { this.name = imported_obj.name; }
         if (imported_obj.username != null) { this.user_name = imported_obj.username; }
         if (imported_obj.password != null) { this.password = imported_obj.password; }
@@ -392,7 +392,7 @@ export { ScheduledEvent, User };
 // test_event = new ScheduledEvent("test", '2021', '12', '12', '12', '12', '12', '12', '12', '12', '12')
 // test_event.createDBEntry()
 // await new Promise(r => setTimeout(r, 2000));
-// // console.log(test_event.user_id)
+// // console.log(test_event.obj_id)
 // console.log(test_event)
 // test_event.updateFromJson({
 //     year: "912837",
@@ -400,6 +400,6 @@ export { ScheduledEvent, User };
 // })
 // console.log(test_event)
 // test_event.exportToDB()
-// new_event = new ScheduledEvent(test_event.user_id)
+// new_event = new ScheduledEvent(test_event.obj_id)
 // console.log(new_event)
 // }
