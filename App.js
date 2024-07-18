@@ -26,7 +26,7 @@ function DropdownMenu({ task, position, incompleteReasons, handleIncompleteTask,
   }, [closeDropdown]);
 
   return ReactDOM.createPortal(
-    <ul className="dropdown-menu" style={{ top: position.top, left: position.left, position: 'absolute' }} ref={dropdownRef}>
+    <ul className="dropdown-menu" style={{ top: position.top, left: position.left }} ref={dropdownRef}>
       {incompleteReasons.map((reason, index) => (
         <li key={index} onClick={() => handleIncompleteTask(task.id, reason)}>{reason}</li>
       ))}
@@ -34,7 +34,6 @@ function DropdownMenu({ task, position, incompleteReasons, handleIncompleteTask,
     document.body
   );
 }
-
 
 // Login component
 function Login({ onLogin }) {
@@ -223,6 +222,7 @@ function App() {
 
   // Toggle dropdown menu
   const toggleDropdown = (id, event) => {
+    event.stopPropagation();
     const rect = event.target.getBoundingClientRect();              // Get bounding client rect of target
     const position = {                                              // Position of dropdown menu
       top: rect.top + window.scrollY + rect.height,                              // Top position of dropdown menu
@@ -230,6 +230,10 @@ function App() {
     };
     setDropdownPosition(position);                                  // Set dropdown position
     setActiveDropdownId(activeDropdownId === id ? null : id);       // Toggle active dropdown id
+  };
+
+  const closeDropdown = () => {
+    setActiveDropdownId(null);
   };
 
   // Functions for handling login and registration
@@ -349,21 +353,6 @@ function App() {
     productivityChart.update();
   }, [productivityChart, completedTasks, incompletedTasks]);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (activeDropdownId && !event.target.closest('.dropdown')) {
-        setActiveDropdownId(null);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [activeDropdownId]);
-
-
   return (
     <div className="container">                                    {/* Comment everything below this line */}
       <div className="app-header">
@@ -458,6 +447,7 @@ function App() {
                           position={dropdownPosition}
                           incompleteReasons={incompleteReasons}
                           handleIncompleteTask={incompleteTask}
+                          closeDropdown={closeDropdown}
                         />
                       )}
                     </div>

@@ -227,7 +227,6 @@ button:active {
   position: relative;
   display: inline-block;
 }
-
 .dropdown-menu {
   position: absolute;
   top: 0; 
@@ -255,6 +254,7 @@ button:active {
 .dropdown-menu li:hover {
   background-color: #f1f1f1;
 }
+
 
 .incomplete-reason {
   display: block;
