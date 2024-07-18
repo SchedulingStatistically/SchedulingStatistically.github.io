@@ -5,23 +5,36 @@
 // - A list of incompleted tasks with reasons for not completing the task
 // - A dropdown menu to select a reason for marking a task as incomplete
 
-const { useEffect, useState, Fragment } = React;
+const { useEffect, useState, Fragment, useRef } = React;
 const { Calendar, momentLocalizer } = ReactBigCalendar;
 const localizer = momentLocalizer(moment);
 
-function DropdownMenu({ task, position, incompleteReasons, handleIncompleteTask }) {            // DropdownMenu component
-  return ReactDOM.createPortal(                                                                 // Create a portal to render the dropdown menu   
-    <ul                                                                                         // Dropdown menu
-      className="dropdown-menu"                                                                 // Dropdown menu class
-      style={{ top: position.top, left: position.left, position: 'absolute' }}                  // Dropdown menu style
-    >
-      {incompleteReasons.map((reason, index) => (                                               // Map through incomplete reasons
-        <li key={index} onClick={() => handleIncompleteTask(task.id, reason)}>{reason}</li>     // List item with reason
+function DropdownMenu({ task, position, incompleteReasons, handleIncompleteTask, closeDropdown }) {
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        closeDropdown();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [closeDropdown]);
+
+  return ReactDOM.createPortal(
+    <ul className="dropdown-menu" style={{ top: position.top, left: position.left, position: 'absolute' }} ref={dropdownRef}>
+      {incompleteReasons.map((reason, index) => (
+        <li key={index} onClick={() => handleIncompleteTask(task.id, reason)}>{reason}</li>
       ))}
     </ul>,
-    document.body                                                                               // Render dropdown menu in the body
+    document.body
   );
 }
+
 
 // Login component
 function Login({ onLogin }) {
@@ -100,6 +113,9 @@ function loadTasks(key) {
   return tasks ? JSON.parse(tasks) : [];
 }
 
+//ADD THE IMPORT AND EXPORT HERE
+//
+//
 function handleImport() {
 
 }
@@ -190,13 +206,6 @@ function App() {
     setEditingTaskTime(task.time.replace(' minutes', ''));                           // Set editing task time
   };
 
-  // Function to handle key press while editing
-  const handleEditKeyPress = (e, id) => {                                           // Handle edit key press function
-    if (e.key === 'Enter') {                                                        // Check if key is Enter
-      editTask(id, editingTaskText, editingTaskTime);                               // Edit task
-    }
-  };
-
   // Function to mark a task as complete
   const completeTask = (id) => {                                                   // Complete task function
     const task = tasks.find(task => task.id === id);                               // Find task with id
@@ -216,8 +225,8 @@ function App() {
   const toggleDropdown = (id, event) => {
     const rect = event.target.getBoundingClientRect();              // Get bounding client rect of target
     const position = {                                              // Position of dropdown menu
-      top: rect.top + window.scrollY,                               // Top position of dropdown menu
-      left: rect.left + window.scrollX                              // Left position of dropdown menu
+      top: rect.top + window.scrollY + rect.height,                              // Top position of dropdown menu
+      left: rect.left + window.scrollX                         // Left position of dropdown menu
     };
     setDropdownPosition(position);                                  // Set dropdown position
     setActiveDropdownId(activeDropdownId === id ? null : id);       // Toggle active dropdown id
@@ -346,9 +355,9 @@ function App() {
         setActiveDropdownId(null);
       }
     };
-  
+
     document.addEventListener('mousedown', handleClickOutside);
-  
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -439,22 +448,22 @@ function App() {
                       )}
                     </div>
                   )}
-<div className="task-buttons">
-  <button className="complete-button" onClick={() => completeTask(task.id)}>Complete</button>
-  <div className="dropdown">
-    <button className="incomplete-button" onClick={(e) => toggleDropdown(task.id, e)}>Incomplete</button>
-    {activeDropdownId === task.id && (
-      <DropdownMenu
-        task={task}
-        position={dropdownPosition}
-        incompleteReasons={incompleteReasons}
-        handleIncompleteTask={incompleteTask}
-      />
-    )}
-  </div>
-  <button className="edit-button" onClick={() => startEditing(task)}>Edit</button>
-  <button className="delete-button" onClick={() => deleteTask(task.id)}>Delete</button>
-</div>
+                  <div className="task-buttons">
+                    <button className="complete-button" onClick={() => completeTask(task.id)}>Complete</button>
+                    <div className="dropdown">
+                      <button className="incomplete-button" onClick={(e) => toggleDropdown(task.id, e)}>Incomplete</button>
+                      {activeDropdownId === task.id && (
+                        <DropdownMenu
+                          task={task}
+                          position={dropdownPosition}
+                          incompleteReasons={incompleteReasons}
+                          handleIncompleteTask={incompleteTask}
+                        />
+                      )}
+                    </div>
+                    <button className="edit-button" onClick={() => startEditing(task)}>Edit</button>
+                    <button className="delete-button" onClick={() => deleteTask(task.id)}>Delete</button>
+                  </div>
 
                 </li>
               ))}
