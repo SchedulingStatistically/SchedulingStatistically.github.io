@@ -100,6 +100,14 @@ function loadTasks(key) {
   return tasks ? JSON.parse(tasks) : [];
 }
 
+function handleImport() {
+
+}
+
+function handleExport() {
+
+}
+
 function App() {
   // State variables
   const [tasks, setTasksVar] = useState(loadTasks('tasks'));                                              // Tasks state variable        
@@ -300,9 +308,9 @@ function App() {
       nextDate.setDate(date.getDate() + 1);
     })()) {
       completedTaskData[date.getDate() - 1] =
-        completedTasks.filter(({id}) => id >= date.valueOf() && id < nextDate.valueOf()).length
+        completedTasks.filter(({ id }) => id >= date.valueOf() && id < nextDate.valueOf()).length
       incompleteTaskData[date.getDate() - 1] =
-        incompletedTasks.filter(({id}) => id >= date.valueOf() && id < nextDate.valueOf()).length
+        incompletedTasks.filter(({ id }) => id >= date.valueOf() && id < nextDate.valueOf()).length
     }
 
     // Data for the chart
@@ -358,8 +366,12 @@ function App() {
                 placeholder="Estimated time (minutes)"
                 className="task-input"
               />
-              <button type="submit">Add Task</button>
+              <button type="AddTask">Add Task</button>
             </form>
+          </div>
+          <div className="action-buttons">
+            <button onClick={handleImport}>Import</button>
+            <button onClick={handleExport}>Export</button>
           </div>
         </div>
         <div className="auth-section">
@@ -414,8 +426,6 @@ function App() {
                     </div>
                   )}
                   <div className="task-buttons">
-                    <button onClick={() => deleteTask(task.id)}>Delete</button>
-                    <button onClick={() => startEditing(task)}>Edit</button>
                     <button onClick={() => completeTask(task.id)}>Complete</button>
                     <div className="dropdown">
                       <button onClick={(e) => toggleDropdown(task.id, e)}>Incomplete</button>
@@ -428,6 +438,8 @@ function App() {
                         />
                       )}
                     </div>
+                    <button onClick={() => startEditing(task)}>Edit</button>
+                    <button onClick={() => deleteTask(task.id)}>Delete</button>
                   </div>
                 </li>
               ))}
