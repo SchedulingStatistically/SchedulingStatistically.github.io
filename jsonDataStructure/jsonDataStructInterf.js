@@ -5,7 +5,6 @@
     before you merge your branch, the backend team must review YOUR BRANCH for APPROVAL!
 
 */
-
 import  {ScheduledEvent, OwnerStatus, Ownership, JsonDataStruct} from './jsonDataStruct.js'
 // loading a whole json to make a data struct
 // loading a whole json to make a data struct
@@ -20,58 +19,57 @@ const whole_json = {
         your_global_status : 'global status 2019828',
         current_status_scope : "yearly: 2017 to 2020",
         all_event_status : [
-            {an_event : 'coding', max : 70, min : 15, median : 35, mode : 40}
+            {an_event : 'default', max : 0, min : 0, median : 0, mode : 0, mean : 0, ratio : 0, total : 0, percent : 0}
+        ],
+        all_period_status : [
+            {year : 0, month : 0, day : 0, total : 0, complete : 0}
         ]
     },
     scheduled_events : [
         {
-            year : 2019,
-            month : 9,
-            day : 9,
-            an_event : 'coding',
-            start : '9:00am',
-            hours : 4,
-            end : '1:00pm'
-        },
-        {
-            year : 2020,
-            month : 7,
-            day : 1,
-            an_event : 'typing',
-            start : '11:00am',
-            hours : 1,
-            end : '1:00pm'
-        },
-        {
-            year : 2020,
-            month : 8,
-            day : 2,
-            an_event : 'reading',
-            start : '12:00am',
-            hours : 1,
-            end : '1:00pm'
-        },
-        {
-            year : 2020,
-            month : 8,
-            day : 2,
-            an_event : 'reading',
-            start : '4:00apm',
-            hours : 1,
-            end : '5:00pm'
+            category : 'default', 
+            yearly_events : [
+                {year : 2018, monthly_events : [
+                    {month : 12, daily_events : [
+                        {day : 12, events :[
+                            {
+                                year : 2018,
+                                month : 12,
+                                day : 11,
+                                an_event : 'coding',
+                                start : '10:00pm',
+                                hours : 3,
+                                end : '3:00pm',
+                                complete : false,
+                                id : -1
+            
+                            }
+                        ]
+                            
+                        }
+                    ]
+                    }
+                ]
+                }
+            ]
+            }
+        ]
         }
-    ]
-}
 
 // pending documentation!
 export default class jsonDataStructInterf {
     constructor(name){
         this.name = name;
         this.json_object = null;
+        this.event_types_to_be_computed = []
     }
 
     use_default_json_data(){
         this.json_object = JsonDataStruct.fromJsonFormat(whole_json);
+    }
+
+    accessor_object_json_format() {
+        return this.json_object.toJsonFormat()
     }
 
     updateOwnership(name, user_name, password){
@@ -83,40 +81,154 @@ export default class jsonDataStructInterf {
         this.json_object.updateOwnership(owner);
     }
 
-    getEventStatus() {
-        const an_event_status = JSON.stringify(this.json_object.getEvent_status(), null, 2);
-        return an_event_status;
+    addComplete_event(i_category, i_year, i_month, i_day, i_an_event, i_start, i_hours, i_end){
+        const event_To_json = 
+            {category : i_category, yearly_event : 
+                {year : i_year, monthly_event :
+                    {month : i_month, daily_event :
+                        {day : i_day, event :
+                            {
+                                year : i_year,
+                                month : i_month,
+                                day : i_day,
+                                an_event : i_an_event,
+                                start : i_start,
+                                hours : i_hours,
+                                end : i_end,
+
+                            }
+                            
+                        }
+                    }
+                }
+            };
+        this.json_object.schedule_an_event(event_To_json)
     }
 
-    addComplete_events(year, month, day, an_event, start, hours, end){
-        let a_event = {
-            year : year,
-            month : month,
-            day : day,
-            an_event : an_event,
-            start : start,
-            hours : hours,
-            end : end
-        }
-        this.json_object.addScheduled_event(a_event)
+    update_the_complete_event(i_category, i_year, i_month, i_day, i_an_event, i_start, i_hours, i_end, complete, id){
+        const event_To_json = 
+            {category : i_category, yearly_event : 
+                {year : i_year, monthly_event :
+                    {month : i_month, daily_event :
+                        {day : i_day, event :
+                            {
+                                year : i_year,
+                                month : i_month,
+                                day : i_day,
+                                an_event : i_an_event,
+                                start : i_start,
+                                hours : i_hours,
+                                end : i_end,
+                                complete : complete,
+                                id : id
+                            }
+                            
+                        }
+                    }
+                }
+            };
+        this.json_object.update_a_scheduled_event(event_To_json)
     }
 
-    removeCompleted_event(){
-        this.json_object.removeScheduled_event()
+    delete_the_complete_event(i_category, i_year, i_month, i_day, i_an_event, i_start, i_hours, i_end, complete, id){
+        const event_To_json = 
+            {category : i_category, yearly_event : 
+                {year : i_year, monthly_event :
+                    {month : i_month, daily_event :
+                        {day : i_day, event :
+                            {
+                                year : i_year,
+                                month : i_month,
+                                day : i_day,
+                                an_event : i_an_event,
+                                start : i_start,
+                                hours : i_hours,
+                                end : i_end,
+                                complete : complete,
+                                id : id
+                            }
+                            
+                        }
+                    }
+                }
+            };
+        this.json_object.delete_a_scheduled_event(event_To_json)
+    }
+
+    remove_top_Completed_event(){
+        this.json_object.remove_top_scheduled_event()
+    }
+
+    remove_bottom_Completed_event() {
+        this.json_object.remove_bottom_scheduled_event()
+    }
+
+    reset_event_status() {
+        this.json_object.emptyOwnerEventStatus()
+    }
+
+    reset_period_status() {
+        this.json_object.emptyOwnerPeriodStatus()
+    }
+
+    accessor_object_filter_events() {
+        return this.json_object.temp_event_list
+    }
+
+    get_events_within_a_yearly_time_partition(category, start_year, end_year) {
+        this.json_object.empty_temp_event_list()
+        this.json_object.yearly_event_partition(category, start_year, end_year)
+        this.json_object.filter_events_from_yearly_event_partition()
+    }
+
+    get_events_within_a_monthly_time_partition(category, year, start_month, end_month) {
+        this.json_object.empty_temp_event_list()
+        this.json_object.yearly_event_partition(category, year, year)
+        this.json_object.monthly_event_partition(year, start_month, end_month)
+        this.json_object.filter_events_from_monthly_event_partition()
+    }
+
+    get_events_within_a_daily_time_partition(category, year, month, start_day, end_day) {
+        this.json_object.empty_temp_event_list()
+        this.json_object.yearly_event_partition(category, year, year)
+        this.json_object.monthly_event_partition(year, month, month)
+        this.json_object.daily_event_partition(month, start_day, end_day)
+        this.json_object.filter_events_from_daily_event_partition()
+    }
+
+    compute_an_event_status(event_type) {
+        this.json_object.emptyOwnerEventStatus()
+        this.json_object.compute_an_event_status_type(event_type)
+    }
+
+    add_an_event_type(event_type) {
+        this.event_types_to_be_computed.push(event_type)
+    }
+
+    rest_event_types() {
+        this.event_types_to_be_computed = []
+    }
+
+    compute_all_event_status_type(){
+        this.json_object.emptyOwnerEventStatus()
+        this.json_object.compute_a_set_of_event_types_status(this.event_types_to_be_computed)
+    }
+
+    compute_event_in_by_period_of_days(category, start_year, end_year, days_period) {
+        this.json_object.compute_events_in_a_yearly_span_and_days_period(category, start_year, end_year, days_period)
+    }
+
+    accessor_object_period_status(){
+        return this.json_object.temp_period_event_status
+    }
+
+    accessor_object_event_status() {
+        return this.json_object.getEvent_status()
     }
 
     getJsonObjectString(){
         const json_string = JSON.stringify(this.json_object.toJsonFormat(), null, 2);
         return json_string;
     }
-
-    reset_event_status() {
-        this.json_object.emptyOwnerStatus()
-    }
-
-    compute_an_event_status(event_type) {
-        this.json_object.compute_an_event_type_status(event_type)
-    }
-
 
 }
