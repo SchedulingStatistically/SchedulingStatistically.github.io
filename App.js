@@ -254,18 +254,38 @@ function App() {
   }, []);
 
   useEffect(() => {
-    console.log('preupdate');
     if (!productivityChart) return;
     // Generate fake data for the last 30 days
-    const generateData = (completed) => {
-      return Array.from({ length: 30 }, () =>
-        completed ? Math.floor(Math.random() * 10) + 1 : Math.floor(Math.random() * 5)
-      );
-    };
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    date.setMonth(date.getMonth() + 1);
+    date.setDate(0);
+    const labels = Array.from({ length: date.getDate() }, (_, i) => `Day ${i + 1}`);
 
-    const labels = Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`);
-    const completedTaskData = generateData(true);
-    const incompleteTaskData = generateData(false);
+    // const generateData = (completed) => {
+    //   return Array.from({ length: labels.length }, () =>
+    //     completed ? Math.floor(Math.random() * 10) + 1 : Math.floor(Math.random() * 5)
+    //   );
+    // };
+    //
+    // const completedTaskData = generateData(true);
+    // const incompleteTaskData = generateData(false);
+
+    const completedTaskData = Array(labels.length);
+    const incompleteTaskData = Array(labels.length);
+
+    date.setDate(1);
+    const nextDate = new Date(date);
+    nextDate.setDate(2);
+    for (const thisMonth = date.getMonth(); date.getMonth() === thisMonth; (() => {
+      date.setDate(date.getDate() + 1);
+      nextDate.setDate(date.getDate() + 1);
+    })()) {
+      completedTaskData[date.getDate() - 1] =
+        completedTasks.filter(({id}) => id >= date.valueOf() && id < nextDate.valueOf()).length
+      incompleteTaskData[date.getDate() - 1] =
+        incompletedTasks.filter(({id}) => id >= date.valueOf() && id < nextDate.valueOf()).length
+    }
 
     // Data for the chart
     const data = {
@@ -290,11 +310,9 @@ function App() {
       ]
     };
 
-    console.log('update');
-
     productivityChart.data = data;
     productivityChart.update();
-  });
+  }, [productivityChart, completedTasks, incompletedTasks]);
 
 
   return (
