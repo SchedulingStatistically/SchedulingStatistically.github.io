@@ -142,7 +142,23 @@ function App() {
   };
 
   const handleImport = () => {
+    const importInput = document.createElement('input');
+    importInput.type = 'file';
+    importInput.accept = 'application/json';
 
+    importInput.onchange = e => {
+      const reader = new FileReader();
+      reader.readAsText(e.target.files[0])
+
+      reader.onload = readerEvent => {
+        const data = JSON.parse(readerEvent.target.result);
+        setTasks(data.tasks);
+        setCompletedTasks(data.completedTasks);
+        setIncompletedTasks(data.incompletedTasks);
+      }
+    }
+
+    importInput.click();
   }
 
   const handleExport = () => {
@@ -153,10 +169,7 @@ function App() {
       incompletedTasks: incompletedTasks,
     })], { type: 'application/json' }));
     exportLink.download = 'SchedulingStatistically.json'
-    exportLink.style.display = 'none'
-    document.body.appendChild(exportLink);
     exportLink.click()
-    document.body.removeChild(exportLink);
     URL.revokeObjectURL(exportLink.href);
   }
 
@@ -298,7 +311,6 @@ function App() {
       document.getElementById('productivityChart'),
       config
     ));
-
   }, []);
 
   useEffect(() => {
