@@ -126,8 +126,6 @@ button:active {
   flex-direction: column;
 }
 
-
-
 /* Task list styles */
 .task-list {
   list-style-type: none;
@@ -279,6 +277,7 @@ button:active {
   }
 }
 
+/* Login and Register System */
 .app-header {
   display: flex;
   justify-content: space-between;

@@ -9,6 +9,7 @@ const { useEffect, useState, Fragment, useRef } = React;
 const { Calendar, momentLocalizer } = ReactBigCalendar;
 const localizer = momentLocalizer(moment);
 
+// Dropdown Menu Component
 function DropdownMenu({ task, position, incompleteReasons, handleIncompleteTask, closeDropdown }) {
   const dropdownRef = useRef(null);
 
@@ -127,6 +128,7 @@ function App() {
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });       // Dropdown position state variable
   const [user, setUser] = useState(null);
 
+  // Local Storage Functions
   const setTasks = (args) => {
     setTasksVar(args);
     window.localStorage.setItem('tasks', JSON.stringify(args));
@@ -141,6 +143,7 @@ function App() {
     window.localStorage.setItem('incompletedTasks', JSON.stringify(args));
   };
 
+  // Import and export functions
   const handleImport = () => {
     const importInput = document.createElement('input');
     importInput.type = 'file';
