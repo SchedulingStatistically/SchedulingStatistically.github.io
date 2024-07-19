@@ -176,23 +176,41 @@ export default class jsonDataStructInterf {
     }
 
     get_events_within_a_yearly_time_partition(category, start_year, end_year) {
-        this.json_object.empty_temp_event_list()
-        this.json_object.yearly_event_partition(category, start_year, end_year)
-        this.json_object.filter_events_from_yearly_event_partition()
+        // this.json_object.empty_temp_event_list()
+        // this.json_object.yearly_event_partition(category, start_year, end_year)
+        // this.json_object.filter_events_from_yearly_event_partition()
+        // test new functions
+        // this.json_object.partition_years(category,start_year, end_year)
+        // this.json_object.filter_events_from_yearly_event_partition()
+        // test new functions
+        // this.json_object.partition_years_into_month(category,start_year, end_year)
+        // this.json_object.filter_events_from_monthly_event_partition()
+        // test new functions
+        this.json_object.partition_years_into_days(category, start_year, end_year)
+        this.json_object.filter_events_from_daily_event_partition()
     }
 
     get_events_within_a_monthly_time_partition(category, year, start_month, end_month) {
-        this.json_object.empty_temp_event_list()
-        this.json_object.yearly_event_partition(category, year, year)
-        this.json_object.monthly_event_partition(year, start_month, end_month)
-        this.json_object.filter_events_from_monthly_event_partition()
+        // this.json_object.empty_temp_event_list()
+        // this.json_object.yearly_event_partition(category, year, year)
+        // this.json_object.monthly_event_partition(year, start_month, end_month)
+        // this.json_object.filter_events_from_monthly_event_partition()
+        // test new functions
+        // this.json_object.partition_months(category, year, start_month, end_month)
+        // this.json_object.filter_events_from_monthly_event_partition()
+        // test new functions
+        this.json_object.partition_months_into_days(category, year,start_month, end_month)
+        this.json_object.filter_events_from_daily_event_partition()
     }
 
     get_events_within_a_daily_time_partition(category, year, month, start_day, end_day) {
-        this.json_object.empty_temp_event_list()
-        this.json_object.yearly_event_partition(category, year, year)
-        this.json_object.monthly_event_partition(year, month, month)
-        this.json_object.daily_event_partition(month, start_day, end_day)
+        // this.json_object.empty_temp_event_list()
+        // this.json_object.yearly_event_partition(category, year, year)
+        // this.json_object.monthly_event_partition(year, month, month)
+        // this.json_object.daily_event_partition(month, start_day, end_day)
+        // this.json_object.filter_events_from_daily_event_partition()
+        // test new function
+        this.json_object.partition_days(category, year, month, start_day, end_day)
         this.json_object.filter_events_from_daily_event_partition()
     }
 

@@ -530,6 +530,37 @@ class JsonDataStruct {
         } 
     }
 
+    partition_years(category, start_year, end_year) {
+        this.temp_yearly_event_partition = []
+        const selected_category = this.scheduled_events.find(the_event => the_event.category === category)
+        if(selected_category) {
+            this.temp_yearly_event_partition = selected_category.yearly_events.filter(
+                function(the_event) {
+                    return (the_event.year <= end_year && start_year <=the_event.year);
+                })
+        } 
+    }
+
+    partition_years_into_month(category, start_year, end_year) {
+        this.temp_monthly_event_partition = []
+        this.partition_years(category, start_year, end_year)
+        this.temp_yearly_event_partition.forEach(the_event => {
+            this.temp_monthly_event_partition = this.temp_monthly_event_partition.concat(the_event.monthly_events)
+            // console.log(the_event.year, the_event.monthly_events)
+            // console.log(this.temp_monthly_event_partition)
+        })
+    }
+
+    partition_years_into_days(category, start_year, end_year) {
+        this.temp_daily_event_partition = []
+        this.partition_years_into_month(category, start_year, end_year)
+        this.temp_monthly_event_partition.forEach(the_event => {
+            this.temp_daily_event_partition = this.temp_daily_event_partition.concat(the_event.daily_events)
+            // console.log(the_event.month, the_event.daily_events)
+            // console.log(this.temp_daily_event_partition)
+        })
+    }
+
     monthly_event_partition(year, start_month, end_month) {
         const selected_year = this.temp_yearly_event_partition.find(the_event => the_event.year === year)
         if(selected_year) {
@@ -538,6 +569,27 @@ class JsonDataStruct {
                         return (the_event.month <= end_month && start_month <=the_event.month);
                     }) 
         }
+    }
+
+    partition_months(category, year, start_month, end_month) {
+        this.temp_monthly_event_partition = []
+        this.partition_years(category, year, year)
+        const selected_year = this.temp_yearly_event_partition.find(the_event => the_event.year === year)
+        if(selected_year) {
+            this.temp_monthly_event_partition = selected_year.monthly_events.filter(
+                    function(the_event) {
+                        return (the_event.month <= end_month && start_month <=the_event.month);
+                    }) 
+        }
+
+    }
+
+    partition_months_into_days(category, year, start_month, end_month) {
+        this.temp_daily_event_partition = []
+        this.partition_months(category, year, start_month, end_month)
+        this.temp_monthly_event_partition.forEach(the_event => {
+            this.temp_daily_event_partition = this.temp_daily_event_partition.concat(the_event.daily_events)
+        })
     }
 
     daily_event_partition(month, start_day, end_day) {
@@ -550,8 +602,21 @@ class JsonDataStruct {
             }
     }
 
+    partition_days(category, year, month, start_day, end_day) {
+        this.temp_daily_event_partition = []
+        this.partition_months(category, year, month, month) 
+        const selected_month = this.temp_monthly_event_partition.find(the_event => the_event.month === month)
+        if(selected_month) {
+            this.temp_daily_event_partition = selected_month.daily_events.filter(
+                function(the_event) {
+                    return (the_event.day <= end_day && start_day <=the_event.day);
+                }) 
+        }
+    }
+
 
     filter_events_from_daily_event_partition() {
+        this.temp_event_list = []
         this.temp_daily_event_partition.forEach(event_array => {
             this.temp_event_list = this.temp_event_list.concat(event_array.events)
         })

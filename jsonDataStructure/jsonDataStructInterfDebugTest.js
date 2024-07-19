@@ -75,23 +75,24 @@ our_interface.addComplete_event('work', 2020, 11, 25, 'hims', '8:00am', 4, '11:3
 
 console.log(our_interface.accessor_object_json_format())
 
-// console.log('partition a set of event')
-// console.log('yearly partition')
-// our_interface.get_events_within_a_yearly_time_partition('work', 2019, 2020)
-// console.log(our_interface.accessor_object_filter_events())
-// console.log('monthly partition')
-// our_interface.get_events_within_a_monthly_time_partition('work', 2020, 1, 11)
-// console.log(our_interface.accessor_object_filter_events())
+console.log('partition a set of event')
+console.log('yearly partition')
+our_interface.get_events_within_a_yearly_time_partition('work', 2019, 2020)
+console.log(our_interface.accessor_object_filter_events())
+console.log('monthly partition')
+our_interface.get_events_within_a_monthly_time_partition('work', 2020, 1, 11)
+console.log(our_interface.accessor_object_filter_events())
 console.log('daily time partition')
 our_interface.get_events_within_a_daily_time_partition('work', 2020, 11, 22, 25)
 console.log(our_interface.accessor_object_filter_events())
+// console.log(our_interface.getJsonObjectString())
 
 
 // console.log('test json data struct event update')
-our_interface.update_the_complete_event('work', 2020, 11, 22, 'update', '1:00pm', 4, '3:00pm', true, 22112020)
-our_interface.update_the_complete_event('work', 2020, 11, 22, 'updat1', '1:00pm', 4, '3:00pm', true, 122112020)
-our_interface.update_the_complete_event('work', 2020, 11, 22, 'updat2', '1:00pm', 4, '3:00pm', true, 222112020)
-our_interface.delete_the_complete_event('work', 2020, 11, 25, 'delete', '10:00pm', 1, '5:00am', false, 225112020)
+// our_interface.update_the_complete_event('work', 2020, 11, 22, 'update', '1:00pm', 4, '3:00pm', true, 22112020)
+// our_interface.update_the_complete_event('work', 2020, 11, 22, 'updat1', '1:00pm', 4, '3:00pm', true, 122112020)
+// our_interface.update_the_complete_event('work', 2020, 11, 22, 'updat2', '1:00pm', 4, '3:00pm', true, 222112020)
+// our_interface.delete_the_complete_event('work', 2020, 11, 25, 'delete', '10:00pm', 1, '5:00am', false, 225112020)
 // console.log(our_interface.accessor_object_json_format())
 
 
@@ -106,7 +107,7 @@ our_interface.delete_the_complete_event('work', 2020, 11, 25, 'delete', '10:00pm
 // our_interface.compute_an_event_status('calc')
 // console.log(our_interface.accessor_object_event_status())
 
-// console.log('compute a list of filter evens')
+console.log('compute a list of filter evens')
 our_interface.add_an_event_type('calc')
 our_interface.add_an_event_type('hims')
 our_interface.compute_all_event_status_type()
