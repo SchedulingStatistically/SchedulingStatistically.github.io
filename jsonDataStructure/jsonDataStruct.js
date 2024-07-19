@@ -30,6 +30,7 @@
 
 import * as stats from './node_modules/simple-statistics/dist/simple-statistics.mjs'
 
+// event class is the attribute of a given event that takes place
 class AnEvent {
     constructor(year, month, day, an_event, start, hours, end, complete, id) {
         this.year = year;
@@ -61,6 +62,8 @@ class AnEvent {
         return new AnEvent(json.year, json.month, json.day, json.an_event, json.start, json.hours, json.end, json.complete, json.id);
     }
 }
+
+// DailyEvents class is a list of events that occur in a day
 class DailyEvents {
     constructor(day, events) {
         this.day = day;
@@ -108,6 +111,7 @@ class DailyEvents {
     }
 }
 
+// MonthlyEvents is a list of dailyEvents that occur in a month
 class MonthlyEvents {
     constructor(month, daily_events) {
         this.month = month;
@@ -156,6 +160,7 @@ class MonthlyEvents {
     }
 }
 
+// YearlyEvents is a list of MonthlyEvents that occur in a year
 class YearlyEvents {
     constructor(year, monthly_events) {
         this.year = year;
@@ -204,6 +209,7 @@ class YearlyEvents {
     }
 }
 
+// ScheduledEvent contains all YearlyEvents within a category of distribution
 class ScheduledEvent {
     constructor(category, yearly_events) {
         this.category = category;
@@ -254,6 +260,7 @@ class ScheduledEvent {
     
 }
 
+// EventStatus contains the status of a selected event by name
 class EventStatus {
     constructor(an_event, max, min, median, mode, mean, ratio, total, percent) {
         this.an_event = an_event;
@@ -286,6 +293,7 @@ class EventStatus {
     }
 }
 
+// PeriodStatus contains the attribute of event status by time period
 class PeriodStatus {
     constructor(an_event, year, month, day, total, complete) {
         this.an_event = an_event;
@@ -312,6 +320,8 @@ class PeriodStatus {
     }
 }
 
+// OwnerStatus status contains a list of EventStatus and PeriodStatus 
+// which can be plotted as stats data
 class OwnerStatus {
     constructor(global_status, current_status_scope, all_event_status, all_period_status) {
         this.your_global_status = global_status;
@@ -360,6 +370,7 @@ class OwnerStatus {
     }
 }
 
+// Ownership is the heading of the file with name and user name attribute
 class Ownership {
     constructor(name, user_name, password) {
         this.name = name;
@@ -380,20 +391,32 @@ class Ownership {
     }
 }
 
-
+// JsonDataStruct contains Ownership, OwnerStatus, and ScheduledEvent classes
+// as attribute to structure all classes into a single json object
+// all classes are structure into a single json object
 class JsonDataStruct {
     // class global variable for functions
+    // the act as buffers of communication
+
+
+    // saves a list of filtered event in a time partitions 
     temp_event_list = [];                   // is the list of filter events
+   
+    // used for computing event status
     temp_solved_event_list = [];            // use by solve type of event functions
     temp_period_event_status = [];          // used by solve period of event functions
-    temp_event_category_partition = [];
-    temp_yearly_event_partition = [];
-    temp_monthly_event_partition = [];
-    temp_daily_event_partition = [];
+   
+    // used for partitioning events by time
+    temp_event_category_partition = [];     // used for category partitioning
+    temp_yearly_event_partition = [];       // used for yearly partitioning
+    temp_monthly_event_partition = [];      // used for monthly partitioning
+    temp_daily_event_partition = [];        // used for daily partition
+   
+    // used for buffering status data
     temp_events_status = {an_event : '', max : 0, min : 0, median : 0, mode : 0}
     temp_period_status = {year : 0, month : 0, day : 0, total : 0, complete : 0}
 
-
+    // constructor
     constructor(name, ownership, owner_status, scheduled_events){
         this.name = name;
         this.ownership = ownership;
@@ -417,6 +440,13 @@ class JsonDataStruct {
         return new JsonDataStruct(json.name, ownership, owner_status, scheduled_events);
     }
 
+    /*
+    FUNCTION FOR UPDATING ATTRIBUTE IN A GIVE TIME PERIOD
+    
+    the following function bellow are used for creating, deleting, and updating the
+    data structure object.
+    */
+
     getName(){
         return this.name;
     }
@@ -437,10 +467,12 @@ class JsonDataStruct {
         return this.owner_status;
     }
 
+    // delete save event status
     emptyOwnerEventStatus() {
         this.owner_status.empty_all_event_status();
     }
 
+    // delete save period status
     emptyOwnerPeriodStatus() {
         this.owner_status.empty_all_period_status()
     }
@@ -465,6 +497,7 @@ class JsonDataStruct {
         return this.owner_status.toJsonFormat()
     }
 
+    // update OwnerStatus class with a compatible json data object
     updateOwner_status(newOwner_status){
         this.owner_status = OwnerStatus.fromJsonFormat(newOwner_status)
     }
@@ -473,6 +506,9 @@ class JsonDataStruct {
         return this.scheduled_events;
     }
 
+    // create new objects for an event object by year month and day
+    // it only accept a compatible json object as input
+    // use jsonDataStructInter file to find the json format
     schedule_an_event(json) {
         const scheduled_event_category = this.scheduled_events.find(the_event => the_event.category === json.category)
         if(scheduled_event_category) {
@@ -484,6 +520,9 @@ class JsonDataStruct {
         }
     }
 
+    // updates an existing event object by traversing the data structure
+    // it only accept a compatible json object as input
+    // use jsonDataStructInter file to fine the json format
     update_a_scheduled_event(json) {
         const scheduled_event_category = this.scheduled_events.find(the_event => the_event.category === json.category)
         if(scheduled_event_category) {
@@ -493,6 +532,9 @@ class JsonDataStruct {
         }
     }
 
+    // delete an existing event object by traversing the data structure
+    // it only accept a compatible json object as input
+    // use jsonDataStructInter file to fine the json format
     delete_a_scheduled_event(json) {
         const scheduled_event_category = this.scheduled_events.find(the_event => the_event.category === json.category)
         if(scheduled_event_category) {
@@ -502,23 +544,26 @@ class JsonDataStruct {
         }
     }
 
-
+    // delete the top most object of data scheduled_events array
     remove_top_scheduled_event(){
         this.scheduled_events.shift()
     }
 
+    // deletes the bottom most of data scheduled_events array
     remove_bottom_scheduled_event() {
         this.scheduled_events.pop()
     }
 
+
+
     /*
-        Time partition functions
+        FUNCTION FOR PARTITIONING EVENT IN A TIME PERIOD
+
+        The following functions bellow are used for partitioning event by time
+        they partition events by years, months, and days
     */
 
-    empty_temp_event_list(){
-        this.temp_event_list = [];
-    }
-
+    // partition by years
     partition_years(category, start_year, end_year) {
         this.temp_yearly_event_partition = []
         const selected_category = this.scheduled_events.find(the_event => the_event.category === category)
@@ -530,6 +575,7 @@ class JsonDataStruct {
         } 
     }
 
+    // partition_years to months
     partition_years_into_month(category, start_year, end_year) {
         this.temp_monthly_event_partition = []
         this.partition_years(category, start_year, end_year)
@@ -538,6 +584,7 @@ class JsonDataStruct {
         })
     }
 
+    // partition_years to days
     partition_years_into_days(category, start_year, end_year) {
         this.temp_daily_event_partition = []
         this.partition_years_into_month(category, start_year, end_year)
@@ -546,6 +593,7 @@ class JsonDataStruct {
         })
     }
 
+    // partition_months
     partition_months(category, year, start_month, end_month) {
         this.temp_monthly_event_partition = []
         this.partition_years(category, year, year)
@@ -559,6 +607,7 @@ class JsonDataStruct {
 
     }
 
+    // partition_months to days
     partition_months_into_days(category, year, start_month, end_month) {
         this.temp_daily_event_partition = []
         this.partition_months(category, year, start_month, end_month)
@@ -567,6 +616,7 @@ class JsonDataStruct {
         })
     }
 
+    // partition_days
     partition_days(category, year, month, start_day, end_day) {
         this.temp_daily_event_partition = []
         this.partition_months(category, year, month, month) 
@@ -579,7 +629,7 @@ class JsonDataStruct {
         }
     }
 
-
+    // filter partition_days to events in temp_event_list array
     filter_events_from_daily_event_partition() {
         this.temp_event_list = []
         this.temp_daily_event_partition.forEach(event_array => {
@@ -588,9 +638,13 @@ class JsonDataStruct {
     }
 
     /*
-        FUNCTION BELLOW ARE FOR FILTERING JSON ARRAYS
-        THE INTENT IT TO MAKE A PIPELINE TO PROCESS DATA WITH ARRAY
-        FOR EXAMPLE LIST.REDUCE(LIST.MAP(NAME) + NAME)
+        FUNCTION FOR COMPUTING EVENT STATUS
+
+        the following function compute status of events in
+        a given array: temp_event_list and temp_solved_event_list
+
+        It includes basic statical computation:
+        max, min, mode mean, total percent
     */
 
     init_temp_event_status(){
@@ -610,7 +664,6 @@ class JsonDataStruct {
         let total = 0;
         this.temp_solved_event_list.forEach(function(the_event, index) {
             total = total + 1;
-            // return the_event.hours;
         });
         this.temp_events_status.total = total;
         return total;
@@ -661,6 +714,36 @@ class JsonDataStruct {
         return mean_value;
     }
 
+    // setup the computation for a complete status of an event name
+    compute_an_event_status_type(event_status_type) {
+        this.init_temp_event_status()
+        this.filter_an_event_type(event_status_type)
+        this.solve_min_of_all_events()
+        this.solve_max_of_all_events()
+        this.solve_median_of_all_events()
+        this.solve_mode_of_all_events()
+        this.solve_mean_of_all_events()
+        this.solve_total_of_all_event()
+        this.add_an_event_status_toOwnerStatus(this.temp_events_status)
+    }
+
+    // setup the computation for a complete status of an event name in a array
+    compute_a_set_of_event_types_status(event_type_status_list) {
+        for (const event_status_type of event_type_status_list){
+            // console.log(event_status_type)
+            this.compute_an_event_status_type(event_status_type)
+        }
+    }
+
+
+    /*
+    FUNCTIONS FOR SOLVING PERIOD STATUS
+
+    the following function compute the status of an event in a given array: temp_event_list and temp_solve_event_list
+    compute the number of event occurring in a time period
+    and the number of complete events
+    */
+
     solve_complete_of_all_events_in_a_period() {
         let completion_count = 0
         this.temp_solved_event_list.forEach(function(the_event) {
@@ -676,37 +759,11 @@ class JsonDataStruct {
         return total
     }
 
-    compute_an_event_status_type(event_status_type) {
-        this.init_temp_event_status()
-        this.filter_an_event_type(event_status_type)
-        this.solve_min_of_all_events()
-        this.solve_max_of_all_events()
-        this.solve_median_of_all_events()
-        this.solve_mode_of_all_events()
-        this.solve_mean_of_all_events()
-        this.solve_total_of_all_event()
-        this.add_an_event_status_toOwnerStatus(this.temp_events_status)
-    }
-
-    compute_a_set_of_event_types_status(event_type_status_list) {
-        for (const event_status_type of event_type_status_list){
-            // console.log(event_status_type)
-            this.compute_an_event_status_type(event_status_type)
-        }
-    }
-
-    /*
-    add function that compute daily status
-    */
-
-    empty_temp_period_list(){
-        this.temp_period_event_status = [];
-    }
-
     init_temp_period_status() {
         this.temp_period_status = {year : 0, month : 0, day : 0, total : 0, complete : 0}
     }
 
+    // setup the computation of period status in a given time period and interval
     compute_period_status_by_n_period_days_in_years(category, start_year, end_year, n_period_days) {
         this.temp_period_event_status = []
         this.partition_years(category, start_year, end_year)

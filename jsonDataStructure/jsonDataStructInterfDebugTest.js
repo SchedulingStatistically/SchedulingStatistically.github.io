@@ -110,7 +110,7 @@ console.log(our_interface.accessor_object_json_format())
 // console.log('compute a list of filter evens')
 our_interface.add_an_event_name('calc')
 our_interface.add_an_event_name('hims')
-our_interface.add_an_event_name('uu')
+// our_interface.add_an_event_name('uu')
 our_interface.solve_event_status_by_the_list_of_event_names()
 console.log(our_interface.accessor_object_event_status())
 
