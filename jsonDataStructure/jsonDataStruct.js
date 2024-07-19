@@ -30,6 +30,7 @@
 
 import * as stats from './node_modules/simple-statistics/dist/simple-statistics.mjs'
 
+// event class is the attribute of a given event that takes place
 class AnEvent {
     constructor(year, month, day, an_event, start, hours, end, complete, id) {
         this.year = year;
@@ -61,6 +62,8 @@ class AnEvent {
         return new AnEvent(json.year, json.month, json.day, json.an_event, json.start, json.hours, json.end, json.complete, json.id);
     }
 }
+
+// DailyEvents class is a list of events that occur in a day
 class DailyEvents {
     constructor(day, events) {
         this.day = day;
@@ -108,6 +111,7 @@ class DailyEvents {
     }
 }
 
+// MonthlyEvents is a list of dailyEvents that occur in a month
 class MonthlyEvents {
     constructor(month, daily_events) {
         this.month = month;
@@ -156,6 +160,7 @@ class MonthlyEvents {
     }
 }
 
+// YearlyEvents is a list of MonthlyEvents that occur in a year
 class YearlyEvents {
     constructor(year, monthly_events) {
         this.year = year;
@@ -204,6 +209,7 @@ class YearlyEvents {
     }
 }
 
+// ScheduledEvent contains all YearlyEvents within a category of distribution
 class ScheduledEvent {
     constructor(category, yearly_events) {
         this.category = category;
@@ -254,6 +260,7 @@ class ScheduledEvent {
     
 }
 
+// EventStatus contains the status of a selected event by name
 class EventStatus {
     constructor(an_event, max, min, median, mode, mean, ratio, total, percent) {
         this.an_event = an_event;
@@ -286,6 +293,7 @@ class EventStatus {
     }
 }
 
+// PeriodStatus contains the attribute of event status by time period
 class PeriodStatus {
     constructor(an_event, year, month, day, total, complete) {
         this.an_event = an_event;
@@ -312,6 +320,8 @@ class PeriodStatus {
     }
 }
 
+// OwnerStatus status contains a list of EventStatus and PeriodStatus 
+// which can be plotted as stats data
 class OwnerStatus {
     constructor(global_status, current_status_scope, all_event_status, all_period_status) {
         this.your_global_status = global_status;
@@ -360,6 +370,7 @@ class OwnerStatus {
     }
 }
 
+// Ownership is the heading of the file with name and user name attribute
 class Ownership {
     constructor(name, user_name, password) {
         this.name = name;
@@ -380,17 +391,32 @@ class Ownership {
     }
 }
 
-
+// JsonDataStruct contains Ownership, OwnerStatus, and ScheduledEvent classes
+// as attribute to structure all classes into a single json object
+// all classes are structure into a single json object
 class JsonDataStruct {
-    temp_event_list = [];
-    temp_solved_event_list = [];
-    temp_period_event_status = [];
-    temp_event_category_partition = [];
-    temp_yearly_event_partition = [];
-    temp_monthly_event_partition = [];
-    temp_daily_event_partition = [];
+    // class global variable for functions
+    // the act as buffers of communication
+
+
+    // saves a list of filtered event in a time partitions 
+    temp_event_list = [];                   // is the list of filter events
+   
+    // used for computing event status
+    temp_solved_event_list = [];            // use by solve type of event functions
+    temp_period_event_status = [];          // used by solve period of event functions
+   
+    // used for partitioning events by time
+    temp_event_category_partition = [];     // used for category partitioning
+    temp_yearly_event_partition = [];       // used for yearly partitioning
+    temp_monthly_event_partition = [];      // used for monthly partitioning
+    temp_daily_event_partition = [];        // used for daily partition
+   
+    // used for buffering status data
     temp_events_status = {an_event : '', max : 0, min : 0, median : 0, mode : 0}
     temp_period_status = {year : 0, month : 0, day : 0, total : 0, complete : 0}
+
+    // constructor
     constructor(name, ownership, owner_status, scheduled_events){
         this.name = name;
         this.ownership = ownership;
@@ -414,6 +440,13 @@ class JsonDataStruct {
         return new JsonDataStruct(json.name, ownership, owner_status, scheduled_events);
     }
 
+    /*
+    FUNCTION FOR UPDATING ATTRIBUTE IN A GIVE TIME PERIOD
+    
+    the following function bellow are used for creating, deleting, and updating the
+    data structure object.
+    */
+
     getName(){
         return this.name;
     }
@@ -434,10 +467,12 @@ class JsonDataStruct {
         return this.owner_status;
     }
 
+    // delete save event status
     emptyOwnerEventStatus() {
         this.owner_status.empty_all_event_status();
     }
 
+    // delete save period status
     emptyOwnerPeriodStatus() {
         this.owner_status.empty_all_period_status()
     }
@@ -462,6 +497,7 @@ class JsonDataStruct {
         return this.owner_status.toJsonFormat()
     }
 
+    // update OwnerStatus class with a compatible json data object
     updateOwner_status(newOwner_status){
         this.owner_status = OwnerStatus.fromJsonFormat(newOwner_status)
     }
@@ -470,6 +506,9 @@ class JsonDataStruct {
         return this.scheduled_events;
     }
 
+    // create new objects for an event object by year month and day
+    // it only accept a compatible json object as input
+    // use jsonDataStructInter file to find the json format
     schedule_an_event(json) {
         const scheduled_event_category = this.scheduled_events.find(the_event => the_event.category === json.category)
         if(scheduled_event_category) {
@@ -481,6 +520,9 @@ class JsonDataStruct {
         }
     }
 
+    // updates an existing event object by traversing the data structure
+    // it only accept a compatible json object as input
+    // use jsonDataStructInter file to fine the json format
     update_a_scheduled_event(json) {
         const scheduled_event_category = this.scheduled_events.find(the_event => the_event.category === json.category)
         if(scheduled_event_category) {
@@ -490,6 +532,9 @@ class JsonDataStruct {
         }
     }
 
+    // delete an existing event object by traversing the data structure
+    // it only accept a compatible json object as input
+    // use jsonDataStructInter file to fine the json format
     delete_a_scheduled_event(json) {
         const scheduled_event_category = this.scheduled_events.find(the_event => the_event.category === json.category)
         if(scheduled_event_category) {
@@ -499,28 +544,28 @@ class JsonDataStruct {
         }
     }
 
-
+    // delete the top most object of data scheduled_events array
     remove_top_scheduled_event(){
         this.scheduled_events.shift()
     }
 
+    // deletes the bottom most of data scheduled_events array
     remove_bottom_scheduled_event() {
         this.scheduled_events.pop()
     }
 
-    // updateScheduled_events(newScheduled_events){
-    //     this.scheduled_events = newScheduled_events.map(event => new ScheduledEvent(event.year, event.month, event.day, event.an_event, event.start, event.hours,event.end));
-    // }
+
 
     /*
-        Time partition functions
+        FUNCTION FOR PARTITIONING EVENT IN A TIME PERIOD
+
+        The following functions bellow are used for partitioning event by time
+        they partition events by years, months, and days
     */
 
-    empty_temp_event_list(){
-        this.temp_event_list = [];
-    }
-    
-    yearly_event_partition(category, start_year, end_year) {
+    // partition by years
+    partition_years(category, start_year, end_year) {
+        this.temp_yearly_event_partition = []
         const selected_category = this.scheduled_events.find(the_event => the_event.category === category)
         if(selected_category) {
             this.temp_yearly_event_partition = selected_category.yearly_events.filter(
@@ -530,7 +575,28 @@ class JsonDataStruct {
         } 
     }
 
-    monthly_event_partition(year, start_month, end_month) {
+    // partition_years to months
+    partition_years_into_month(category, start_year, end_year) {
+        this.temp_monthly_event_partition = []
+        this.partition_years(category, start_year, end_year)
+        this.temp_yearly_event_partition.forEach(the_event => {
+            this.temp_monthly_event_partition = this.temp_monthly_event_partition.concat(the_event.monthly_events)
+        })
+    }
+
+    // partition_years to days
+    partition_years_into_days(category, start_year, end_year) {
+        this.temp_daily_event_partition = []
+        this.partition_years_into_month(category, start_year, end_year)
+        this.temp_monthly_event_partition.forEach(the_event => {
+            this.temp_daily_event_partition = this.temp_daily_event_partition.concat(the_event.daily_events)
+        })
+    }
+
+    // partition_months
+    partition_months(category, year, start_month, end_month) {
+        this.temp_monthly_event_partition = []
+        this.partition_years(category, year, year)
         const selected_year = this.temp_yearly_event_partition.find(the_event => the_event.year === year)
         if(selected_year) {
             this.temp_monthly_event_partition = selected_year.monthly_events.filter(
@@ -538,50 +604,47 @@ class JsonDataStruct {
                         return (the_event.month <= end_month && start_month <=the_event.month);
                     }) 
         }
+
     }
 
-    daily_event_partition(month, start_day, end_day) {
+    // partition_months to days
+    partition_months_into_days(category, year, start_month, end_month) {
+        this.temp_daily_event_partition = []
+        this.partition_months(category, year, start_month, end_month)
+        this.temp_monthly_event_partition.forEach(the_event => {
+            this.temp_daily_event_partition = this.temp_daily_event_partition.concat(the_event.daily_events)
+        })
+    }
+
+    // partition_days
+    partition_days(category, year, month, start_day, end_day) {
+        this.temp_daily_event_partition = []
+        this.partition_months(category, year, month, month) 
         const selected_month = this.temp_monthly_event_partition.find(the_event => the_event.month === month)
         if(selected_month) {
             this.temp_daily_event_partition = selected_month.daily_events.filter(
                 function(the_event) {
                     return (the_event.day <= end_day && start_day <=the_event.day);
                 }) 
-            }
+        }
     }
 
-
+    // filter partition_days to events in temp_event_list array
     filter_events_from_daily_event_partition() {
+        this.temp_event_list = []
         this.temp_daily_event_partition.forEach(event_array => {
             this.temp_event_list = this.temp_event_list.concat(event_array.events)
         })
     }
 
-
-    filter_events_from_monthly_event_partition() {
-        for(const a_monthly_event of this.temp_monthly_event_partition) {
-            this.daily_event_partition(a_monthly_event.month, 1, 31)
-            this.filter_events_from_daily_event_partition()
-        }
-    }
-
-    filter_events_from_yearly_event_partition() {
-        for(const a_yearly_event of this.temp_yearly_event_partition) {
-            this.monthly_event_partition(a_yearly_event.year, 1, 12)
-            this.filter_events_from_monthly_event_partition()
-        }
-    }
-
-    // set_up_temp_event_status_solved_list() {
-    //     this.temp_solved_event_list = Array.from(this.temp_event_list);
-    // }
-
-
-
     /*
-        FUNCTION BELLOW ARE FOR FILTERING JSON ARRAYS
-        THE INTENT IT TO MAKE A PIPELINE TO PROCESS DATA WITH ARRAY
-        FOR EXAMPLE LIST.REDUCE(LIST.MAP(NAME) + NAME)
+        FUNCTION FOR COMPUTING EVENT STATUS
+
+        the following function compute status of events in
+        a given array: temp_event_list and temp_solved_event_list
+
+        It includes basic statical computation:
+        max, min, mode mean, total percent
     */
 
     init_temp_event_status(){
@@ -601,7 +664,6 @@ class JsonDataStruct {
         let total = 0;
         this.temp_solved_event_list.forEach(function(the_event, index) {
             total = total + 1;
-            // return the_event.hours;
         });
         this.temp_events_status.total = total;
         return total;
@@ -652,16 +714,7 @@ class JsonDataStruct {
         return mean_value;
     }
 
-    solve_complete_of_all_events_in_a_period() {
-        let completion_count = 0
-        this.temp_solved_event_list.forEach(function(the_event) {
-            if( the_event.complete === true) {completion_count++}
-        })
-        this.temp_period_status.complete = completion_count;
-        return completion_count;
-    }
-
-
+    // setup the computation for a complete status of an event name
     compute_an_event_status_type(event_status_type) {
         this.init_temp_event_status()
         this.filter_an_event_type(event_status_type)
@@ -674,6 +727,7 @@ class JsonDataStruct {
         this.add_an_event_status_toOwnerStatus(this.temp_events_status)
     }
 
+    // setup the computation for a complete status of an event name in a array
     compute_a_set_of_event_types_status(event_type_status_list) {
         for (const event_status_type of event_type_status_list){
             // console.log(event_status_type)
@@ -681,48 +735,60 @@ class JsonDataStruct {
         }
     }
 
+
     /*
-    add function that compute daily status
+    FUNCTIONS FOR SOLVING PERIOD STATUS
+
+    the following function compute the status of an event in a given array: temp_event_list and temp_solve_event_list
+    compute the number of event occurring in a time period
+    and the number of complete events
     */
 
-    empty_temp_period_list(){
-        this.temp_period_event_status = [];
+    solve_complete_of_all_events_in_a_period() {
+        let completion_count = 0
+        this.temp_solved_event_list.forEach(function(the_event) {
+            if( the_event.complete === true) {completion_count++}
+        })
+        this.temp_period_status.complete = completion_count;
+        return completion_count;
+    }
+
+    solve_total_of_all_event_in_a_period() {
+        const total = this.temp_solved_event_list.length
+        this.temp_period_status.total = total
+        return total
     }
 
     init_temp_period_status() {
         this.temp_period_status = {year : 0, month : 0, day : 0, total : 0, complete : 0}
     }
 
-    compute_events_in_periods_of_days_in_a_month(year, month, days_period) {
-        for(let day = 0; day < 31; day = day + days_period) {
-            this.empty_temp_event_list()
-            this.init_temp_period_status()
-            this.temp_period_status.year = year
-            this.temp_period_status.month = month
-            this.temp_period_status.day = day
-            this.daily_event_partition(month, day, day + days_period)
-            this.filter_events_from_daily_event_partition()
-            this.temp_solved_event_list = this.temp_event_list
-            this.solve_complete_of_all_events_in_a_period()
-            this.add_a_period_status_toOwnerStatus(this.temp_period_status)
-            this.temp_period_event_status.push(this.temp_period_status)
-        }
-    }
-
-    compute_events_in_a_monthly_period(year, days_period) {
-        for(const a_monthly_event of this.temp_monthly_event_partition) {
-            this.monthly_event_partition(year, a_monthly_event.month, a_monthly_event.month)
-            this.compute_events_in_periods_of_days_in_a_month(year, a_monthly_event.month, days_period)
-        }
-    }
-
-    compute_events_in_a_yearly_span_and_days_period(category, start_year, end_year, days_period) {
-        this.yearly_event_partition(category, start_year, end_year)
+    // setup the computation of period status in a given time period and interval
+    compute_period_status_by_n_period_days_in_years(category, start_year, end_year, n_period_days) {
+        this.temp_period_event_status = []
+        this.partition_years(category, start_year, end_year)
         for(const a_yearly_event of this.temp_yearly_event_partition) {
-            this.monthly_event_partition(a_yearly_event.year, 1, 12)
-            this.compute_events_in_a_monthly_period(a_yearly_event.year, days_period)
+            this.partition_months(category,a_yearly_event.year, 1, 12)
+            for(const a_monthly_event of this.temp_monthly_event_partition) {
+                for(let day = 0; day < 31; day = day + n_period_days) {
+                    this.init_temp_period_status()
+                    this.temp_period_status.year = a_yearly_event.year
+                    this.temp_period_status.month = a_monthly_event.month
+                    this.temp_period_status.day = day
+                    this.partition_days(category, a_yearly_event.year, a_monthly_event.month, day, day + n_period_days)
+                    this.filter_events_from_daily_event_partition()
+                    this.temp_solved_event_list = this.temp_event_list
+                    this.solve_complete_of_all_events_in_a_period()
+                    this.solve_total_of_all_event_in_a_period()
+                    this.add_a_period_status_toOwnerStatus(this.temp_period_status)
+                    this.temp_period_event_status.push(this.temp_period_status)
+                }
+            }
         }
     }
+
+
+    
 }
 
 export {ScheduledEvent, OwnerStatus, Ownership, JsonDataStruct};
