@@ -232,9 +232,9 @@ export default class jsonDataStructInterf {
         this.json_object.compute_a_set_of_event_types_status(this.event_types_to_be_computed)
     }
 
-    compute_event_in_by_period_of_days(category, start_year, end_year, days_period) {
-        this.json_object.compute_events_in_a_yearly_span_and_days_period(category, start_year, end_year, days_period)
-    }
+    // compute_event_in_by_period_of_days(category, start_year, end_year, days_period) {
+    //     this.json_object.compute_events_in_a_yearly_span_and_days_period(category, start_year, end_year, days_period)
+    // }
 
     compute_event_in_by_period_of_days_v0(category, start_year, end_year, n_period_days) {
         this.json_object.compute_period_status_by_n_period_days_in_years(category, start_year, end_year, n_period_days)
