@@ -790,24 +790,32 @@ class JsonDataStruct {
     }
 
     compute_period_status_by_n_period_days_in_years(category, start_year, end_year, n_period_days) {
+        this.temp_period_event_status = []
         this.partition_years(category, start_year, end_year)
         for(const a_yearly_event of this.temp_yearly_event_partition) {
-            this.init_temp_period_status()
-            this.temp_period_status.year = a_yearly_event.year
             this.partition_months(category,a_yearly_event.year, 1, 12)
             for(const a_monthly_event of this.temp_monthly_event_partition) {
-                this.temp_period_status.month = a_monthly_event.month
-                for(let day; day < 31; day = day + n_period_days) {
+                for(let day = 0; day < 31; day = day + n_period_days) {
+                    this.init_temp_period_status()
+                    this.temp_period_status.year = a_yearly_event.year
+                    this.temp_period_status.month = a_monthly_event.month
+                    this.temp_period_status.day = day
                     this.partition_days(category, a_yearly_event.year, a_monthly_event.month, day, day + n_period_days)
+                    // console.log(this.temp_daily_event_partition)
                     this.filter_events_from_daily_event_partition()
                     this.temp_solved_event_list = this.temp_event_list
                     this.solve_complete_of_all_events_in_a_period()
                     this.add_a_period_status_toOwnerStatus(this.temp_period_status)
                     this.temp_period_event_status.push(this.temp_period_status)
+                    // console.log(this.temp_period_status)
                 }
             }
-        } 
+        }
+        // console.log(this.temp_period_event_status) 
     }
+
+
+    
 }
 
 export {ScheduledEvent, OwnerStatus, Ownership, JsonDataStruct};
