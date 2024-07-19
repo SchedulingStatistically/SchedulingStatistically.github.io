@@ -236,6 +236,10 @@ export default class jsonDataStructInterf {
         this.json_object.compute_events_in_a_yearly_span_and_days_period(category, start_year, end_year, days_period)
     }
 
+    compute_event_in_by_period_of_days_v0(category, start_year, end_year, n_period_days) {
+        this.json_object.compute_period_status_by_n_period_days_in_years(category, start_year, end_year, n_period_days)
+    }
+
     accessor_object_period_status(){
         return this.json_object.temp_period_event_status
     }
