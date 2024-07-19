@@ -112,16 +112,6 @@ function loadTasks(key) {
   return tasks ? JSON.parse(tasks) : [];
 }
 
-//ADD THE IMPORT AND EXPORT HERE
-//
-//
-function handleImport() {
-
-}
-
-function handleExport() {
-
-}
 
 function App() {
   // State variables
@@ -150,6 +140,25 @@ function App() {
     setIncompletedTasksVar(args);
     window.localStorage.setItem('incompletedTasks', JSON.stringify(args));
   };
+
+  const handleImport = () => {
+
+  }
+
+  const handleExport = () => {
+    const exportLink = document.createElement('a');
+    exportLink.href = URL.createObjectURL(new Blob([JSON.stringify({
+      tasks: tasks,
+      completedTasks: completedTasks,
+      incompletedTasks: incompletedTasks,
+    })], { type: 'application/json' }));
+    exportLink.download = 'SchedulingStatistically.json'
+    exportLink.style.display = 'none'
+    document.body.appendChild(exportLink);
+    exportLink.click()
+    document.body.removeChild(exportLink);
+    URL.revokeObjectURL(exportLink.href);
+  }
 
   const incompleteReasons = [
     "Procrastination",
@@ -382,8 +391,8 @@ function App() {
             </form>
           </div>
           <div className="action-buttons">
-            <button onClick={handleImport}>Import</button>
-            <button onClick={handleExport}>Export</button>
+            <button onClick={() => handleImport()}>Import</button>
+            <button onClick={() => handleExport()}>Export</button>
           </div>
         </div>
         <div className="auth-section">
