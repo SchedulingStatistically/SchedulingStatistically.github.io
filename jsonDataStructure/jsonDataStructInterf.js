@@ -8,7 +8,7 @@
 import  {ScheduledEvent, OwnerStatus, Ownership, JsonDataStruct} from './jsonDataStruct.js'
 // loading a whole json to make a data struct
 // loading a whole json to make a data struct
-const whole_json = {
+const default_json_object = {
     name : 'whole tree',
     ownership : {
         name : 'sam',
@@ -61,11 +61,27 @@ export default class jsonDataStructInterf {
     constructor(name){
         this.name = name;
         this.json_object = null;
-        this.event_types_to_be_computed = []
+        this.list_of_event_names = []
     }
 
     use_default_json_data(){
-        this.json_object = JsonDataStruct.fromJsonFormat(whole_json);
+        this.json_object = JsonDataStruct.fromJsonFormat(default_json_object);
+    }
+
+    load_json_from_string_file_format(string_json_file) {
+        let json_parse_object = null
+        try {
+            json_parse_object = JSON.parse(string_json_file)
+
+        }catch(error){
+            console.error('failed to parse json file', error);
+        }
+        this.json_object = JsonDataStruct.fromJsonFormat(json_parse_object)
+    }
+
+    getJsonObjectString(){
+        const json_string = JSON.stringify(this.json_object.toJsonFormat(), null, 2);
+        return json_string;
     }
 
     accessor_object_json_format() {
@@ -175,68 +191,40 @@ export default class jsonDataStructInterf {
         return this.json_object.temp_event_list
     }
 
-    get_events_within_a_yearly_time_partition(category, start_year, end_year) {
-        // this.json_object.empty_temp_event_list()
-        // this.json_object.yearly_event_partition(category, start_year, end_year)
-        // this.json_object.filter_events_from_yearly_event_partition()
-        // test new functions
-        // this.json_object.partition_years(category,start_year, end_year)
-        // this.json_object.filter_events_from_yearly_event_partition()
-        // test new functions
-        // this.json_object.partition_years_into_month(category,start_year, end_year)
-        // this.json_object.filter_events_from_monthly_event_partition()
-        // test new functions
+    set_events_within_a_yearly_time_partition(category, start_year, end_year) {
         this.json_object.partition_years_into_days(category, start_year, end_year)
         this.json_object.filter_events_from_daily_event_partition()
     }
 
-    get_events_within_a_monthly_time_partition(category, year, start_month, end_month) {
-        // this.json_object.empty_temp_event_list()
-        // this.json_object.yearly_event_partition(category, year, year)
-        // this.json_object.monthly_event_partition(year, start_month, end_month)
-        // this.json_object.filter_events_from_monthly_event_partition()
-        // test new functions
-        // this.json_object.partition_months(category, year, start_month, end_month)
-        // this.json_object.filter_events_from_monthly_event_partition()
-        // test new functions
+    set_events_within_a_monthly_time_partition(category, year, start_month, end_month) {
         this.json_object.partition_months_into_days(category, year,start_month, end_month)
         this.json_object.filter_events_from_daily_event_partition()
     }
 
-    get_events_within_a_daily_time_partition(category, year, month, start_day, end_day) {
-        // this.json_object.empty_temp_event_list()
-        // this.json_object.yearly_event_partition(category, year, year)
-        // this.json_object.monthly_event_partition(year, month, month)
-        // this.json_object.daily_event_partition(month, start_day, end_day)
-        // this.json_object.filter_events_from_daily_event_partition()
-        // test new function
+    set_events_within_a_daily_time_partition(category, year, month, start_day, end_day) {
         this.json_object.partition_days(category, year, month, start_day, end_day)
         this.json_object.filter_events_from_daily_event_partition()
     }
 
-    compute_an_event_status(event_type) {
+    solve_event_status_by_name(event_type) {
         this.json_object.emptyOwnerEventStatus()
         this.json_object.compute_an_event_status_type(event_type)
     }
 
-    add_an_event_type(event_type) {
-        this.event_types_to_be_computed.push(event_type)
+    add_an_event_name(event_type) {
+        this.list_of_event_names.push(event_type)
     }
 
-    rest_event_types() {
-        this.event_types_to_be_computed = []
+    reset_event_names() {
+        this.list_of_event_names = []
     }
 
-    compute_all_event_status_type(){
+    solve_event_status_by_the_list_of_event_names(){
         this.json_object.emptyOwnerEventStatus()
-        this.json_object.compute_a_set_of_event_types_status(this.event_types_to_be_computed)
+        this.json_object.compute_a_set_of_event_types_status(this.list_of_event_names)
     }
 
-    // compute_event_in_by_period_of_days(category, start_year, end_year, days_period) {
-    //     this.json_object.compute_events_in_a_yearly_span_and_days_period(category, start_year, end_year, days_period)
-    // }
-
-    compute_event_in_by_period_of_days_v0(category, start_year, end_year, n_period_days) {
+    solve_event_status_within_period_of_n_days(category, start_year, end_year, n_period_days) {
         this.json_object.compute_period_status_by_n_period_days_in_years(category, start_year, end_year, n_period_days)
     }
 
@@ -248,9 +236,5 @@ export default class jsonDataStructInterf {
         return this.json_object.getEvent_status()
     }
 
-    getJsonObjectString(){
-        const json_string = JSON.stringify(this.json_object.toJsonFormat(), null, 2);
-        return json_string;
-    }
 
 }
