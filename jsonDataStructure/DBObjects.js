@@ -1,34 +1,11 @@
 /* 
-    **** Do NOT MODIFY! ****
-
-    work is still in progress!
-
-   **** PROTOTYPE json data structure ****
-
-
-    if you want to study and edit the code, CREATE A NEW BRANCH.
-
-    DO NOT MERGE you new branch, I must review your code and 
-    understand the changes you have made! 
-
-    ONLY! Once I ------- OFFICIALLY FORMATE the JsonDataStruct with Proper DOCUMENTATION -------, Only then
-    will new changes be reviewed by the team for APPROVAL!
-
-    Feel free to ask me any question! I Strongly recommend everyone to take their time
-    to understand the jsonDataStruct. I would help so much with development. 
-    BACKEND DEVs MUST THOUGH!
-
-
-
-    HOW TO TEST THE CODE
-
-    "Use and the jsonDataStructDebugTest.js to run and test the jsonDataStruct object"
-    "run jsonDataStruct.html on a web browser get the console.log output with inspect command"
-    "I use vscode with 'Live Server' extension to run the html on my local browser app"
-    "DO NOT MERGE or push you testing code in the main branch"
+For our database, we used Airtable, a relatively low barrier to entry database, paired with the Airtable API in order to access, modify, and create 
+records. For the abstraction, we used three objects: DatabaseObj, ScheduledEvent and User that were modified from the data structure design. The 
+database itself is comprised of two pages which store properties of each respective object: ScheduledEvent and User. 
 */
 
 class DatabaseObj {
+    //The database object serves as a parent class for the following objects providing abstractions for interacting with the database
     constructor() {
         this.base_id = 'appujfaklryoZZPxX';
         this.auth_token = 'Bearer pateZMV3GBMLUVnWA.53e93b721f80534560c6592cfa282c13e9c8079387c3b79d033cd39956ee7d71';
@@ -42,8 +19,7 @@ class DatabaseObj {
         this.base = new Airtable({ apiKey: 'pateZMV3GBMLUVnWA.53e93b721f80534560c6592cfa282c13e9c8079387c3b79d033cd39956ee7d71' }).base('appujfaklryoZZPxX');
     }
 
-    // typecheck that fields is a key value pair object
-    // error check for same id in database
+    // creates an entry in the respective page of the database
     async create(data) {
         return new Promise((resolve, reject) => {
             this.base(this.obj_type).create(data, function (err, record) {
@@ -53,6 +29,7 @@ class DatabaseObj {
         });
     }
 
+    // updates an entry in the database based off of the obj_id
     async update() {
         return new Promise((resolve, reject) => {
             this.base(this.obj_type).find(this._obj_id, function (err, record) {
@@ -62,6 +39,7 @@ class DatabaseObj {
         });
     }
 
+    //combines create an update, creating an entry if it exists in the database and updating if it doesn't
     export(data) {
         this.base(this.obj_type).update([
             {
@@ -80,7 +58,11 @@ class DatabaseObj {
     }
 }
 
+
 class ScheduledEvent extends DatabaseObj {
+   // This is a representation of any event/task that a user creates with date and statistics. This object has getters and setters, used as if you  
+   // were modifying the property. Creating a ScheduledEvent with one argument of the obj_id will pull all properties of that user_id from the 
+   // database.
     constructor(...args) {
         super();
         this.obj_type = 'ScheduledEvent';
@@ -103,30 +85,44 @@ class ScheduledEvent extends DatabaseObj {
         }
     }
 
+    // gets obj_id property: used for api calls in order to identify which page to access in the database
     get obj_id() { return this._obj_id; }
 
+    // gets owner property: the user that "owns" the events
     get owner() { return this._owner; }
 
+    // gets name property: the name of the event
     get name() { return this._name; }
 
+    // get year property: the year the event was created
     get year() { return this._year; }
 
+    // get month property: the month the event was created
     get month() { return this._month; }
 
+    // get day property: the day the event was created
     get day() { return this._day; }
 
+    // get start property: when the event will start
     get start() { return this._start; }
 
+    // get hours property: the amount of time the event will take
     get hours() { return this._hours; }
 
+    // get end property: when the event will end
     get end() { return this._end; }
 
+    // get max property: max amount of time the user has spent on the event in the past
     get max() { return this._max; }
 
+    // get min property: min amount of time the user has spent on the event in the past
     get min() { return this._min; }
 
+    // get median property: median amount of time the user has spent on the event in the 
+    // past
     get median() { return this._median; }
 
+    // get mode property: mode amount of time the user has spent on the event in the past
     get mode() { return this._mode; }
 
     set name(inputName) { this._name = inputName; }
@@ -153,6 +149,8 @@ class ScheduledEvent extends DatabaseObj {
 
     set mode(inputMode) { this._mode = inputMode; }
 
+    // uses inherited functions to create an entry in the database, 
+    // waiting for a response before continuing
     async createDBEntry() {
         try {
             this._obj_id = await this.create(
@@ -164,6 +162,7 @@ class ScheduledEvent extends DatabaseObj {
         }
     }
 
+    // updates all properties of current object from database
     async updateFromDB() {
         try {
             let imported_obj = await this.update(this._obj_id);
@@ -184,6 +183,7 @@ class ScheduledEvent extends DatabaseObj {
         }
     }
 
+    // exports a JSON object
     exportToJson() {
         return {
             Name: this.name,
@@ -201,6 +201,7 @@ class ScheduledEvent extends DatabaseObj {
         };
     }
 
+    // updates properties of current object with given JSON string
     updateFromJson(json) {
         // json = JSON.parse(json);
         json = JSON.stringify(json);
@@ -219,6 +220,8 @@ class ScheduledEvent extends DatabaseObj {
         if (json.mode != null) { this._mode = json.mode; }
     }
 
+    // uses inherited export function to create/update database entry 
+    // and assigns user_id to created DB entry if not already created
     exportToDB() {
         if (this._obj_id != null) {
             this.export(this.exportToJson());
@@ -229,6 +232,9 @@ class ScheduledEvent extends DatabaseObj {
 }
 
 class User extends DatabaseObj {
+    // The User object represents a User in the system. 
+    // Unfortunately, authentication was not able to be implemented 
+    // in the time period we were allotted so it has no functionality.
     constructor(...args) {
         super();
         this.obj_type = 'User';
@@ -242,12 +248,17 @@ class User extends DatabaseObj {
         }
     }
 
+    // get obj_id: used for api calls in order to identify 
+    // which page to access in the database
     get obj_id() { return this._obj_id; }
 
+    // get name: real name of the user
     get name() { return this._name; }
 
+    // get username: used to associate a User with ScheduledEvents
     get user_name() { return this._username; }
 
+    // get password: the passwordof the user (no functionality right now)
     get password() { return this._password; }
 
     set user_name(inputUserName) { this._username = inputUserName; }
@@ -256,6 +267,8 @@ class User extends DatabaseObj {
 
     set password(inputPassword) { this._password = inputPassword; }
 
+    // uses inherited functions to create an entry in the database, 
+    // waiting for a response before continuing
     async createDBEntry() {
         try {
             this._obj_id = await this.create(
@@ -267,6 +280,7 @@ class User extends DatabaseObj {
         }
     }
 
+    // updates the properties of current object with a given Json string
     async updateFromDB() {
         try {
             let imported_obj = await this.update(this._obj_id);
@@ -278,6 +292,7 @@ class User extends DatabaseObj {
         }
     }
 
+    // exports a JSON object
     exportToJson() {
         return {
             Name: this.name,
@@ -286,6 +301,7 @@ class User extends DatabaseObj {
         };
     }
 
+    // updates the properties of current object with a given Json string
     importFromJson(json) {
         // json = JSON.parse(json);
         json = JSON.stringify(json);
@@ -295,6 +311,8 @@ class User extends DatabaseObj {
         if (json.password != null) { this.password = json.password; }
     }
 
+    // uses inherited export function to create/update database entry and 
+    // assigns user_id to created DB entry if not already created
     exportToDB() {
         if (this._obj_id != null) {
             this.export(this.exportToJson());
@@ -303,6 +321,8 @@ class User extends DatabaseObj {
         }
     }
 
+    // akes in a username, checking the database if the username 
+    // doesn't exist and returning True if it doesn't
     nonExistingUsername(username) {
         this.base('User').select({
             maxRecords: 1,
@@ -320,6 +340,10 @@ class User extends DatabaseObj {
         return True
     }
 
+    // takes in a username. creates an entry in the database 
+    // if it doesn't exist and returning an empty list. if the 
+    // entry exists, it returns a list of ScheduledEvents associated 
+    // with that user
     async logIn(username) {
         let doesntExist = nonExistingUsername(username)
         await new Promise(r => setTimeout(r, 2000));
