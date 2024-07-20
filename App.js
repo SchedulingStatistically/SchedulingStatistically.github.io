@@ -1,13 +1,9 @@
-// App.js is the main component that renders the entire application. It contains the following features:
-// - A form to add a new task with an estimated time
-// - A list of tasks that can be edited, deleted, marked as complete, or marked as incomplete
-// - A list of completed tasks
-// - A list of incompleted tasks with reasons for not completing the task
-// - A dropdown menu to select a reason for marking a task as incomplete
+// App.js
 
 const { useEffect, useState, Fragment, useRef } = React;
 const { Calendar, momentLocalizer } = ReactBigCalendar;
 const localizer = momentLocalizer(moment);
+const axios = window.axios;
 
 // Dropdown Menu Component
 function DropdownMenu({ task, position, incompleteReasons, handleIncompleteTask, closeDropdown }) {
@@ -43,9 +39,7 @@ function Login({ onLogin }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Backend request here
-    console.log('Login attempt:', username, password);
-    onLogin(username);
+    onLogin(username, password);
   };
 
   return (
@@ -79,9 +73,7 @@ function Register({ onRegister }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Backend request here
-    console.log('Registration attempt:', username, password);
-    onRegister(username);
+    onRegister(username, password);
   };
 
   return (
@@ -113,20 +105,20 @@ function loadTasks(key) {
   return tasks ? JSON.parse(tasks) : [];
 }
 
-
 function App() {
   // State variables
-  const [tasks, setTasksVar] = useState(loadTasks('tasks'));                                              // Tasks state variable        
-  const [newTask, setNewTask] = useState('');                                          // New task state variable
-  const [newTaskTime, setNewTaskTime] = useState('');                                  // New task time state variable
-  const [editingTaskId, setEditingTaskId] = useState(null);                            // Editing task id state variable
-  const [editingTaskText, setEditingTaskText] = useState('');                          // Editing task text state variable
-  const [editingTaskTime, setEditingTaskTime] = useState('');                          // Editing task time state variable
-  const [completedTasks, setCompletedTasksVar] = useState(loadTasks('completedTasks'));                            // Completed tasks state variable 
-  const [incompletedTasks, setIncompletedTasksVar] = useState(loadTasks('incompletedTasks'));                        // Incompleted tasks state variable
-  const [activeDropdownId, setActiveDropdownId] = useState(null);                      // Active dropdown id state variable
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });       // Dropdown position state variable
+  const [tasks, setTasksVar] = useState(loadTasks('tasks'));
+  const [newTask, setNewTask] = useState('');
+  const [newTaskTime, setNewTaskTime] = useState('');
+  const [editingTaskId, setEditingTaskId] = useState(null);
+  const [editingTaskText, setEditingTaskText] = useState('');
+  const [editingTaskTime, setEditingTaskTime] = useState('');
+  const [completedTasks, setCompletedTasksVar] = useState(loadTasks('completedTasks'));
+  const [incompletedTasks, setIncompletedTasksVar] = useState(loadTasks('incompletedTasks'));
+  const [activeDropdownId, setActiveDropdownId] = useState(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [user, setUser] = useState(null);
+  const [productivityChart, setChart] = useState(null);
 
   // Local Storage Functions
   const setTasks = (args) => {
@@ -138,6 +130,7 @@ function App() {
     setCompletedTasksVar(args);
     window.localStorage.setItem('completedTasks', JSON.stringify(args));
   };
+
   const setIncompletedTasks = (args) => {
     setIncompletedTasksVar(args);
     window.localStorage.setItem('incompletedTasks', JSON.stringify(args));
@@ -187,74 +180,74 @@ function App() {
   ];
 
   // Function to add a new task
-  const addTask = (e) => {                                                             // Add task function
-    e.preventDefault();                                                                // Prevent default form submission
-    if (newTask.trim() && newTaskTime.trim()) {                                        // Check if new task and time are not empty
-      const task = { id: Date.now(), text: newTask, time: `${newTaskTime} minutes` };  // Create
-      setTasks([...tasks, task]);                                                      // Add task to tasks
-      setNewTask('');                                                                  // Reset new task
-      setNewTaskTime('');                                                              // Reset new task time 
+  const addTask = (e) => {
+    e.preventDefault();
+    if (newTask.trim() && newTaskTime.trim()) {
+      const task = { id: Date.now(), text: newTask, time: `${newTaskTime} minutes` };
+      setTasks([...tasks, task]);
+      setNewTask('');
+      setNewTaskTime('');
     }
   };
 
   // Function to delete a task
-  const deleteTask = (id) => {                                                        // Delete task function
-    setTasks(tasks.filter(task => task.id !== id));                                   // Filter out task with id
-    setCompletedTasks(completedTasks.filter(task => task.id !== id));                 // Filter out task with id from completed tasks
-    setIncompletedTasks(incompletedTasks.filter(task => task.id !== id));             // Filter out task with id from incompleted tasks
+  const deleteTask = (id) => {
+    setTasks(tasks.filter(task => task.id !== id));
+    setCompletedTasks(completedTasks.filter(task => task.id !== id));
+    setIncompletedTasks(incompletedTasks.filter(task => task.id !== id));
   };
 
   // Function to edit a task
-  const editTask = (id, newText, newTime) => {                                        // Edit task function
+  const editTask = (id, newText, newTime) => {
     const updatedTasks = tasks.map(task =>
-      task.id === id ? { ...task, text: newText, time: `${newTime} minutes` } : task  // Map through tasks and update task with id
-    );
-    setTasks(updatedTasks);                                                           // Update tasks
-    const updatedCompletedTasks = completedTasks.map(task =>                          // Map through completed tasks and update task with id
       task.id === id ? { ...task, text: newText, time: `${newTime} minutes` } : task
     );
-    setCompletedTasks(updatedCompletedTasks);                                         // Update completed tasks
-    const updatedIncompletedTasks = incompletedTasks.map(task =>                      // Map through incompleted tasks and update task with id
+    setTasks(updatedTasks);
+    const updatedCompletedTasks = completedTasks.map(task =>
       task.id === id ? { ...task, text: newText, time: `${newTime} minutes` } : task
     );
-    setIncompletedTasks(updatedIncompletedTasks);                                     // Update incompleted tasks
-    setEditingTaskId(null);                                                           // Reset editing task id
-    setEditingTaskText('');                                                           // Reset editing task text
-    setEditingTaskTime('');                                                           // Reset editing task time
+    setCompletedTasks(updatedCompletedTasks);
+    const updatedIncompletedTasks = incompletedTasks.map(task =>
+      task.id === id ? { ...task, text: newText, time: `${newTime} minutes` } : task
+    );
+    setIncompletedTasks(updatedIncompletedTasks);
+    setEditingTaskId(null);
+    setEditingTaskText('');
+    setEditingTaskTime('');
   };
 
   // Function to start editing a task
-  const startEditing = (task) => {                                                   // Start editing task function
-    setEditingTaskId(task.id);                                                       // Set editing task id
-    setEditingTaskText(task.text);                                                   // Set editing task text
-    setEditingTaskTime(task.time.replace(' minutes', ''));                           // Set editing task time
+  const startEditing = (task) => {
+    setEditingTaskId(task.id);
+    setEditingTaskText(task.text);
+    setEditingTaskTime(task.time.replace(' minutes', ''));
   };
 
   // Function to mark a task as complete
-  const completeTask = (id) => {                                                   // Complete task function
-    const task = tasks.find(task => task.id === id);                               // Find task with id
-    setCompletedTasks([...completedTasks, task]);                                  // Add task to completed tasks
-    setTasks(tasks.filter(task => task.id !== id));                                // Filter out task with id
+  const completeTask = (id) => {
+    const task = tasks.find(task => task.id === id);
+    setCompletedTasks([...completedTasks, task]);
+    setTasks(tasks.filter(task => task.id !== id));
   };
 
   // Function to mark a task as incomplete
   const incompleteTask = (id, reason) => {
-    const task = tasks.find(task => task.id === id);                             // Find task with id
-    setIncompletedTasks([...incompletedTasks, { ...task, reason }]);             // Add task to incompleted tasks with reason
-    setTasks(tasks.filter(task => task.id !== id));                              // Filter out task with id
-    setActiveDropdownId(null);                                                   // Reset active dropdown id
+    const task = tasks.find(task => task.id === id);
+    setIncompletedTasks([...incompletedTasks, { ...task, reason }]);
+    setTasks(tasks.filter(task => task.id !== id));
+    setActiveDropdownId(null);
   };
 
   // Toggle dropdown menu
   const toggleDropdown = (id, event) => {
     event.stopPropagation();
-    const rect = event.target.getBoundingClientRect();              // Get bounding client rect of target
-    const position = {                                              // Position of dropdown menu
-      top: rect.top + window.scrollY + rect.height,                              // Top position of dropdown menu
-      left: rect.left + window.scrollX                         // Left position of dropdown menu
+    const rect = event.target.getBoundingClientRect();
+    const position = {
+      top: rect.top + window.scrollY + rect.height,
+      left: rect.left + window.scrollX
     };
-    setDropdownPosition(position);                                  // Set dropdown position
-    setActiveDropdownId(activeDropdownId === id ? null : id);       // Toggle active dropdown id
+    setDropdownPosition(position);
+    setActiveDropdownId(activeDropdownId === id ? null : id);
   };
 
   const closeDropdown = () => {
@@ -262,24 +255,62 @@ function App() {
   };
 
   // Functions for handling login and registration
-  const handleLogin = (username) => {
-    setUser(username);
+  const handleLogin = async (username, password) => {
+    try {
+      const response = await axios.post('http://localhost:3001/login', { username, password });
+      if (response.data.success) {
+        setUser(username);
+        // Load user data
+        setTasks(response.data.userData.tasks || []);
+        setCompletedTasks(response.data.userData.completedTasks || []);
+        setIncompletedTasks(response.data.userData.incompletedTasks || []);
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
-  const handleRegister = (username) => {
-    setUser(username);
+  const handleRegister = async (username, password) => {
+    try {
+      const userData = {
+        tasks,
+        completedTasks,
+        incompletedTasks
+      };
+      const response = await axios.post('http://localhost:3001/register', { username, password, userData });
+      if (response.data.success) {
+        setUser(username);
+      }
+    } catch (error) {
+      console.error('Registration failed:', error);
+    }
   };
 
   const handleLogout = () => {
     setUser(null);
+    // Clear user data
+    setTasks([]);
+    setCompletedTasks([]);
+    setIncompletedTasks([]);
   };
 
-  const [productivityChart, setChart] = useState(null);
+  // Add this effect to sync data with Airtable when it changes
+  useEffect(() => {
+    if (user) {
+      const userData = {
+        tasks,
+        completedTasks,
+        incompletedTasks
+      };
+      axios.post('http://localhost:3001/sync', { username: user, userData })
+        .catch(error => console.error('Sync failed:', error));
+    }
+  }, [tasks, completedTasks, incompletedTasks, user]);
+
   useEffect(() => {
     // Configuration options
     const config = {
       type: 'line',
-      // data: data,
       options: {
         responsive: true,
         plugins: {
@@ -325,15 +356,6 @@ function App() {
     date.setDate(0);
     const labels = Array.from({ length: date.getDate() }, (_, i) => `Day ${i + 1}`);
 
-    // const generateData = (completed) => {
-    //   return Array.from({ length: labels.length }, () =>
-    //     completed ? Math.floor(Math.random() * 10) + 1 : Math.floor(Math.random() * 5)
-    //   );
-    // };
-    //
-    // const completedTaskData = generateData(true);
-    // const incompleteTaskData = generateData(false);
-
     const completedTaskData = Array(labels.length);
     const incompleteTaskData = Array(labels.length);
 
@@ -378,7 +400,7 @@ function App() {
   }, [productivityChart, completedTasks, incompletedTasks]);
 
   return (
-    <div className="container">                                    {/* Comment everything below this line */}
+    <div className="container">
       <div className="app-header">
         <div className="planner">
           <div className="task-input-area">
@@ -478,7 +500,6 @@ function App() {
                     <button className="edit-button" onClick={() => startEditing(task)}>Edit</button>
                     <button className="delete-button" onClick={() => deleteTask(task.id)}>Delete</button>
                   </div>
-
                 </li>
               ))}
             </ul>
