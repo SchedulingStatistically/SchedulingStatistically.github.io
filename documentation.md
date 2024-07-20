@@ -89,7 +89,7 @@ For our database, we used Airtable, a relatively low barrier to entry database, 
   <li>updateFromDB: updates the properties of current object with a given Json string</li>
   <li>exportToJson: exports a Json object</li>
   <li>updateFromJson: updates the properties of current object with a given Json string</li>
-  <li>uses inherited export function to create/update database entry and assigns user_id to created DB entry if not already created</li>
+  <li>exportToDB: uses inherited export function to create/update database entry and assigns user_id to created DB entry if not already created</li>
   <li>nonExistingUsername: takes in a username, checking the database if the username  doesn't exist and returning True if it doesn't</li>
   <li>logIn: takes in a username. creates an entry in the database if it doesn't exist and returning an empty list. if the entry exists, it returns a list of ScheduledEvents associated with that user</li>
 </ul>
