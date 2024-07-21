@@ -4,7 +4,7 @@ const Airtable = require('airtable');
 const cors = require('cors');
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: 'https://maz-ax.github.io/SchedulingStatistically.github.io/' }));
 app.use(express.json());
 
 const base = new Airtable({apiKey: 'patuyBWMIypYphVl4.e5174b86499f75093a1a61fd33229b59fbd446849e75024337d0b469ebc1edaa'}).base('appjMFSP6U6V4cwTO');
@@ -82,10 +82,6 @@ app.post('/sync', async (req, res) => {
     res.status(500).json({ success: false, error: 'Sync failed' });
   }
 });
-
-// Allow requests from the Github Pages domain due to CORS policy
-const cors = require('cors');
-app.use(cors({ origin: 'https://maz-ax.github.io/SchedulingStatistically.github.io/' }));
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
