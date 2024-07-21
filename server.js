@@ -18,7 +18,7 @@ app.post('/register', async (req, res) => {
     }).firstPage();
 
     if (existingUsers.length > 0) {
-      return res.status(400).json({ error: 'Username already exists' });
+      return res.json({ success: false, error: 'Username already exists' });
     }
 
     await base('Users').create([
@@ -33,7 +33,7 @@ app.post('/register', async (req, res) => {
 
     res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ error: 'Registration failed' });
+    res.status(500).json({ success: false, error: 'Registration failed' });
   }
 });
 
@@ -46,13 +46,13 @@ app.post('/login', async (req, res) => {
     }).firstPage();
 
     if (users.length === 0) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.json({ success: false, error: 'Invalid credentials' });
     }
 
     const userData = JSON.parse(users[0].fields.UserData || '{}');
     res.json({ success: true, userData });
   } catch (error) {
-    res.status(500).json({ error: 'Login failed' });
+    res.status(500).json({ success: false, error: 'Login failed' });
   }
 });
 
@@ -65,7 +65,7 @@ app.post('/sync', async (req, res) => {
     }).firstPage();
 
     if (users.length === 0) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.json({ success: false, error: 'User not found' });
     }
 
     await base('Users').update([
@@ -79,7 +79,7 @@ app.post('/sync', async (req, res) => {
 
     res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ error: 'Sync failed' });
+    res.status(500).json({ success: false, error: 'Sync failed' });
   }
 });
 
