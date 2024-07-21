@@ -83,5 +83,9 @@ app.post('/sync', async (req, res) => {
   }
 });
 
+// Allow requests from the Github Pages domain due to CORS policy
+const cors = require('cors');
+app.use(cors({ origin: 'https://maz-ax.github.io/SchedulingStatistically.github.io/' }));
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

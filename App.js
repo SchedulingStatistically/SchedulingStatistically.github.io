@@ -257,7 +257,7 @@ function App() {
   // Functions for handling login and registration
   const handleLogin = async (username, password) => {
   try {
-    const response = await axios.post('http://localhost:3001/login', { username, password });
+    const response = await axios.post('https://schedulingstatistically-github-io.onrender.com/login', { username, password });
     if (response.data.success) {
       setUser(username);
       setTasks(response.data.userData.tasks || []);
@@ -280,7 +280,7 @@ const handleRegister = async (username, password) => {
       completedTasks,
       incompletedTasks
     };
-    const response = await axios.post('http://localhost:3001/register', { username, password, userData });
+    const response = await axios.post('https://schedulingstatistically-github-io.onrender.com/register', { username, password, userData });
     if (response.data.success) {
       setUser(username);
       alert('Registration successful! You are now logged in.');
@@ -309,7 +309,7 @@ const handleRegister = async (username, password) => {
       completedTasks,
       incompletedTasks
     };
-    axios.post('http://localhost:3001/sync', { username: user, userData })
+    axios.post('https://schedulingstatistically-github-io.onrender.com/sync', { username: user, userData })
       .then(response => {
         if (!response.data.success) {
           console.error('Sync failed:', response.data.error);
