@@ -52,6 +52,7 @@ function Login({ onLogin }) {
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Username"
           required
+		  autocomplete="off"
         />
         <input
           type="password"
@@ -59,6 +60,7 @@ function Login({ onLogin }) {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
           required
+		  autocomplete="current-password"
         />
         <button type="submit">Login</button>
       </form>
@@ -86,6 +88,7 @@ function Register({ onRegister }) {
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Username"
           required
+		  autocomplete="off"
         />
         <input
           type="password"
@@ -93,6 +96,7 @@ function Register({ onRegister }) {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
           required
+		  autocomplete="new-password"
         />
         <button type="submit">Register</button>
       </form>
