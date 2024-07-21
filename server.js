@@ -4,6 +4,24 @@ const Airtable = require('airtable');
 const app = express();
 app.use(express.json());
 
+// Allowing CORS policy so GitHub Pages could interact with the backend server Render.
+const cors = require('cors');
+app.use(cors({
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'https://maz-ax.github.io',
+      'https://maz-ax.github.io/SchedulingStatistically.github.io',
+      'http://localhost:8000'
+    ];
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+
 const base = new Airtable({apiKey: 'patuyBWMIypYphVl4.e5174b86499f75093a1a61fd33229b59fbd446849e75024337d0b469ebc1edaa'}).base('appjMFSP6U6V4cwTO');
 
 app.post('/register', async (req, res) => {
@@ -79,10 +97,6 @@ app.post('/sync', async (req, res) => {
     res.status(500).json({ success: false, error: 'Sync failed' });
   }
 });
-
-// Allowing CORS policy so GitHub Pages could interact with the backend server Render.
-const cors = require('cors');
-app.use(cors({ origin: 'https://maz-ax.github.io/SchedulingStatistically.github.io/' }));
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
