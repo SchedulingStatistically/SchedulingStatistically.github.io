@@ -52,6 +52,7 @@ function Login({ onLogin }) {
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Username"
           required
+		  autocomplete="off"
         />
         <input
           type="password"
@@ -59,6 +60,7 @@ function Login({ onLogin }) {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
           required
+		  autocomplete="current-password"
         />
         <button type="submit">Login</button>
       </form>
@@ -86,6 +88,7 @@ function Register({ onRegister }) {
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Username"
           required
+		  autocomplete="off"
         />
         <input
           type="password"
@@ -93,6 +96,7 @@ function Register({ onRegister }) {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
           required
+		  autocomplete="new-password"
         />
         <button type="submit">Register</button>
       </form>
@@ -256,35 +260,42 @@ function App() {
 
   // Functions for handling login and registration
   const handleLogin = async (username, password) => {
-    try {
-      const response = await axios.post('http://localhost:3001/login', { username, password });
-      if (response.data.success) {
-        setUser(username);
-        // Load user data
-        setTasks(response.data.userData.tasks || []);
-        setCompletedTasks(response.data.userData.completedTasks || []);
-        setIncompletedTasks(response.data.userData.incompletedTasks || []);
-      }
-    } catch (error) {
-      console.error('Login failed:', error);
+  try {
+    const response = await axios.post('https://schedulingstatistically-github-io.onrender.com/login', { username, password });
+    if (response.data.success) {
+      setUser(username);
+      setTasks(response.data.userData.tasks || []);
+      setCompletedTasks(response.data.userData.completedTasks || []);
+      setIncompletedTasks(response.data.userData.incompletedTasks || []);
+      alert('Login successful!');
+    } else {
+      alert('Invalid credentials. Please try again.');
     }
-  };
+  } catch (error) {
+    console.error('Login failed:', error);
+    alert('Login failed. Please try again.');
+  }
+};
 
-  const handleRegister = async (username, password) => {
-    try {
-      const userData = {
-        tasks,
-        completedTasks,
-        incompletedTasks
-      };
-      const response = await axios.post('http://localhost:3001/register', { username, password, userData });
-      if (response.data.success) {
-        setUser(username);
-      }
-    } catch (error) {
-      console.error('Registration failed:', error);
+const handleRegister = async (username, password) => {
+  try {
+    const userData = {
+      tasks,
+      completedTasks,
+      incompletedTasks
+    };
+    const response = await axios.post('https://schedulingstatistically-github-io.onrender.com/register', { username, password, userData });
+    if (response.data.success) {
+      setUser(username);
+      alert('Registration successful! You are now logged in.');
+    } else {
+      alert('Registration failed. Please try again.');
     }
-  };
+  } catch (error) {
+    console.error('Registration failed:', error);
+    alert('Registration failed. Please try again.');
+  }
+};
 
   const handleLogout = () => {
     setUser(null);
@@ -296,16 +307,21 @@ function App() {
 
   // Add this effect to sync data with Airtable when it changes
   useEffect(() => {
-    if (user) {
-      const userData = {
-        tasks,
-        completedTasks,
-        incompletedTasks
-      };
-      axios.post('http://localhost:3001/sync', { username: user, userData })
-        .catch(error => console.error('Sync failed:', error));
-    }
-  }, [tasks, completedTasks, incompletedTasks, user]);
+  if (user) {
+    const userData = {
+      tasks,
+      completedTasks,
+      incompletedTasks
+    };
+    axios.post('https://schedulingstatistically-github-io.onrender.com/sync', { username: user, userData })
+      .then(response => {
+        if (!response.data.success) {
+          console.error('Sync failed:', response.data.error);
+        }
+      })
+      .catch(error => console.error('Sync failed:', error));
+  }
+}, [tasks, completedTasks, incompletedTasks, user]);
 
   useEffect(() => {
     // Configuration options
