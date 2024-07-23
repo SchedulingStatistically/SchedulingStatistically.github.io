@@ -30,7 +30,7 @@ Welcome to the Scheduling Statistically project repository!
 
 ## Sprints Overview
 
-### Sprint 1
+### Sprint 1 (SCRUM Master: Daniel)
 #### Front End
 - Website Initialization
 - Task Management (Create, Edit, Delete tasks)
@@ -43,7 +43,7 @@ Welcome to the Scheduling Statistically project repository!
 - JSON, NodeJS, Airtable Exploration
 - **Total Points**: 30
 
-### Sprint 2
+### Sprint 2 (SCRUM Master: Maz)
 #### Front End
 - Task Completion Dropdown
 - Productivity Bar Graph Implementation
@@ -55,7 +55,7 @@ Welcome to the Scheduling Statistically project repository!
 - Express, Axios, CORS Policy Compliance, and Website Security
 - **Total Points**: 34
 
-### Sprint 3
+### Sprint 3 (SCRUM Master: Philip)
 #### Front End
 - Pie Chart Implementation
 - Bug Fixes & Refinement
@@ -95,7 +95,8 @@ Welcome to the Scheduling Statistically project repository!
 - Task Completion Tracking
 - Productivity Bar Graph
 - User Registration and Information Retention
-
+  
+***************************************************************************************************************
 # Instructions:
 ### You may use our website that is up and running at https://schedulingstatistically.github.io/
 ### or run it on your local server or a server of your choice.
