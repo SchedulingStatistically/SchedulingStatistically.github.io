@@ -5,16 +5,20 @@ const { Calendar, momentLocalizer } = ReactBigCalendar;
 const localizer = momentLocalizer(moment);
 const axios = window.axios;
 
+const API_URL = 'https://schedulingstatistically-github-io.onrender.com';
+
 // Dropdown Menu Component
-function DropdownMenu({ task, position, incompleteReasons, handleIncompleteTask, closeDropdown }) {
+function DropdownMenu({ task, position, incompleteReasons, 
+    handleIncompleteTask, closeDropdown }) {
     const dropdownRef = useRef(null);
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        function handleClickOutside(event) {
+            if (dropdownRef.current && 
+                !dropdownRef.current.contains(event.target)) {
                 closeDropdown();
             }
-        };
+        }
 
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
@@ -23,9 +27,14 @@ function DropdownMenu({ task, position, incompleteReasons, handleIncompleteTask,
     }, [closeDropdown]);
 
     return ReactDOM.createPortal(
-        <ul className="dropdown-menu" style={{ top: position.top, left: position.left }} ref={dropdownRef}>
+        <ul className="dropdown-menu" 
+            style={{ top: position.top, left: position.left }} 
+            ref={dropdownRef}>
             {incompleteReasons.map((reason, index) => (
-                <li key={index} onClick={() => handleIncompleteTask(task.id, reason)}>{reason}</li>
+                <li key={index} 
+                    onClick={() => handleIncompleteTask(task.id, reason)}>
+                    {reason}
+                </li>
             ))}
         </ul>,
         document.body
@@ -37,10 +46,10 @@ function Login({ onLogin }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = (e) => {
+    function handleSubmit(e) {
         e.preventDefault();
         onLogin(username, password);
-    };
+    }
 
     return (
         <div className="auth-box">
@@ -73,10 +82,10 @@ function Register({ onRegister }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = (e) => {
+    function handleSubmit(e) {
         e.preventDefault();
         onRegister(username, password);
-    };
+    }
 
     return (
         <div className="auth-box">
@@ -117,31 +126,35 @@ function App() {
     const [editingTaskId, setEditingTaskId] = useState(null);
     const [editingTaskText, setEditingTaskText] = useState('');
     const [editingTaskTime, setEditingTaskTime] = useState('');
-    const [completedTasks, setCompletedTasksVar] = useState(loadTasks('completedTasks'));
-    const [incompletedTasks, setIncompletedTasksVar] = useState(loadTasks('incompletedTasks'));
+    const [completedTasks, setCompletedTasksVar] = useState(
+        loadTasks('completedTasks')
+    );
+    const [incompletedTasks, setIncompletedTasksVar] = useState(
+        loadTasks('incompletedTasks')
+    );
     const [activeDropdownId, setActiveDropdownId] = useState(null);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const [user, setUser] = useState(null);
     const [productivityChart, setChart] = useState(null);
 
     // Local Storage Functions
-    const setTasks = (args) => {
+    function setTasks(args) {
         setTasksVar(args);
         window.localStorage.setItem('tasks', JSON.stringify(args));
-    };
+    }
 
-    const setCompletedTasks = (args) => {
+    function setCompletedTasks(args) {
         setCompletedTasksVar(args);
         window.localStorage.setItem('completedTasks', JSON.stringify(args));
-    };
+    }
 
-    const setIncompletedTasks = (args) => {
+    function setIncompletedTasks(args) {
         setIncompletedTasksVar(args);
         window.localStorage.setItem('incompletedTasks', JSON.stringify(args));
-    };
+    }
 
     // Import and export functions
-    const handleImport = () => {
+    function handleImport() {
         const importInput = document.createElement('input');
         importInput.type = 'file';
         importInput.accept = 'application/json';
@@ -161,7 +174,7 @@ function App() {
         importInput.click();
     }
 
-    const handleExport = () => {
+    function handleExport() {
         const exportLink = document.createElement('a');
         exportLink.href = URL.createObjectURL(new Blob([JSON.stringify({
             tasks: tasks,
@@ -184,25 +197,29 @@ function App() {
     ];
 
     // Function to add a new task
-    const addTask = (e) => {
+    function addTask(e) {
         e.preventDefault();
         if (newTask.trim() && newTaskTime.trim()) {
-            const task = { id: Date.now(), text: newTask, time: `${newTaskTime} minutes` };
+            const task = { 
+                id: Date.now(), 
+                text: newTask, 
+                time: `${newTaskTime} minutes` 
+            };
             setTasks([...tasks, task]);
             setNewTask('');
             setNewTaskTime('');
         }
-    };
+    }
 
     // Function to delete a task
-    const deleteTask = (id) => {
+    function deleteTask(id) {
         setTasks(tasks.filter(task => task.id !== id));
         setCompletedTasks(completedTasks.filter(task => task.id !== id));
         setIncompletedTasks(incompletedTasks.filter(task => task.id !== id));
-    };
+    }
 
     // Function to edit a task
-    const editTask = (id, newText, newTime) => {
+    function editTask(id, newText, newTime) {
         const updatedTasks = tasks.map(task =>
             task.id === id ? { ...task, text: newText, time: `${newTime} minutes` } : task
         );
@@ -218,32 +235,32 @@ function App() {
         setEditingTaskId(null);
         setEditingTaskText('');
         setEditingTaskTime('');
-    };
+    }
 
     // Function to start editing a task
-    const startEditing = (task) => {
+    function startEditing(task) {
         setEditingTaskId(task.id);
         setEditingTaskText(task.text);
         setEditingTaskTime(task.time.replace(' minutes', ''));
-    };
+    }
 
     // Function to mark a task as complete
-    const completeTask = (id) => {
+    function completeTask(id) {
         const task = tasks.find(task => task.id === id);
         setCompletedTasks([...completedTasks, task]);
         setTasks(tasks.filter(task => task.id !== id));
-    };
+    }
 
     // Function to mark a task as incomplete
-    const incompleteTask = (id, reason) => {
+    function incompleteTask(id, reason) {
         const task = tasks.find(task => task.id === id);
         setIncompletedTasks([...incompletedTasks, { ...task, reason }]);
         setTasks(tasks.filter(task => task.id !== id));
         setActiveDropdownId(null);
-    };
+    }
 
     // Toggle dropdown menu
-    const toggleDropdown = (id, event) => {
+    function toggleDropdown(id, event) {
         event.stopPropagation();
         const rect = event.target.getBoundingClientRect();
         const position = {
@@ -252,16 +269,16 @@ function App() {
         };
         setDropdownPosition(position);
         setActiveDropdownId(activeDropdownId === id ? null : id);
-    };
+    }
 
-    const closeDropdown = () => {
+    function closeDropdown() {
         setActiveDropdownId(null);
-    };
+    }
 
     // Functions for handling login and registration
-    const handleLogin = async (username, password) => {
+    async function handleLogin(username, password) {
         try {
-            const response = await axios.post('https://schedulingstatistically-github-io.onrender.com/login', { username, password });
+            const response = await axios.post(`${API_URL}/login`, { username, password });
             if (response.data.success) {
                 setUser(username);
                 setTasks(response.data.userData.tasks || []);
@@ -275,16 +292,20 @@ function App() {
             console.error('Login failed:', error);
             alert('Login failed. Please try again.');
         }
-    };
+    }
 
-    const handleRegister = async (username, password) => {
+    async function handleRegister(username, password) {
         try {
             const userData = {
                 tasks,
                 completedTasks,
                 incompletedTasks
             };
-            const response = await axios.post('https://schedulingstatistically-github-io.onrender.com/register', { username, password, userData });
+            const response = await axios.post(`${API_URL}/register`, { 
+                username, 
+                password, 
+                userData 
+            });
             if (response.data.success) {
                 setUser(username);
                 alert('Registration successful! You are now logged in.');
@@ -295,15 +316,15 @@ function App() {
             console.error('Registration failed:', error);
             alert('Registration failed. Please try again.');
         }
-    };
+    }
 
-    const handleLogout = () => {
+    function handleLogout() {
         setUser(null);
         // Clear user data
         setTasks([]);
         setCompletedTasks([]);
         setIncompletedTasks([]);
-    };
+    }
 
     // Add this effect to sync data with Airtable when it changes
     useEffect(() => {
@@ -313,7 +334,7 @@ function App() {
                 completedTasks,
                 incompletedTasks
             };
-            axios.post('https://schedulingstatistically-github-io.onrender.com/sync', { username: user, userData })
+            axios.post(`${API_URL}/sync`, { username: user, userData })
                 .then(response => {
                     if (!response.data.success) {
                         console.error('Sync failed:', response.data.error);
@@ -365,12 +386,13 @@ function App() {
 
     useEffect(() => {
         if (!productivityChart) return;
-        // Generate fake data for the last 30 days
+        // Generate data for the last 30 days
         const date = new Date();
         date.setHours(0, 0, 0, 0);
         date.setMonth(date.getMonth() + 1);
         date.setDate(0);
-        const labels = Array.from({ length: date.getDate() }, (_, i) => `Day ${i + 1}`);
+        const labels = Array.from({ length: date.getDate() }, 
+            (_, i) => `Day ${i + 1}`);
 
         const completedTaskData = Array(labels.length);
         const incompleteTaskData = Array(labels.length);
@@ -378,14 +400,18 @@ function App() {
         date.setDate(1);
         const nextDate = new Date(date);
         nextDate.setDate(2);
-        for (const thisMonth = date.getMonth(); date.getMonth() === thisMonth; (() => {
-            date.setDate(date.getDate() + 1);
-            nextDate.setDate(date.getDate() + 1);
-        })()) {
+        for (const thisMonth = date.getMonth(); 
+            date.getMonth() === thisMonth; 
+            (() => {
+                date.setDate(date.getDate() + 1);
+                nextDate.setDate(date.getDate() + 1);
+            })()) {
             completedTaskData[date.getDate() - 1] =
-                completedTasks.filter(({ id }) => id >= date.valueOf() && id < nextDate.valueOf()).length
+                completedTasks.filter(({ id }) => 
+                    id >= date.valueOf() && id < nextDate.valueOf()).length
             incompleteTaskData[date.getDate() - 1] =
-                incompletedTasks.filter(({ id }) => id >= date.valueOf() && id < nextDate.valueOf()).length
+                incompletedTasks.filter(({ id }) => 
+                    id >= date.valueOf() && id < nextDate.valueOf()).length
         }
 
         // Data for the chart
@@ -444,8 +470,8 @@ function App() {
                         </form>
                     </div>
                     <div className="action-buttons">
-                        <button onClick={() => handleImport()}>Import</button>
-                        <button onClick={() => handleExport()}>Export</button>
+                        <button onClick={handleImport}>Import</button>
+                        <button onClick={handleExport}>Export</button>
                     </div>
                 </div>
                 <div className="auth-section">
@@ -468,7 +494,8 @@ function App() {
                     <div className="task-list-scrollable">
                         <ul className="task-list">
                             {tasks.map(task => (
-                                <li key={task.id} className={`task-item ${editingTaskId === task.id ? 'editing' : ''}`}>
+                                <li key={task.id} 
+                                    className={`task-item ${editingTaskId === task.id ? 'editing' : ''}`}>
                                     {editingTaskId === task.id ? (
                                         <div>
                                             <input
@@ -488,21 +515,35 @@ function App() {
                                                 }}
                                                 className="task-input"
                                             />
-                                            <button onClick={() => editTask(task.id, editingTaskText, editingTaskTime)}>Save</button>
-                                            <button onClick={() => setEditingTaskId(null)}>Cancel</button>
+                                            <button onClick={() => editTask(task.id, editingTaskText, editingTaskTime)}>
+                                                Save
+                                            </button>
+                                            <button onClick={() => setEditingTaskId(null)}>
+                                                Cancel
+                                            </button>
                                         </div>
                                     ) : (
                                         <div>
                                             <span>{task.text}</span>
                                             {task.time && (
-                                                <span style={{ marginLeft: '10px' }}>{`${task.time}`}</span>
+                                                <span style={{ marginLeft: '10px' }}>
+                                                    {`${task.time}`}
+                                                </span>
                                             )}
                                         </div>
                                     )}
                                     <div className="task-buttons">
-                                        <button className="complete-button" onClick={() => completeTask(task.id)}>Complete</button>
+                                        <button 
+                                            className="complete-button" 
+                                            onClick={() => completeTask(task.id)}>
+                                            Complete
+                                        </button>
                                         <div className="dropdown">
-                                            <button className="incomplete-button" onClick={(e) => toggleDropdown(task.id, e)}>Incomplete</button>
+                                            <button 
+                                                className="incomplete-button" 
+                                                onClick={(e) => toggleDropdown(task.id, e)}>
+                                                Incomplete
+                                            </button>
                                             {activeDropdownId === task.id && (
                                                 <DropdownMenu
                                                     task={task}
@@ -513,8 +554,16 @@ function App() {
                                                 />
                                             )}
                                         </div>
-                                        <button className="edit-button" onClick={() => startEditing(task)}>Edit</button>
-                                        <button className="delete-button" onClick={() => deleteTask(task.id)}>Delete</button>
+                                        <button 
+                                            className="edit-button" 
+                                            onClick={() => startEditing(task)}>
+                                            Edit
+                                        </button>
+                                        <button 
+                                            className="delete-button" 
+                                            onClick={() => deleteTask(task.id)}>
+                                            Delete
+                                        </button>
                                     </div>
                                 </li>
                             ))}
@@ -529,7 +578,9 @@ function App() {
                                 <li key={task.id} className="task-item">
                                     <div>
                                         <span>{task.text}</span>
-                                        <span style={{ marginLeft: '10px' }}>{` ${task.time}`}</span>
+                                        <span style={{ marginLeft: '10px' }}>
+                                            {` ${task.time}`}
+                                        </span>
                                     </div>
                                 </li>
                             ))}
@@ -542,8 +593,14 @@ function App() {
                                 <li key={task.id} className="task-item">
                                     <div>
                                         <span>{task.text}</span>
-                                        <span style={{ marginLeft: '10px' }}>{` ${task.time}`}</span>
-                                        {task.reason && <span className="incomplete-reason">Reason: {task.reason}</span>}
+                                        <span style={{ marginLeft: '10px' }}>
+                                            {` ${task.time}`}
+                                        </span>
+                                        {task.reason && 
+                                            <span className="incomplete-reason">
+                                                Reason: {task.reason}
+                                            </span>
+                                        }
                                     </div>
                                 </li>
                             ))}
