@@ -1,95 +1,62 @@
 <h1>Scheduling Statistically Documentation</h1>
-
-<p>welcome to the documentation for Scheduling Statistically! Our project helps users with time management through statistical analysis of a user's behavior</p>
-
+<p>Welcome to the documentation for Scheduling Statistically! Our project helps users with time management through a simple task tracking system.</p>
 <h2>Frontend</h2>
-
 <h3>Landing Page</h3>
-
-<h3>Charts</h3>
-  
+<p>The landing page consists of a daily planner interface where users can add, edit, complete, and mark tasks as incomplete. It also includes user authentication components for login and registration.</p>
+<h3>Task Management</h3>
+<ul>
+  <li>Add new tasks with estimated time</li>
+  <li>Edit existing tasks</li>
+  <li>Mark tasks as complete or incomplete</li>
+  <li>Delete tasks</li>
+  <li>View lists of ongoing, completed, and incomplete tasks</li>
+</ul>
+<h3>Chart</h3>
+<p>The application includes a productivity chart that visualizes the number of completed vs incomplete tasks over time.</p>
+<h3>Import/Export</h3>
+<p>Users can import and export their task data in JSON format.</p>
 <h2>Backend</h2>
-
 <h3>Data Structure</h3>
-<p>Information about datastructures goes here</p>
-
+<p>The backend manages three main data structures:</p>
+<ul>
+  <li>Tasks: Ongoing tasks with text and estimated time</li>
+  <li>Completed Tasks: Tasks marked as complete</li>
+  <li>Incompleted Tasks: Tasks marked as incomplete with a reason</li>
+</ul>
 <h3>Database</h3>
-For our database, we used Airtable, a relatively low barrier to entry database, paired with the Airtable API in order to access, modify, and create records. For the abstraction, we used three objects: DatabaseObj, ScheduledEvent and User that were modified from the data structure design. The database itself is comprised of two pages which store properties of each respective object: ScheduledEvent and User.
-
-<h4><ins>DatabaseObj</ins></h4>
-
-<p>The database object serves as a parent class for the following objects providing abstractions for interacting with the database</p>
-
-<h5>Properties</h5>
-
+<p>For our database, we use Airtable, accessed through the Airtable API. The database stores user information and task data.</p>
+<h4>User Data</h4>
 <ul>
-  <li>base_id: identifies the database in the api calls</li>
-  <li>auth_token: the authentication token</li>
-  <li>obj_type: used for api calls in order to identify which page to access in the database</li>
-  <li>obj_id: a unique ID given to each record to identify it</li>
-  <li>base: used for api calls to the DB, combines and produces a unique Airtable object with the auth_token and base_id</li>
+  <li>Username</li>
+  <li>Password</li>
+  <li>UserData: A JSON string containing the user's tasks, completed tasks, and incompleted tasks</li>
 </ul>
-
-<h5>Functions</h5>
-
+<h3>API Endpoints</h3>
 <ul>
-  <li>create: creates an entry in the respective page of the database</li>
-  <li>update: updates an entry in the database based off of the obj_id</li>
-  <li>export: combines create an update, creating an entry if it exists in the database and updating if it doesn't</li>
+  <li>/register: Creates a new user account</li>
+  <li>/login: Authenticates a user and returns their task data</li>
+  <li>/sync: Updates a user's task data in the database</li>
 </ul>
-
-<h4><ins>ScheduledEvent</ins></h4>
-
-<p>This is a representation of any event/task that a user creates with date and statistics. This object has getters and setters, used as if you were modifying the property. Creating a ScheduledEvent with one argument of the obj_id will pull all properties of that user_id from the database.</p>
-
-<h5>Properties</h5>
-
+<h2>Technologies Used</h2>
 <ul>
-  <li>owner: the user that "owns" the events</li>
-  <li>name: the name of the event</li>
-  <li>year: the year the event was created</li>
-  <li>month: the month the event was created</li>
-  <li>day: the day the event was created</li>
-  <li>start: when the event will start</li>
-  <li>hours: the amount of time the event will take</li>
-  <li>end: when the event will end</li>
-  <li>max: the max amount of time the user has spent on this event in the past</li>
-  <li>min: the min amount of time the user has spent on this event in the past</li>
-  <li>median: the median amount of time the user has spent on this event in the past</li>
-  <li>mode: the mode amount of time the user has spent on this event in the past</li>
+  <li>Frontend: React.js, Chart.js</li>
+  <li>Backend: Node.js, Express.js</li>
+  <li>Database: Airtable</li>
+  <li>Deployment: GitHub Pages (frontend), Render (backend)</li>
 </ul>
-
-<h5>Functions</h5>
-
+<h2>Getting Started</h2>
+<p>To run the project locally:</p>
+<ol>
+  <li>Clone the repository</li>
+  <li>Install dependencies with <code>npm install</code></li>
+  <li>Start the backend server with <code>node server.js</code></li>
+  <li>Serve the frontend files using a local server (e.g., <code>http-server</code>)</li>
+  <li>Access the application in your web browser</li>
+</ol>
+<h2>Future Improvements</h2>
 <ul>
-  <li>createDBEntry: uses inherited functions to create an entry in the database, waiting for a response before continuing</li>
-  <li>updateFromDB: updates all properties of current object </li>
-  <li>exportToJson: exports a Json object</li>
-  <li>updateFromJson: updates the properties of current object with a given Json string</li>
-  <li>exportToDB: uses inherited export function to create/update database entry and assigns user_id to created DB entry if not already created</li>
-</ul>
-
-  
-<h4><ins>User</ins></h4>
-
-<p>The User object represents a User in the system. Unfortunately, authentication was not able to be implemented in the time period we were allotted so it has no functionality.</p>
-
-<h5><ins>Properties</ins></h5>
-
-<ul>
-  <li>username: used to associate a User with ScheduledEvents</li>
-  <li>name: the real name of the user</li>
-  <li>password: the password of the user (currently no functionality)</li>
-</ul>
-
-<h5><ins>Functions</ins></h5>
-
-<ul>
-  <li>createDBEntry: uses inherited functions to create an entry in the database, waiting for a response before continuing</li>
-  <li>updateFromDB: updates the properties of current object with a given Json string</li>
-  <li>exportToJson: exports a Json object</li>
-  <li>updateFromJson: updates the properties of current object with a given Json string</li>
-  <li>exportToDB: uses inherited export function to create/update database entry and assigns user_id to created DB entry if not already created</li>
-  <li>nonExistingUsername: takes in a username, checking the database if the username  doesn't exist and returning True if it doesn't</li>
-  <li>logIn: takes in a username. creates an entry in the database if it doesn't exist and returning an empty list. if the entry exists, it returns a list of ScheduledEvents associated with that user</li>
+  <li>Implement more robust user authentication</li>
+  <li>Add more detailed statistical analysis of task completion patterns</li>
+  <li>Improve mobile responsiveness</li>
+  <li>Implement data validation and sanitization</li>
 </ul>
