@@ -1,12 +1,18 @@
 // server.js
-const EXPRESS = require('EXPRESS');
-const AIRTABLE = require('airtable');
-const APP = EXPRESS();
-APP.use(EXPRESS.json());
 
-// Allowing CORS policy so GitHub Pages could interact with the backend server Render.
-const CORS = require('cors');
-APP.use(CORS({
+const express = require('express');
+const Airtable = require('airtable');
+const cors = require('cors');
+
+const app = express();
+const PORT = process.env.PORT || 3001;
+const AIRTABLE_API_KEY = 'patuyBWMIypYphVl4.e5174b86499f75093a1a61fd33229b59fbd446849e75024337d0b469ebc1edaa';
+const AIRTABLE_BASE_ID = 'appjMFSP6U6V4cwTO';
+
+app.use(express.json());
+
+// CORS configuration for GitHub Pages interaction with Render backend
+app.use(cors({
     origin: function (origin, callback) {
         const allowedOrigins = [
             'https://schedulingstatistically.github.io',
@@ -21,11 +27,16 @@ APP.use(CORS({
     credentials: true
 }));
 
-const base = new AIRTABLE({ apiKey: 'patuyBWMIypYphVl4.e5174b86499f75093a1a61fd33229b59fbd446849e75024337d0b469ebc1edaa' }).base('APPjMFSP6U6V4cwTO');
+const base = new Airtable({apiKey: AIRTABLE_API_KEY}).base(AIRTABLE_BASE_ID);
 
-APP.post('/register', async (req, res) => {
+/**
+ * Register a new user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+async function registerUser(req, res) {
     const { username, password, userData } = req.body;
-
+    
     try {
         const existingUsers = await base('Users').select({
             filterByFormula: `{Username} = '${username}'`
@@ -49,11 +60,16 @@ APP.post('/register', async (req, res) => {
     } catch (error) {
         res.status(500).json({ success: false, error: 'Registration failed' });
     }
-});
+}
 
-APP.post('/login', async (req, res) => {
+/**
+ * Log in a user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+async function loginUser(req, res) {
     const { username, password } = req.body;
-
+    
     try {
         const users = await base('Users').select({
             filterByFormula: `AND({Username} = '${username}', {Password} = '${password}')`
@@ -68,11 +84,16 @@ APP.post('/login', async (req, res) => {
     } catch (error) {
         res.status(500).json({ success: false, error: 'Login failed' });
     }
-});
+}
 
-APP.post('/sync', async (req, res) => {
+/**
+ * Sync user data
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+async function syncUserData(req, res) {
     const { username, userData } = req.body;
-
+    
     try {
         const users = await base('Users').select({
             filterByFormula: `{Username} = '${username}'`
@@ -95,7 +116,12 @@ APP.post('/sync', async (req, res) => {
     } catch (error) {
         res.status(500).json({ success: false, error: 'Sync failed' });
     }
-});
+}
 
-const PORT = process.env.PORT || 3001;
-APP.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Route handlers
+app.post('/register', registerUser);
+app.post('/login', loginUser);
+app.post('/sync', syncUserData);
+
+// Start the server
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
