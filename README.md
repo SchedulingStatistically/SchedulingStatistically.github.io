@@ -15,7 +15,7 @@ Welcome to the Scheduling Statistically project repository!
 
 ## Team Members
 - **Godfrey** (Product Owner & Backend)
-- **Daniel** (Initial Scrum Master & Frontend)
+- **Daniel** (Frontend)
 - **Garrison** (Frontend)
 - **Phillip** (Frontend)
 - **Clayton** (Backend)
@@ -47,12 +47,12 @@ Welcome to the Scheduling Statistically project repository!
 #### Front End
 - Task Completion Dropdown
 - Productivity Bar Graph Implementation
-- Chart.js, D3.js, React, Redux, Context API, Bootstrap, Fetch API integration
+- ChartJS, D3JS, React, Redux, Context API, Bootstrap, Fetch API integration
 - **Total Points**: 31
 
 #### Back End
 - Bar Graph API Development (CRUD operations)
-- Express, Axios, Lodash, bcrypt integration
+- Express, Axios, CORS Policy Compliance, and Website Security
 - **Total Points**: 34
 
 ### Sprint 3
@@ -61,23 +61,24 @@ Welcome to the Scheduling Statistically project repository!
 - Bug Fixes & Refinement
 - Integration Testing
 - Time Tracking Documentation
-- Chart.js, D3.js, Selenium, Toastr, Fetch API integration
+- ChartJS, D3JS, Toastr, Fetch API integration
 - **Total Points**: 42
 
 #### Back End
 - Pie Chart API Development
 - Secure API Endpoints
 - API Documentation
-- Express.js, Lodash, OAuth2, Passport.js, Swagger integration
+- ExpressJS, NodeJS, Axios, and Airtable Integration with CORS Policy compliance
+- Product backend deployment on Render services and frontend deployment on Github Pages
 - **Total Points**: 44
 
 ## Architecture
 
 ### Technologies Used
 - **Languages**: ReactJS, HTML/CSS, NodeJS
-- **Frameworks**: Chart.js, Express.js, Axios, Lodash, bcrypt, OAuth2, Passport.js, Swagger
-- **Development Environments**: Visual Studio Code, Neovim
-- **Systems**: Airtable
+- **Frameworks**: ChartJS, ExpressJS, Axios, Airtable, NodeJS
+- **Development Environments**: Visual Studio Code, Neovim, Notepad++, Chrome
+- **Systems**: Airtable relational database and Render backend production server
 
 ## Challenges/Risks
 1. Learning new technologies.
@@ -93,3 +94,4 @@ Welcome to the Scheduling Statistically project repository!
 - Task Management (Create, Read, Update, Delete tasks)
 - Task Completion Tracking
 - Productivity Bar Graph
+- User Registration and Information Retention
