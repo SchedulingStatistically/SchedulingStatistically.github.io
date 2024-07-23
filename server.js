@@ -9,7 +9,7 @@ const cors = require('cors');
 app.use(cors({
   origin: function (origin, callback) {
     const allowedOrigins = [
-      'https://schedulingstatistically.github.io/',
+      'https://schedulingstatistically.github.io',
       'http://localhost:8000'
     ];
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
