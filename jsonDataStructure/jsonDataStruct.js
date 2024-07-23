@@ -1,17 +1,14 @@
 /* 
     **** Do NOT MODIFY! ****
 
-    work is still in progress!
-
-   **** PROTOTYPE json data structure ****
-
+   **** json data structure ****
 
     if you want to study and edit the code, CREATE A NEW BRANCH.
 
-    DO NOT MERGE you new branch, I must review your code and 
-    understand the changes you have made! 
+    DO NOT MERGE you new branch, TEAM must review your code and 
+    approve the changes you have made! 
 
-    ONLY! Once I ------- OFFICIALLY FORMATE the JsonDataStruct with Proper DOCUMENTATION -------, Only then
+    WHEN MODIFIED! ------- FORMATE the JsonDataStruct with Proper DOCUMENTATION and UNIT TESTS -------, Only then
     will new changes be reviewed by the team for APPROVAL!
 
     Feel free to ask me any question! I Strongly recommend everyone to take their time
@@ -25,8 +22,17 @@
     "Use and the jsonDataStructDebugTest.js to run and test the jsonDataStruct object"
     "run jsonDataStruct.html on a web browser get the console.log output with inspect command"
     "I use vscode with 'Live Server' extension to run the html on my local browser app"
-    "DO NOT MERGE or push you testing code in the main branch"
+    "ONCE APPROVE! MERGE and push your testing code in the main branch"
 */
+
+// CONSTANTS
+const MIN_YEARS = 1
+const MAX_YEARS = Infinity
+const MIN_MONTHS = 1
+const MAX_MONTHS = 12
+const MIN_DAYS = 1
+const MAX_DAYS = 31
+const TIME_ZERO = 0
 
 import * as stats from './node_modules/simple-statistics/dist/simple-statistics.mjs'
 
@@ -768,7 +774,7 @@ class JsonDataStruct {
         this.temp_period_event_status = []
         this.partition_years(category, start_year, end_year)
         for(const a_yearly_event of this.temp_yearly_event_partition) {
-            this.partition_months(category,a_yearly_event.year, 1, 12)
+            this.partition_months(category,a_yearly_event.year, MIN_MONTHS, MAX_MONTHS)
             for(const a_monthly_event of this.temp_monthly_event_partition) {
                 for(let day = 0; day < 31; day = day + n_period_days) {
                     this.init_temp_period_status()
