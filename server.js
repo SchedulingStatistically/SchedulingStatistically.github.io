@@ -1,101 +1,101 @@
 // server.js
-const express = require('express');
-const Airtable = require('airtable');
-const app = express();
-app.use(express.json());
+const EXPRESS = require('EXPRESS');
+const AIRTABLE = require('airtable');
+const APP = EXPRESS();
+APP.use(EXPRESS.json());
 
 // Allowing CORS policy so GitHub Pages could interact with the backend server Render.
-const cors = require('cors');
-app.use(cors({
-  origin: function (origin, callback) {
-    const allowedOrigins = [
-      'https://schedulingstatistically.github.io',
-      'http://localhost:8000'
-    ];
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
+const CORS = require('cors');
+APP.use(CORS({
+    origin: function (origin, callback) {
+        const allowedOrigins = [
+            'https://schedulingstatistically.github.io',
+            'http://localhost:8000'
+        ];
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
 }));
 
-const base = new Airtable({apiKey: 'patuyBWMIypYphVl4.e5174b86499f75093a1a61fd33229b59fbd446849e75024337d0b469ebc1edaa'}).base('appjMFSP6U6V4cwTO');
+const base = new AIRTABLE({ apiKey: 'patuyBWMIypYphVl4.e5174b86499f75093a1a61fd33229b59fbd446849e75024337d0b469ebc1edaa' }).base('APPjMFSP6U6V4cwTO');
 
-app.post('/register', async (req, res) => {
-  const { username, password, userData } = req.body;
-  
-  try {
-    const existingUsers = await base('Users').select({
-      filterByFormula: `{Username} = '${username}'`
-    }).firstPage();
+APP.post('/register', async (req, res) => {
+    const { username, password, userData } = req.body;
 
-    if (existingUsers.length > 0) {
-      return res.json({ success: false, error: 'Username already exists' });
-    }
+    try {
+        const existingUsers = await base('Users').select({
+            filterByFormula: `{Username} = '${username}'`
+        }).firstPage();
 
-    await base('Users').create([
-      {
-        fields: {
-          Username: username,
-          Password: password,
-          UserData: JSON.stringify(userData)
+        if (existingUsers.length > 0) {
+            return res.json({ success: false, error: 'Username already exists' });
         }
-      }
-    ]);
 
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).json({ success: false, error: 'Registration failed' });
-  }
+        await base('Users').create([
+            {
+                fields: {
+                    Username: username,
+                    Password: password,
+                    UserData: JSON.stringify(userData)
+                }
+            }
+        ]);
+
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ success: false, error: 'Registration failed' });
+    }
 });
 
-app.post('/login', async (req, res) => {
-  const { username, password } = req.body;
-  
-  try {
-    const users = await base('Users').select({
-      filterByFormula: `AND({Username} = '${username}', {Password} = '${password}')`
-    }).firstPage();
+APP.post('/login', async (req, res) => {
+    const { username, password } = req.body;
 
-    if (users.length === 0) {
-      return res.json({ success: false, error: 'Invalid credentials' });
+    try {
+        const users = await base('Users').select({
+            filterByFormula: `AND({Username} = '${username}', {Password} = '${password}')`
+        }).firstPage();
+
+        if (users.length === 0) {
+            return res.json({ success: false, error: 'Invalid credentials' });
+        }
+
+        const userData = JSON.parse(users[0].fields.UserData || '{}');
+        res.json({ success: true, userData });
+    } catch (error) {
+        res.status(500).json({ success: false, error: 'Login failed' });
     }
-
-    const userData = JSON.parse(users[0].fields.UserData || '{}');
-    res.json({ success: true, userData });
-  } catch (error) {
-    res.status(500).json({ success: false, error: 'Login failed' });
-  }
 });
 
-app.post('/sync', async (req, res) => {
-  const { username, userData } = req.body;
-  
-  try {
-    const users = await base('Users').select({
-      filterByFormula: `{Username} = '${username}'`
-    }).firstPage();
+APP.post('/sync', async (req, res) => {
+    const { username, userData } = req.body;
 
-    if (users.length === 0) {
-      return res.json({ success: false, error: 'User not found' });
-    }
+    try {
+        const users = await base('Users').select({
+            filterByFormula: `{Username} = '${username}'`
+        }).firstPage();
 
-    await base('Users').update([
-      {
-        id: users[0].id,
-        fields: {
-          UserData: JSON.stringify(userData)
+        if (users.length === 0) {
+            return res.json({ success: false, error: 'User not found' });
         }
-      }
-    ]);
 
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).json({ success: false, error: 'Sync failed' });
-  }
+        await base('Users').update([
+            {
+                id: users[0].id,
+                fields: {
+                    UserData: JSON.stringify(userData)
+                }
+            }
+        ]);
+
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ success: false, error: 'Sync failed' });
+    }
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+APP.listen(PORT, () => console.log(`Server running on port ${PORT}`));
