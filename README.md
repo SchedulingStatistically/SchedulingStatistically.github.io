@@ -100,8 +100,7 @@ Welcome to the Scheduling Statistically project repository!
 # Instructions:
 ### You may use our website that is up and running at https://schedulingstatistically.github.io/
 ### or run it on your local server or a server of your choice.
-### Note: Serving the backend on a server other than local would require editing the server.js file to ensure
-### CORS policy is applied to the correct URL. For assistance with that, please contact maaman@ucsc.edu
+### Note: Serving the backend on a server other than local would require editing the server.js file to ensure that the CORS policy is applied to the correct URL. For assistance with that, please contact maaman@ucsc.edu
 ***************************************************************************************************************
 ## Instructions for running on a local server:
 ## Prerequisites
