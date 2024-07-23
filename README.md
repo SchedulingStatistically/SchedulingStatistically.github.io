@@ -1,4 +1,5 @@
 # Scheduling Statistically
+https://schedulingstatistically.github.io/
 
 Welcome to the Scheduling Statistically project repository!
 
