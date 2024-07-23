@@ -1,11 +1,25 @@
 // server.js
 const express = require('express');
 const Airtable = require('airtable');
-const cors = require('cors');
-
 const app = express();
-app.use(cors());
 app.use(express.json());
+
+// Allowing CORS policy so GitHub Pages could interact with the backend server Render.
+const cors = require('cors');
+app.use(cors({
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'https://schedulingstatistically.github.io/',
+      'http://localhost:8000'
+    ];
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 
 const base = new Airtable({apiKey: 'patuyBWMIypYphVl4.e5174b86499f75093a1a61fd33229b59fbd446849e75024337d0b469ebc1edaa'}).base('appjMFSP6U6V4cwTO');
 
@@ -18,7 +32,7 @@ app.post('/register', async (req, res) => {
     }).firstPage();
 
     if (existingUsers.length > 0) {
-      return res.status(400).json({ error: 'Username already exists' });
+      return res.json({ success: false, error: 'Username already exists' });
     }
 
     await base('Users').create([
@@ -33,7 +47,7 @@ app.post('/register', async (req, res) => {
 
     res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ error: 'Registration failed' });
+    res.status(500).json({ success: false, error: 'Registration failed' });
   }
 });
 
@@ -46,13 +60,13 @@ app.post('/login', async (req, res) => {
     }).firstPage();
 
     if (users.length === 0) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.json({ success: false, error: 'Invalid credentials' });
     }
 
     const userData = JSON.parse(users[0].fields.UserData || '{}');
     res.json({ success: true, userData });
   } catch (error) {
-    res.status(500).json({ error: 'Login failed' });
+    res.status(500).json({ success: false, error: 'Login failed' });
   }
 });
 
@@ -65,7 +79,7 @@ app.post('/sync', async (req, res) => {
     }).firstPage();
 
     if (users.length === 0) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.json({ success: false, error: 'User not found' });
     }
 
     await base('Users').update([
@@ -79,7 +93,7 @@ app.post('/sync', async (req, res) => {
 
     res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ error: 'Sync failed' });
+    res.status(500).json({ success: false, error: 'Sync failed' });
   }
 });
 
